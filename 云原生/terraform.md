@@ -19,6 +19,7 @@ terraform -help
 
 ## Terraform 语法
 
+- `provider`: 云资源
 
 ## 阿里云实践
 
@@ -122,3 +123,4 @@ terraform destroy
 - Terraform 官网文档: <https://developer.hashicorp.com/terraform/docs>
 - 阿里云文档-什么是Terraform: <https://help.aliyun.com/document_detail/95820.html>
 - Terraform alicloud provider: <https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/instance>
+- Terraform 阿里云资源索引: <https://help.aliyun.com/document_detail/335111.html>
