@@ -89,13 +89,13 @@ export ALICLOUD_REGION="cn-beijing"
 
 关于阿里云凭证的获取，可参考[创建RAM用户](https://help.aliyun.com/document_detail/93720.html)
 
-4. 查看项目
+4. 查看资源操作计划
 
 ```shell
 terraform plan
 ```
 
-5. 创建资源
+5. 执行资源操作
 
 ```shell
 terraform apply
