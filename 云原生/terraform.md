@@ -109,6 +109,11 @@ terraform apply
 terraform show
 ```
 
+7. 释放资源
+
+```shell
+terraform destroy
+```
 
 ## 参考链接
 
