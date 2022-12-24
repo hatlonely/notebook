@@ -1,6 +1,6 @@
 # 资源编排工具 Terraform 简介
 
-Terraform 是一个 hashicorp 开源的资源编排工具（infrastructure as code），可以用来创建，修改和删除云资源，支持各种主流的云厂商，
+Terraform 是 hashicorp 开源的资源编排工具（infrastructure as code），可以用来创建，修改和删除云资源，支持各种主流的云厂商，
 包括 Aws，阿里云，Azure，GCP 等。
 
 Terraform 使用 [HCL](https://github.com/hashicorp/hcl/blob/main/hclsyntax/spec.md) 语法来描述云资源。并且提供命令行交互工具。
