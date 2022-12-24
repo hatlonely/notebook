@@ -6,6 +6,10 @@ import (
 	"github.com/pulumi/pulumi/sdk/v2/go/pulumi"
 )
 
+// 不推荐使用 golang 编写
+// 1. 类型转换太繁琐
+// 2. 修改需要重新编译
+
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		zone_id := "cn-beijing-b"
