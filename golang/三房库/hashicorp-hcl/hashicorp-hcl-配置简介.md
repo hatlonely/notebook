@@ -250,3 +250,4 @@ hclsimple.DecodeFile("test.hcl", &hcl.EvalContext{
 - 项目地址: <https://github.com/hashicorp/hcl>
 - 语法规则: <https://github.com/hashicorp/hcl/blob/main/hclsyntax/spec.md>
 - 测试 case: <https://github.com/hashicorp/hcl/tree/main/specsuite>
+- 测试代码: <https://github.com/hatlonely/notebook/blob/master/golang/code/hashicorp-hcl/hcl_test.go>
