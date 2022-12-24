@@ -1,26 +1,25 @@
 import pulumi
 import pulumi_alicloud as alicloud
 
+az = "cn-beijing-a"
+
 vpc = alicloud.vpc.Network(
     "my-vpc",
     cidr_block="172.16.0.0/12",
 )
 
-az = "cn-hangzhou-i"
+vswitch = alicloud.vpc.Switch(
+    "pulumi_vswitch",
+    zone_id=az,
+    cidr_block="172.16.0.0/21",
+    vpc_id=vpc.id,
+)
+
 sg = alicloud.ecs.SecurityGroup(
     "pulumi_sg",
     description="pulumi security_groups",
     vpc_id=vpc.id,
 )
-
-vswitch = alicloud.vpc.Switch(
-    "pulumi_vswitch",
-    availability_zone=az,
-    cidr_block="172.16.0.0/21",
-    vpc_id=vpc.id,
-)
-
-sg_ids= [sg.id]
 
 sg_rule= alicloud.ecs.SecurityGroupRule(
     "sg_rule",
@@ -35,8 +34,8 @@ sg_rule= alicloud.ecs.SecurityGroupRule(
 instance=alicloud.ecs.Instance(
     "ecs-instance2",
     availability_zone=az,
-    instance_type ="ecs.t6-c1m1.large",
-    security_groups =sg_ids,
+    instance_type="ecs.t6-c1m1.large",
+    security_groups =[sg.id],
     image_id="ubuntu_18_04_64_20G_alibase_20190624.vhd",
     instance_name ="ecsCreatedByPulumi2",
     vswitch_id=vswitch.id,

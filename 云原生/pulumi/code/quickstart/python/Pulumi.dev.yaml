@@ -1,2 +1,2 @@
 config:
-  alicloud:region: cn-hangzhou
+  alicloud:region: cn-beijing
