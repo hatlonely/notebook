@@ -170,12 +170,13 @@ EOT
 func TestVariable(t *testing.T) {
 	Convey("TestExpression", t, func() {
 		So(ioutil.WriteFile("test.hcl", []byte(`
+# 数值运算
 add = a + b
 sub = a - b
 mul = a * b
 div = b / a
 mod = a % b
-
+# 布尔运算
 eq = a == b
 ne = a != b
 gt = a > b
@@ -184,9 +185,9 @@ gte = a >= b
 lte = a <= b
 and = (a != b) && (a < b)
 or = (a == b) || (a > b)
-
+# 条件选择
 cond = a == b ? "eq" : "ne"
-
+# 字符串组合
 concat = "hello ${str}"
 `), 0644), ShouldBeNil)
 

@@ -147,12 +147,13 @@ hcl 的基本语法主要有两种，一种属性语法（Attribute），一种�
 test.hcl 配置文件
 
 ```hcl
+# 数值运算
 add = a + b
 sub = a - b
 mul = a * b
 div = b / a
 mod = a % b
-
+# 布尔运算
 eq = a == b
 ne = a != b
 gt = a > b
@@ -161,9 +162,9 @@ gte = a >= b
 lte = a <= b
 and = (a != b) && (a < b)
 or = (a == b) || (a > b)
-
+# 条件选择
 cond = a == b ? "eq" : "ne"
-
+# 字符串组合
 concat = "hello ${str}"
 ```
 
