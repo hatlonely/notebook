@@ -21,9 +21,45 @@ terraform -help
 
 关于 hcl 的介绍可以参考 [hashicorp-hcl-简介](https://github.com/hatlonely/notebook/blob/master/golang/%E4%B8%89%E6%88%BF%E5%BA%93/hashicorp-hcl/hashicorp-hcl-%E9%85%8D%E7%BD%AE%E7%AE%80%E4%BB%8B.md)
 
-- `provider`: 云资源
+- `terraform`: terraform 配置
+  - `cloud`: terraform 云配置，将资源状态保存在 terraform 云
+  - `backend`: terraform 后端配置，将资源状态保存至后端
+    - `label1`: 后端类型
+      - `oss`: 阿里云对象存储，并通过表格存储作一致性检查
+      - `s3`: aws 对象存储
+      - `cos`: 腾讯对象存储
+      - `azurerm`: 微软云
+- `provider`: 云资源集合
+  - `lable1`: 云资源
+    - `alicloud`: 阿里云
+    - `aws`: 亚马逊
+    - `azurerm`: 微软云
 - `resource`:
-  - 
+  - `label1`: 资源类型，比如 `alicloud_vpc` 表示阿里云的 `vpc` 资源
+  - `label2`: 资源名称，该名称用于引用该资源
+  - `depends_on`: 显示依赖
+  - `count`: 副本数量
+  - `for_each`: 循环创建副本，通过 `each.key/each.value` 引用当前循环的值，不能和 `count` 字段同时使用
+  - `provider`: 显示指定 `provider`
+  - `lifecycle`: 生命周期
+  - `provisioner`: 预置器，在资源创建之后执行的一些步骤
+    - `label1`: 预置器名称
+      - `file`: 复制文件
+      - `local-exec`: 本地执行命令
+      - `remote-exec`: 远程执行命令
+    - `connection`: 远程连接信息
+- `data`: 数据源，比如1核1G的 ecs 资源的可选实例类型
+- `variable`: 变量，通过 terraform 的命令行参数 `-var` 传递给资源描述文件
+  - `type`: 类型
+  - `default`: 默认值
+  - `description`: 描述信息
+- `locals`: 本地变量
+- `output`: 可以输出一些资源信息
+  - `value`: 值
+  - `description`: 描述信息
+  - `sensitive`: 敏感信息，敏感信息将被隐藏
+- `module`: 模块，支持本地模块/Terraform 仓库/github 仓库等
+
 
 ## 阿里云实践
 
@@ -61,18 +97,21 @@ resource "alicloud_security_group_rule" "allow_all_tcp" {
   cidr_ip           = "0.0.0.0/0"
 }
 
+data "alicloud_instance_types" "ecs_1c1g" {
+  cpu_core_count = 1
+  memory_size    = 1
+}
+
 resource "alicloud_instance" "instance" {
-  # cn-beijing
   availability_zone = "cn-beijing-b"
   security_groups   = alicloud_security_group.default.*.id
 
-  # series III
-  instance_type              = "ecs.n2.small"
+  instance_type              = data.alicloud_instance_types.ecs_1c1g.instance_types[0].id
   system_disk_category       = "cloud_efficiency"
   image_id                   = "ubuntu_18_04_64_20G_alibase_20190624.vhd"
   instance_name              = "test_foo"
   vswitch_id                 = alicloud_vswitch.vsw.id
-  internet_max_bandwidth_out = 10
+  internet_max_bandwidth_out = 0
 }
 ```
 

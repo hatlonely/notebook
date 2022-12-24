@@ -27,13 +27,18 @@ resource "alicloud_security_group_rule" "allow_all_tcp" {
   cidr_ip           = "0.0.0.0/0"
 }
 
+data "alicloud_instance_types" "ecs_1c1g" {
+  cpu_core_count = 1
+  memory_size    = 1
+}
+
 resource "alicloud_instance" "instance" {
   # cn-beijing
   availability_zone = "cn-beijing-b"
   security_groups   = alicloud_security_group.default.*.id
 
   # series III
-  instance_type              = "ecs.n2.small"
+  instance_type              = data.alicloud_instance_types.ecs_1c1g.instance_types[0].id
   system_disk_category       = "cloud_efficiency"
   image_id                   = "ubuntu_18_04_64_20G_alibase_20190624.vhd"
   instance_name              = "test_foo"
