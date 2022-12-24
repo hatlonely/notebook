@@ -73,21 +73,24 @@ func TestDecodeFile(t *testing.T) {
 func TestStructural(t *testing.T) {
 	Convey("decode test.hcl", t, func() {
 		So(ioutil.WriteFile("test.hcl", []byte(`
-key1 = "val1"
-key2 = 2
-key3 = [1, 2, 3]
+key1 = "val1"    # 字符串
+key2 = 2         # 数值
+key3 = [1, 2, 3] # 数组
+# 字典
 key4 = {
   "key5": "val5"
 }
+# 对象数组
 key6 {
   key7 = "val7"
 }
 key6 {
   key7 = "val7"
 }
-
+# 对象
 key8 "label-val1" "label-val2" {
   key9 = "val9"
+  # 嵌套对象
   key10 "label-val3" {
     key11 = "val11"
     key12 {
@@ -95,7 +98,7 @@ key8 "label-val1" "label-val2" {
     }
   }
 }
-
+# 多行
 key14 = <<EOT
 hello
 world
