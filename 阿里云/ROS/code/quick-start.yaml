@@ -1,0 +1,13 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Description: ros quick start
+Parameters:
+  VpcCidrBlock:
+    Type: String
+    Default: 192.168.0.0/24
+Resources:
+  VPC:
+    Type: ALIYUN::ECS::VPC
+    Properties:
+      VpcName: myvpc
+      CidrBlock:
+        Ref: VpcCidrBlock
