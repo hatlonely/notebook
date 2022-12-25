@@ -17,5 +17,5 @@ mv aliyun /usr/local/bin/
 1. 创建资源栈
 
 ```shell
-aliyun ros 
+aliyun ros CreateStack help
 ```

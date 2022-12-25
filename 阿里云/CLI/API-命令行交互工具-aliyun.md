@@ -36,9 +36,9 @@ aliyun configure get --profile hatlonely
 
 命令格式 `aliyun <product> <api-name> [--parameter1 value1 --parameter2 value2 ...]`
 
-- `product`: 产品名称，可通过 `aliyun --help` 查看支持的产品
-- `api-name`: API 名称，可以通过 `aliyun <product> --help` 查看产品支持的 API，比如 `aliyun ecs --help`
-- `parameter`: 通过 `aliyun <product> <api-name> --help` 可以查看支持的参数
+- `product`: 产品名称，可通过 `aliyun help` 查看支持的产品
+- `api-name`: API 名称，可以通过 `aliyun <product> help` 查看产品支持的 API，比如 `aliyun ecs help`
+- `parameter`: 通过 `aliyun <product> <api-name> help` 可以查看支持的参数
 
 阿里云服务的 API 有两种风格，分别是 RPC 风格和 RESTful 风格，不同的服务有不同的风格，不同的风格有不同的调用形式
 
