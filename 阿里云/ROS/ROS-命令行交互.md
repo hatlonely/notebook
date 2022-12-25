@@ -50,7 +50,35 @@ TODO: Parameters 是对象数组，无法传入
 aliyun ros GetStack --RegionId cn-shanghai --StackId 355cb0f0-ea92-4851-ac73-b47572673bfe
 ```
 
-4. 删除资源栈
+4. 更新模板，更新 vpc 的 cidr 地址段为 `172.16.0.0/16`
+
+```yaml
+ROSTemplateFormatVersion: '2015-09-01'
+Description: ros quick start
+Parameters:
+  VpcCidrBlock:
+    Type: String
+    Default: 172.16.0.0/16
+Resources:
+  VPC:
+    Type: ALIYUN::ECS::VPC
+    Properties:
+      VpcName: myvpc
+      CidrBlock:
+        Ref: VpcCidrBlock
+```
+
+5. 更新资源栈
+
+```shell
+aliyun ros UpdateStack \
+  --RegionId cn-shanghai \
+  --StackId 355cb0f0-ea92-4851-ac73-b47572673bfe \
+  --TimeoutInMinutes 10 \
+  --TemplateBody "$(cat quick-start.yaml)"
+```
+
+6. 删除资源栈
 
 ```shell
 aliyun ros DeleteStack --RegionId cn-shanghai --StackId 355cb0f0-ea92-4851-ac73-b47572673bfe
