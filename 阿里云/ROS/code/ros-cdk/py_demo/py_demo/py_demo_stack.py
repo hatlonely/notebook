@@ -6,7 +6,7 @@ class PyDemoStack(core.Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         vpc = ecs.Vpc(self, "vpc", ecs.VPCProps(
-            cidr_block="192.168.0.0/16",
+            cidr_block="10.0.0.0/24",
             description="create by ros-cdk",
             vpc_name="test-ros-cdk-vpc",
         ))
