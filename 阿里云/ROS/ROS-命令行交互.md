@@ -83,3 +83,14 @@ aliyun ros UpdateStack \
 ```shell
 aliyun ros DeleteStack --RegionId cn-shanghai --StackId 355cb0f0-ea92-4851-ac73-b47572673bfe
 ```
+
+## 结论
+
+虽然通过 aliyun 命令行工具也可以完成资源的创建，更新和删除，但是 ROS 对这种使用场景的支持并不友好：
+
+1. 相比 Terraform 工具，首先 API 的调用比较复杂，需要传入各种参数
+2. 没有资源栈存储的信息，需要手动记录资源栈 id
+3. 资源创建和更新的输出都是 API 的输出，可读性不友好
+4. 没有 `plan` 相关操作，在执行操作前，无法知道资源的变化过程
+
+综上，并不建议使用命令行工具 aliyun 来管理阿里云资源，类似的需求可以通过 terraform 的阿里云插件来实现。
