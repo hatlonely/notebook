@@ -216,6 +216,56 @@ count_values("version", build_version)
 topk(5, http_requests_total)
 ```
 
+## 函数
+
+- `abs(v instant-vector) -> instant-vector`: 绝对值
+- `absent(v instant-vector) -> instant-vector | none`: 如果瞬时数据有任何值，则返回空，如果没有值，返回一条数据，其值为 1。这个函数在设置告警的时候很有用
+- `absent_over_time(v range-vector) -> instant-vector | none`: 和 `absent` 类似，参数为范围数据
+- `ceil(v instant-vector) -> instant-vector`: 向上取整
+- `round(v instant-vector, to_nearest=1 scalar)`: 四舍五入
+- `floor(v instant-vector) -> instant-vector`: 向下取整
+- `changes(v range-vector) -> instant-vector`: 范围数据变化的次数
+- `clamp(v instant-vector, min scalar, max scalar) -> instant-vector`: 如果值小于 min，这只为 min，如果大于 max 设置为 max
+- `clamp_max(v instant-vector, max scalar) -> instant-vector`: 如果值大于 max 设置为 max
+- `clamp_min(v instant-vector, min scalar) -> instant-vector`: 如果值小于 min 设置为 min
+- `day_of_month(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的所在月份中的第几天，取值 `[1, 31]`，`time.day_of_month`
+- `day_of_week(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的星期几，取值 `[0, 6]`，0 表示周日，`time.day_of_week`
+- `day_of_year(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的一年中的第几天，取值 `[1, 366]`，`time.day_of_year`
+- `days_in_month(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间所在月份的天数，取值 `[28, 31]`，`time.days_in_month`
+- `hour(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的小时，取值 `[0, 23]`，`time.hour`
+- `minute(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的分钟，取值 `[0, 59]`，`time.minute`
+- `year(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的年份，`time.year`
+- `month(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的月份，取值 `[1, 12]`，`time.month`
+- `deriv(v range-vector) -> range-vector`: 使用线性回归计算各个时间序列的导数
+- `exp(v instant-vector) -> instant-vector`: 返回 e 的次方
+- `histogram_count(v instant-vector)`:
+- `histogram_sum(v instant-vector)`: 
+- `histogram_fraction(lower scalar, upper scalar, v instant-vector)`: 
+- `histogram_quantile(φ scalar, b instant-vector)`: 
+- `holt_winters(v range-vector, sf scalar, tf scalar)`: 
+- `label_join`: 
+- `label_replace`: 
+- `ln`: 
+- `log2`: 
+- `log10`: 
+- `predict_linear`: 
+- `delta(v range-vector) -> instant-vector`: 返回最后一个值和第一个值的差，`v[-1].value - v[0].value`
+- `idelta(v range-vector) -> instant-vector`: 返回最后两个值的差，`v[-1].value - v[-2].value`
+- `increase(v range-vector) -> instant-vector`: 区间内最后一个值和第一个值的差，`v[-1].value - v[0].value`
+- `irate(v range-vector) -> instant-vector`: 区间内最后一个值和倒数第二个值的差再除以时间，`(v[-1].value - v[-2].value) / (v[-1].time - v[-2].time)`
+- `rate(v range-vector) -> instant-vector`: 区间内最后一个值和第一个值的差再除以时间，`(v[-1].value - v[0].value) / (v[-1].time - v[0].time)`
+- `resets(v range-vector) -> instant-vector`: 计数器重置的次数。计数器重置指的是连续样本之间的单调性发生变化
+- `scalar`: 
+- `sgn`: 
+- `sort`: 
+- `sort_desc`: 
+- `sqrt`: 
+- `time`: 
+- `timestamp`: 
+- `vector`: 
+- `<aggregation>_over_time`: 
+
+
 ## 参考链接
 
 - 查询语法: <https://prometheus.io/docs/prometheus/latest/querying/basics/>
