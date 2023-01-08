@@ -237,7 +237,6 @@ topk(5, http_requests_total)
 - `year(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的年份，`time.year`
 - `month(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的月份，取值 `[1, 12]`，`time.month`
 - `deriv(v range-vector) -> range-vector`: 使用线性回归计算各个时间序列的导数
-- `exp(v instant-vector) -> instant-vector`: 返回 e 的次方
 - `histogram_count(v instant-vector)`:
 - `histogram_sum(v instant-vector)`: 
 - `histogram_fraction(lower scalar, upper scalar, v instant-vector)`: 
@@ -245,9 +244,11 @@ topk(5, http_requests_total)
 - `holt_winters(v range-vector, sf scalar, tf scalar)`: 
 - `label_join`: 
 - `label_replace`: 
-- `ln`: 
-- `log2`: 
-- `log10`: 
+- `exp(v instant-vector) -> instant-vector`: 返回 e 的次方，`exp(value)`
+- `ln(v instant-vector) -> instant-vector`: 返回 e 的对数，`ln(value)`
+- `log2(v instant-vector) -> instant-vector`: 返回 2 的对数，`log2(value)`
+- `log10(v instant-vector) -> instant-vector`: 返回 10 的对数，`log10(value)`
+- `sqrt(v instant-vector) -> instant-vector`: 返回平方根，`sqrt(value)`
 - `predict_linear`: 
 - `delta(v range-vector) -> instant-vector`: 返回最后一个值和第一个值的差，`v[-1].value - v[0].value`
 - `idelta(v range-vector) -> instant-vector`: 返回最后两个值的差，`v[-1].value - v[-2].value`
@@ -255,11 +256,10 @@ topk(5, http_requests_total)
 - `irate(v range-vector) -> instant-vector`: 区间内最后一个值和倒数第二个值的差再除以时间，`(v[-1].value - v[-2].value) / (v[-1].time - v[-2].time)`
 - `rate(v range-vector) -> instant-vector`: 区间内最后一个值和第一个值的差再除以时间，`(v[-1].value - v[0].value) / (v[-1].time - v[0].time)`
 - `resets(v range-vector) -> instant-vector`: 计数器重置的次数。计数器重置指的是连续样本之间的单调性发生变化
-- `scalar`: 
-- `sgn`: 
-- `sort`: 
-- `sort_desc`: 
-- `sqrt`: 
+- `scalar(v instant-vector) -> scalar`: 如果 v 中只有一个元素，返回这个元素的值，否则返回 NAN，`if len(v) == 1 ? v[0].value else NAN`
+- `sgn(v instant-vector) -> instant-vector`: 获取值的符号。大于0，返回1；小于0，返回-1；等于0，返回0
+- `sort(v instant-vector) -> instant-vector`: 按值升序排序
+- `sort_desc(v instant-vector) -> instant-vector`: 按值降序排序
 - `time`: 
 - `timestamp`: 
 - `vector`: 
