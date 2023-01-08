@@ -240,8 +240,8 @@ topk(5, http_requests_total)
 - `histogram_fraction(lower scalar, upper scalar, v instant-vector)`: 
 - `histogram_quantile(φ scalar, b instant-vector)`: 
 - `holt_winters(v range-vector, sf scalar, tf scalar)`: 
-- `label_join`: 
-- `label_replace`: 
+- `label_join(v instant-vector, dst_label string, separator string, src_label_1 string, src_label_2 string, ...) -> instant-vector`: 新增标签，标签值通过其他标签用逗号合并
+- `label_replace(v instant-vector, dst_label string, replacement string, src_label string, regex string) -> instant-vector`: 替换或新增标签，支持正则替换
 - `ceil(v instant-vector) -> instant-vector`: 向上取整
 - `round(v instant-vector, to_nearest=1 scalar)`: 四舍五入
 - `floor(v instant-vector) -> instant-vector`: 向下取整
