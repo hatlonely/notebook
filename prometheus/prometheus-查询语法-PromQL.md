@@ -38,7 +38,7 @@ NaN
 `hello world`
 ```
 
-## 操作符
+## 运算符
 
 ### 数值运算符
 
@@ -95,7 +95,7 @@ prometheus_http_requests_total offset 60m > 5
 - `or`: 并集
 - `unless`: 差集
 
-只能用在两个瞬时数据之间
+只能用在两个瞬时数据之间，集合运算通过指标名（metric）和标签（label）匹配
 
 ```promql
 # 取 job="prometheus" 指标和指标值大于 5 的数据，作一个交集
@@ -105,6 +105,73 @@ prometheus_http_requests_total offset 60m > 5
 ### 三角函数
 
 - `atan2`: 反正切
+
+
+## 匹配模式
+
+匹配模式指的是一个运算符作用在两个瞬时数据上时，可能会出现，一对一，一对多，多对一三种情况
+
+```text
+# 一对一匹配
+<vector expr> <bin-op> ignoring(<label list>) <vector expr>
+<vector expr> <bin-op> on(<label list>) <vector expr>
+
+# 多对一
+<vector expr> <bin-op> on(<label list>) group_left(<label list>) <vector expr>
+<vector expr> <bin-op> ignoring(<label list>) group_left(<label list>) <vector expr>
+
+# 一对多
+<vector expr> <bin-op> on(<label list>) group_right(<label list>) <vector expr>
+<vector expr> <bin-op> ignoring(<label list>) group_right(<label list>) <vector expr>
+```
+
+- `on`: 指定标签匹配
+- `ignoring`: 忽略标签匹配
+- `group_left`: 多对一匹配
+- `group_right`: 一对多匹配
+
+假设有我们有如下数据两个份瞬时数据
+
+```text
+# 错误请求数据
+method_code:http_errors:rate5m{method="get", code="500"}  24
+method_code:http_errors:rate5m{method="get", code="404"}  30
+method_code:http_errors:rate5m{method="put", code="501"}  3
+method_code:http_errors:rate5m{method="post", code="500"} 6
+method_code:http_errors:rate5m{method="post", code="404"} 21
+
+# 总请求数据
+method:http_requests:rate5m{method="get"}  600
+method:http_requests:rate5m{method="del"}  34
+method:http_requests:rate5m{method="post"} 120
+```
+
+上例中有两个指标: 
+
+- `method_code:http_errors:rate5m`: 错误请求数据，有两个标签，`method` 和 `code`
+- `method:http_requests:rate5m`: 总请求数据，只有一个标签 `method`
+
+**场景一**: 计算 code="500" 分 method 的失败率
+
+```text
+method_code:http_errors:rate5m{code="500"} / ignoring(code) method:http_requests:rate5m
+```
+
+这里涉及两个瞬时数据 `method_code:http_errors:rate5m{code="500"}` 500 错误请求数据和 `method:http_requests:rate5m` 总请求数据。
+`method_code:http_errors:rate5m{code="500"}` 数据的标签比 `method:http_requests:rate5m` 数据标签多了 code，
+表达式 `method_code:http_errors:rate5m{code="500"} / method:http_requests:rate5m` 无法直接匹配，
+这个时候可以指定 `ignoring(code)` 在匹配的时候忽略 `code` 这个标签
+
+**场景二**: 计算分 `code` 分 `method` 的失败率
+
+```text
+method_code:http_errors:rate5m / ignoring(code) group_left method:http_requests:rate5m
+```
+
+`method_code:http_errors:rate5m` 中多条分 code 的数据对应 `method:http_requests:rate5m` 中的一条数据，
+表达式 `method_code:http_errors:rate5m / ignoring(code) method:http_requests:rate5m` 无法直接匹配，
+这个时候可以指定 `group_left` 来表示进行多对一匹配
+
 
 
 ## 参考链接
