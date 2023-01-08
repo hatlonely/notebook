@@ -7,16 +7,16 @@
 - `瞬时向量（Instant vector）`: 最近时间的采样信息
 
 ```text
-promhttp_metric_handler_requests_total
+prometheus_http_requests_total
 {job="prometheus",code=200}
-promhttp_metric_handler_requests_total{job="prometheus"}
+prometheus_http_requests_total{job="prometheus"}
 ```
 
 - `区间向量（Range vector）`: 一段时间内采样信息，样例
 
 ```text
-promhttp_metric_handler_requests_total{job="prometheus"}[1h]
-promhttp_metric_handler_requests_total{job="prometheus"}[1h] offset 5m
+prometheus_http_requests_total{job="prometheus"}[1h]
+prometheus_http_requests_total{job="prometheus"}[1h] offset 5m
 ```
 
 - `Scalar`: 浮点数值
@@ -37,6 +37,8 @@ NaN
 'hello world'
 `hello world`
 ```
+
+## 
 
 ## 参考链接
 
