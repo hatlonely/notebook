@@ -1,10 +1,10 @@
 # prometheus 查询语法 PromQL
 
-## 4种数据类型
+## 基本语法
 
 在 PromQL 中，一个表达式可以表示四种类型
 
-- `瞬时向量（Instant vector）`: 最近时间的采样信息
+- `瞬时数据（Instant vector）`: 一个时间点的采样信息
 
 ```text
 prometheus_http_requests_total
@@ -12,14 +12,14 @@ prometheus_http_requests_total
 prometheus_http_requests_total{job="prometheus"}
 ```
 
-- `区间向量（Range vector）`: 一段时间内采样信息，样例
+- `区间数据（Range vector）`: 一段时间内采样信息，相当于瞬时数据的集合
 
 ```text
 prometheus_http_requests_total{job="prometheus"}[1h]
 prometheus_http_requests_total{job="prometheus"}[1h] offset 5m
 ```
 
-- `Scalar`: 浮点数值
+- `标量（Scalar）`: 浮点数值
 
 ```text
 23
@@ -30,7 +30,7 @@ prometheus_http_requests_total{job="prometheus"}[1h] offset 5m
 NaN
 ```
 
-- `String`: 字符串值
+- `字符串（String）`: 字符串值
 
 ```text
 "hello world"
@@ -38,7 +38,18 @@ NaN
 `hello world`
 ```
 
-## 
+## 操作符
+
+### 二元运算符
+
+- `+`: 加
+- `-`: 减
+- `*`: 乘
+- `/`: 除
+- `%`: 取模
+- `^`: 次方
+
+
 
 ## 参考链接
 
