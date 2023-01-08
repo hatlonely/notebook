@@ -234,12 +234,6 @@ topk(5, http_requests_total)
 - `minute(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的分钟，取值 `[0, 59]`，`time.minute`
 - `year(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的年份，`time.year`
 - `month(v=vector(time()) instant-vector) -> instant-vector`: UTC 时间中的月份，取值 `[1, 12]`，`time.month`
-- `deriv(v range-vector) -> range-vector`: 使用线性回归计算各个时间序列的导数
-- `histogram_count(v instant-vector)`:
-- `histogram_sum(v instant-vector)`: 
-- `histogram_fraction(lower scalar, upper scalar, v instant-vector)`: 
-- `histogram_quantile(φ scalar, b instant-vector)`: 
-- `holt_winters(v range-vector, sf scalar, tf scalar)`: 
 - `label_join(v instant-vector, dst_label string, separator string, src_label_1 string, src_label_2 string, ...) -> instant-vector`: 新增标签，标签值通过其他标签用逗号合并
 - `label_replace(v instant-vector, dst_label string, replacement string, src_label string, regex string) -> instant-vector`: 替换或新增标签，支持正则替换
 - `ceil(v instant-vector) -> instant-vector`: 向上取整
@@ -251,7 +245,6 @@ topk(5, http_requests_total)
 - `log2(v instant-vector) -> instant-vector`: 返回 2 的对数，`log2(value)`
 - `log10(v instant-vector) -> instant-vector`: 返回 10 的对数，`log10(value)`
 - `sqrt(v instant-vector) -> instant-vector`: 返回平方根，`sqrt(value)`
-- `predict_linear`: 
 - `delta(v range-vector) -> instant-vector`: 返回最后一个值和第一个值的差，`v[-1].value - v[0].value`
 - `idelta(v range-vector) -> instant-vector`: 返回最后两个值的差，`v[-1].value - v[-2].value`
 - `increase(v range-vector) -> instant-vector`: 区间内最后一个值和第一个值的差，`v[-1].value - v[0].value`
@@ -265,6 +258,13 @@ topk(5, http_requests_total)
 - `time() -> scalar`: 返回当前的时间戳
 - `timestamp(v instant-vector) -> instant-vector`: 获取时间戳，`time`
 - `vector(s scalar) -> vector`: 返回没有标签的 vector
+- `deriv(v range-vector) -> range-vector`: 使用线性回归计算各个时间序列的导数
+- `predict_linear`: 
+- `histogram_count(v instant-vector)`:
+- `histogram_sum(v instant-vector)`: 
+- `histogram_fraction(lower scalar, upper scalar, v instant-vector)`: 
+- `histogram_quantile(φ scalar, b instant-vector)`: 
+- `holt_winters(v range-vector, sf scalar, tf scalar)`: 
 
 ### <aggregation>_over_time
 
