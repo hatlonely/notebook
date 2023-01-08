@@ -260,9 +260,9 @@ topk(5, http_requests_total)
 - `sgn(v instant-vector) -> instant-vector`: 获取值的符号。大于0，返回1；小于0，返回-1；等于0，返回0
 - `sort(v instant-vector) -> instant-vector`: 按值升序排序
 - `sort_desc(v instant-vector) -> instant-vector`: 按值降序排序
-- `time`: 
-- `timestamp`: 
-- `vector`: 
+- `time() -> scalar`: 返回当前的时间戳
+- `timestamp(v instant-vector) -> instant-vector`: 获取时间戳，`time`
+- `vector(s scalar) -> vector`: 返回没有标签的 vector
 - `<aggregation>_over_time`: 
 
 
