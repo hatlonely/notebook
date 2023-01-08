@@ -266,7 +266,7 @@ topk(5, http_requests_total)
 - `histogram_quantile(φ scalar, b instant-vector)`: 
 - `holt_winters(v range-vector, sf scalar, tf scalar)`: 
 
-### <aggregation>_over_time
+### 聚合函数
 
 - `avg_over_time(v range-vector) -> instant-vector`: 求平均值
 - `min_over_time(v range-vector) -> instant-vector`: 求最小值
