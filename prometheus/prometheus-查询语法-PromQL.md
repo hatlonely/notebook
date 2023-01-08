@@ -4,7 +4,7 @@
 
 在 PromQL 中，一个表达式可以表示四种类型
 
-- `瞬时数据（Instant vector）`: 一个时间点的采样信息
+- `瞬时向量（Instant vector）`: 一个时间点的采样信息
 
 ```promql
 prometheus_http_requests_total
@@ -12,7 +12,7 @@ prometheus_http_requests_total
 prometheus_http_requests_total{job="prometheus"}
 ```
 
-- `区间数据（Range vector）`: 一段时间内采样信息，相当于瞬时数据的集合
+- `区间数据（Range vector）`: 一段时间内采样信息，相当于瞬时向量的集合
 
 ```promql
 prometheus_http_requests_total{job="prometheus"}[1h]
@@ -52,8 +52,8 @@ NaN
 这些运算符三种使用场景：
 
 - 两个标量之间，表示正常的二元运算
-- 瞬时数据和标量之间，表示瞬时数据中的每条数据的值都和标量进行运算
-- 两个瞬时数据之间，表示两个瞬时数据对应的数据的值进行运算
+- 瞬时向量和标量之间，表示瞬时向量中的每条数据的值都和标量进行运算
+- 两个瞬时向量之间，表示两个瞬时向量对应的数据的值进行运算
 
 ```promql
 # 返回标量 2
@@ -78,8 +78,8 @@ prometheus_http_requests_total + 5
 这些运算符同样也有三种使用场景：
 
 - 两个标量之间，表示正常的比较运算，无法直接运行
-- 瞬时数据和标量之间，表示瞬时数据中的每条数据的值都和标量运算，如果计算结果为 `false`，这条数据会被过滤掉
-- 两个瞬时数据，表示两个瞬时数据对应的数据的值进行运算，如果计算结果为 `false`，这条数据会被过滤掉
+- 瞬时向量和标量之间，表示瞬时向量中的每条数据的值都和标量运算，如果计算结果为 `false`，这条数据会被过滤掉
+- 两个瞬时向量，表示两个瞬时向量对应的数据的值进行运算，如果计算结果为 `false`，这条数据会被过滤掉
 
 ```promql
 # 只取数据大于 5 的数据
@@ -95,7 +95,7 @@ prometheus_http_requests_total offset 60m > 5
 - `or`: 并集
 - `unless`: 差集
 
-只能用在两个瞬时数据之间，集合运算通过指标名（metric）和标签（label）匹配
+只能用在两个瞬时向量之间，集合运算通过指标名（metric）和标签（label）匹配
 
 ```promql
 # 取 job="prometheus" 指标和指标值大于 5 的数据，作一个交集
@@ -119,7 +119,7 @@ or
 
 ## 匹配模式
 
-匹配模式指的是一个运算符作用在两个瞬时数据上时，可能会出现，一对一，一对多，多对一三种情况
+匹配模式指的是一个运算符作用在两个瞬时向量上时，可能会出现，一对一，一对多，多对一三种情况
 
 ```text
 # 一对一匹配
@@ -140,7 +140,7 @@ or
 - `group_left`: 多对一匹配
 - `group_right`: 一对多匹配
 
-假设有我们有如下数据两个份瞬时数据
+假设有我们有如下数据两个份瞬时向量
 
 ```text
 # 错误请求数据
@@ -167,7 +167,7 @@ method:http_requests:rate5m{method="post"} 120
 method_code:http_errors:rate5m{code="500"} / ignoring(code) method:http_requests:rate5m
 ```
 
-这里涉及两个瞬时数据 `method_code:http_errors:rate5m{code="500"}` 500 错误请求数据和 `method:http_requests:rate5m` 总请求数据。
+这里涉及两个瞬时向量 `method_code:http_errors:rate5m{code="500"}` 500 错误请求数据和 `method:http_requests:rate5m` 总请求数据。
 `method_code:http_errors:rate5m{code="500"}` 数据的标签比 `method:http_requests:rate5m` 数据标签多了 code，
 表达式 `method_code:http_errors:rate5m{code="500"} / method:http_requests:rate5m` 无法直接匹配，
 这个时候可以指定 `ignoring(code)` 在匹配的时候忽略 `code` 这个标签
@@ -192,6 +192,8 @@ prometheus 提供一些聚合方法支持更丰富的计算，其语法结构如
 ```
 
 维度选择可以通过 `by` 指定，也可以通过 `without` 排除
+
+聚合运算只能作用于瞬时向量（instant-vector），返回新的（instant-vector），类似于 SQL 中的 `group by` 操作
 
 - `sum`: 维度求和
 - `min`: 维度求最小值
@@ -218,9 +220,9 @@ topk(5, http_requests_total)
 
 ## 函数
 
-- `absent(v instant-vector) -> instant-vector | none`: 如果瞬时数据有任何值，则返回空，如果没有值，返回一条数据，其值为 1。这个函数在设置告警的时候很有用
-- `absent_over_time(v range-vector) -> instant-vector | none`: 和 `absent` 类似，参数为范围数据
-- `changes(v range-vector) -> instant-vector`: 范围数据变化的次数
+- `absent(v instant-vector) -> instant-vector | none`: 如果瞬时向量有任何值，则返回空，如果没有值，返回一条数据，其值为 1。这个函数在设置告警的时候很有用
+- `absent_over_time(v range-vector) -> instant-vector | none`: 和 `absent` 类似，参数为范围向量
+- `changes(v range-vector) -> instant-vector`: 范围向量变化的次数
 - `clamp(v instant-vector, min scalar, max scalar) -> instant-vector`: 如果值小于 min，这只为 min，如果大于 max 设置为 max
 - `clamp_max(v instant-vector, max scalar) -> instant-vector`: 如果值大于 max 设置为 max
 - `clamp_min(v instant-vector, min scalar) -> instant-vector`: 如果值小于 min 设置为 min
@@ -263,7 +265,37 @@ topk(5, http_requests_total)
 - `time() -> scalar`: 返回当前的时间戳
 - `timestamp(v instant-vector) -> instant-vector`: 获取时间戳，`time`
 - `vector(s scalar) -> vector`: 返回没有标签的 vector
-- `<aggregation>_over_time`: 
+
+### <aggregation>_over_time
+
+- `avg_over_time(v range-vector) -> instant-vector`: 求平均值
+- `min_over_time(v range-vector) -> instant-vector`: 求最小值
+- `max_over_time(v range-vector) -> instant-vector`: 求最大值
+- `sum_over_time(v range-vector) -> instant-vector`: 求和
+- `count_over_time(v range-vector) -> instant-vector`: 计数
+- `quantile_over_time(s scalar, v range-vector) -> instant-vector`: 求分位数
+- `stddev_over_time(v range-vector) -> instant-vector`: 求方差
+- `stdvar_over_time(v range-vector) -> instant-vector`: 求标准差
+- `last_over_time(v range-vector) -> instant-vector`: 求最近一个点
+- `present_over_time(v range-vector) -> instant-vector`:
+
+### 三角函数
+
+- `acos(v instant-vector) -> instant-vector`: 反余弦
+- `asin(v instant-vector) -> instant-vector`: 反正弦
+- `atan(v instant-vector) -> instant-vector`: 反正切
+- `acosh(v instant-vector) -> instant-vector`: 反双曲余弦
+- `asinh(v instant-vector) -> instant-vector`: 反双曲正弦
+- `atanh(v instant-vector) -> instant-vector`: 反双曲正切
+- `cos(v instant-vector) -> instant-vector`: 余弦
+- `sin(v instant-vector) -> instant-vector`: 正弦
+- `tan(v instant-vector) -> instant-vector`: 正切
+- `cosh(v instant-vector) -> instant-vector`: 双曲余弦
+- `sinh(v instant-vector) -> instant-vector`: 双曲正弦
+- `tanh(v instant-vector) -> instant-vector`: 双曲正切
+- `deg(v instant-vector) -> instant-vector`: 弧度转角度
+- `pi() -> scalar`: 返回 π
+- `rad(v instant-vector) -> instant-vector`: 角度转弧度
 
 
 ## 参考链接
