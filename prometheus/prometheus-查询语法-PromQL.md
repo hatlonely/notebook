@@ -106,6 +106,16 @@ prometheus_http_requests_total offset 60m > 5
 
 - `atan2`: 反正切
 
+### 运算符优先级
+
+```text
+^
+*, /, %, atan2
++, -
+==, !=, <=, <, >=, >
+and, unless
+or
+```
 
 ## 匹配模式
 
@@ -172,7 +182,39 @@ method_code:http_errors:rate5m / ignoring(code) group_left method:http_requests:
 表达式 `method_code:http_errors:rate5m / ignoring(code) method:http_requests:rate5m` 无法直接匹配，
 这个时候可以指定 `group_left` 来表示进行多对一匹配
 
+## 聚合运算
 
+prometheus 提供一些聚合方法支持更丰富的计算，其语法结构如下
+
+```text
+<aggr-op> [without|by (<label list>)] ([parameter,] <vector expression>)
+<aggr-op>([parameter,] <vector expression>) [without|by (<label list>)]
+```
+
+维度选择可以通过 `by` 指定，也可以通过 `without` 排除
+
+- `sum`: 维度求和
+- `min`: 维度求最小值
+- `max`: 维度求最大值
+- `avg`: 维度求平均值
+- `group`: 维度求标准差
+- `stddev`: 维度求标准差
+- `stdvar`: 维度求标准方差
+- `count`: 维度求记录数量
+- `count_values`: 维度求相同值记录数量
+- `bottomk`: 最小的 k 个值
+- `topk`: 最大的 k 个值
+- `quantile`: 分位数
+
+样例
+
+```text
+sum without (instance) (http_requests_total)
+sum by (application, group) (http_requests_total)
+sum(http_requests_total)
+count_values("version", build_version)
+topk(5, http_requests_total)
+```
 
 ## 参考链接
 
