@@ -40,7 +40,7 @@ NaN
 
 ## 操作符
 
-### 二元运算符
+### 数值运算符
 
 - `+`: 加
 - `-`: 减
@@ -96,6 +96,11 @@ prometheus_http_requests_total offset 60m > 5
 - `unless`: 差集
 
 只能用在两个瞬时数据之间
+
+```promql
+# 取 job="prometheus" 指标和指标值大于 5 的数据，作一个交集
+(prometheus_http_requests_total{job="prometheus"}) and (prometheus_http_requests_total > 5)
+```
 
 ### 三角函数
 
