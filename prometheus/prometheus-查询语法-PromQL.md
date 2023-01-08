@@ -218,12 +218,8 @@ topk(5, http_requests_total)
 
 ## 函数
 
-- `abs(v instant-vector) -> instant-vector`: 绝对值
 - `absent(v instant-vector) -> instant-vector | none`: 如果瞬时数据有任何值，则返回空，如果没有值，返回一条数据，其值为 1。这个函数在设置告警的时候很有用
 - `absent_over_time(v range-vector) -> instant-vector | none`: 和 `absent` 类似，参数为范围数据
-- `ceil(v instant-vector) -> instant-vector`: 向上取整
-- `round(v instant-vector, to_nearest=1 scalar)`: 四舍五入
-- `floor(v instant-vector) -> instant-vector`: 向下取整
 - `changes(v range-vector) -> instant-vector`: 范围数据变化的次数
 - `clamp(v instant-vector, min scalar, max scalar) -> instant-vector`: 如果值小于 min，这只为 min，如果大于 max 设置为 max
 - `clamp_max(v instant-vector, max scalar) -> instant-vector`: 如果值大于 max 设置为 max
@@ -244,6 +240,10 @@ topk(5, http_requests_total)
 - `holt_winters(v range-vector, sf scalar, tf scalar)`: 
 - `label_join`: 
 - `label_replace`: 
+- `ceil(v instant-vector) -> instant-vector`: 向上取整
+- `round(v instant-vector, to_nearest=1 scalar)`: 四舍五入
+- `floor(v instant-vector) -> instant-vector`: 向下取整
+- `abs(v instant-vector) -> instant-vector`: 绝对值
 - `exp(v instant-vector) -> instant-vector`: 返回 e 的次方，`exp(value)`
 - `ln(v instant-vector) -> instant-vector`: 返回 e 的对数，`ln(value)`
 - `log2(v instant-vector) -> instant-vector`: 返回 2 的对数，`log2(value)`
