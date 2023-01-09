@@ -12,7 +12,7 @@ prometheus_http_requests_total
 prometheus_http_requests_total{job="prometheus"}
 ```
 
-- `区间数据（Range vector）`: 一段时间内采样信息，相当于瞬时向量的集合
+- `范围数据（Range vector）`: 一段时间内采样信息，相当于瞬时向量的集合
 
 ```promql
 prometheus_http_requests_total{job="prometheus"}[1h]
