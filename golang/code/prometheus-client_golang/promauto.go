@@ -39,6 +39,7 @@ func main() {
 	gauge.WithLabelValues("val1", "val2").Add(5)
 	gauge.WithLabelValues("val1", "val2").Dec()
 	gauge.WithLabelValues("val1", "val2").Sub(3)
+	gauge.WithLabelValues("val1", "val2").Set(8)
 
 	// Histogram 近似计算分位数，效率高
 	// - <name>_bucket: 值的分布，表示值小于等于 le 值的个数
