@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	// promauto 中默认会有 GoCollector 的指标，如果不需要，可以用如下方式替换掉 Registry
 	registry := prometheus.NewRegistry()
 	prometheus.DefaultGatherer = registry
 	prometheus.DefaultRegisterer = registry
