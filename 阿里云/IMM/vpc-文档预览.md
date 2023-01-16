@@ -170,3 +170,7 @@ resource "alicloud_pvtz_zone_attachment" "office_tmp_attachment" {
 使用 chrome 打开 demo.html
 
 ![vpc-文档预览](vpc-文档预览.png)
+
+## 参考链接
+
+- chrome 下载: <https://chrome.softwaredownload.co.in/windows-7?page=9>
