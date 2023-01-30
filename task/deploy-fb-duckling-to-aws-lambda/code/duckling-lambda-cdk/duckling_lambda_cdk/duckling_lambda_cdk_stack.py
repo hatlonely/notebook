@@ -25,7 +25,6 @@ class DucklingLambdaCdkStack(Stack):
             runtime=lambda_.Runtime.FROM_IMAGE,
             handler=lambda_.Handler.FROM_IMAGE,
         )
-
         duckling_url = lambda_.FunctionUrl(
             self, "duckling_url",
             function=duckling,
