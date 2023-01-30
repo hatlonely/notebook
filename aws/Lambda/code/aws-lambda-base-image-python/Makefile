@@ -1,5 +1,5 @@
 NAME ?= aws-lambda-image-python
-VERSION ?= 1.0.6
+VERSION ?= 1.0.0
 AWS_ACCOUNT_ID = 354292498874
 AWS_REGION_ID = ap-southeast-1
 REGISTRY ?= ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION_ID}.amazonaws.com
