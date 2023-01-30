@@ -7,3 +7,5 @@ vendor/
 terraform.tfstate*
 .terraform.lock.hcl
 .terraform/
+
+*.zip
