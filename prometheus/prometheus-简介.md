@@ -13,7 +13,7 @@ prometheus 是一个开源的监控和告警工具集合
 
 ## 架构
 
-![架构图](architecture.png)
+![架构图](image/architecture.png)
 
 - Prometheus server: 抓取和保存时序数据
 - Pushgateway: 推送数据网关，任务无法暴露 http 服务，可以主动推送数据到 Pushgateway，再由 Prometheus server 收集数据
