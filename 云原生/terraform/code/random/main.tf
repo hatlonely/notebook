@@ -1,6 +1,9 @@
 provider "random" {}
 
 resource "random_id" "id" {
+  keepers = {
+    hello = "world"
+  }
   byte_length = 16
 }
 
