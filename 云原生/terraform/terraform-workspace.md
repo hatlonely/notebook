@@ -6,8 +6,11 @@ workspace 能很好满足这个需求。每个 workspace 可以使用不同的 v
 
 ## workspace 命令
 
-- `terraform workspace list`: 列出 workspace，terraform 总会运行在一个 workspace 下，默认为 `default`
-- `terraform workspace new <workspace>`
+- `terraform workspace show`: 显示当前 workspace，terraform 总会运行在一个 workspace 下，默认为 `default`
+- `terraform workspace list`: 列出所有的 workspace
+- `terraform workspace new <workspace>`: 创建新的 workspace
+- `terraform workspace select <workspace>`: 切换 workspace
+- `terraform workspace delete <workspace>`: 删除 workspace
 
 ## 操作实践
 
