@@ -17,22 +17,24 @@ workspace 能很好满足这个需求。每个 workspace 可以使用不同的 v
 ### 编写代码
 
 1. 创建 `main.tf`
-    ```terraform
-    variable "key1" {
-      type = string
-    }
-    
-    variable "key2" {
-      type = number
-    }
-    
-    output "out" {
-      value = {
-        key1 = var.key1
-        key2 = var.key2
-      }
-    }
-    ```
+
+```terraform
+variable "key1" {
+  type = string
+}
+
+variable "key2" {
+  type = number
+}
+
+output "out" {
+  value = {
+    key1 = var.key1
+    key2 = var.key2
+  }
+}
+```
+
 2. 初始化 `terraform init`
 
 ### 在默认空间中部署
@@ -54,19 +56,22 @@ terraform apply -auto-approve -var-file=workspace2.tfvars
 ### workspace 管理
 
 1. 切换 workspace，并清理资源
-   ```shell
-   terraform workspace select workspace1
-   terraform destroy -var key1=val1 -var key2=1
-   
-   terraform workspace select workspace2
-   terraform destroy -auto-approve -var-file=workspace2.tfvars
-   ```
+
+```shell
+terraform workspace select workspace1
+terraform destroy -var key1=val1 -var key2=1
+
+terraform workspace select workspace2
+terraform destroy -auto-approve -var-file=workspace2.tfvars
+```
+
 2. 删除 workspace
-   ```shell
-   terraform workspace select default
-   terraform workspace delete workspace1
-   terraform workspace delete workspace2
-   ```
+
+```shell
+terraform workspace select default
+terraform workspace delete workspace1
+terraform workspace delete workspace2
+```
 
 ## 参考链接
 
