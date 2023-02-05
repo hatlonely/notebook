@@ -7,6 +7,23 @@ time provider 为 terraform 提供时间资源。
 - `time_rotating`: 定期时间
 - `time_sleep`: 时间延迟
 
+## 时间延迟
+
+典型的使用常见是时间延迟：资源 next 依赖资源 prev，但是当资源 prev 创建时立马创建资源 next 可能会出错，可以加入一些时间延迟来保证成功
+
+```terraform
+resource "null_resource" "prev" {}
+
+resource "time_sleep" "wait_1s" {
+  depends_on      = [null_resource.prev]
+  create_duration = "1s"
+}
+
+resource "null_resource" "next" {
+  depends_on = [time_sleep.wait_1s]
+}
+```
+
 ## 参考代码
 
 ```terraform
