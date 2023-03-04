@@ -1,7 +1,7 @@
-NAME ?= aws-lambda-image-python
-VERSION ?= 1.0.7
+NAME ?= duckling-for-lambda
+VERSION ?= 1.0.0
 AWS_ACCOUNT_ID = 354292498874
-AWS_REGION_ID = ap-southeast-1
+AWS_REGION_ID = ap-southeast-2
 REGISTRY ?= ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION_ID}.amazonaws.com
 
 image:

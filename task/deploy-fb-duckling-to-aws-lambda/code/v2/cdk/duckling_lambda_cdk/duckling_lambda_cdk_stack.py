@@ -19,8 +19,8 @@ class DucklingLambdaCdkStack(Stack):
             function_name="duckling",
             role=duckling_role,
             code=lambda_.Code.from_ecr_image(
-                repository=ecr.Repository.from_repository_name(self, "repo", repository_name="ducklingfunction3a51ef0frepo"),
-                tag="ducklingfunction-713d5a84a303-v1",
+                repository=ecr.Repository.from_repository_name(self, "repo", repository_name="duckling-for-lambda"),
+                tag="1.0.0",
             ),
             runtime=lambda_.Runtime.FROM_IMAGE,
             handler=lambda_.Handler.FROM_IMAGE,

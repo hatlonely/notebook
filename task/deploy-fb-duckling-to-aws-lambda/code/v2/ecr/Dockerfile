@@ -1,23 +1,8 @@
-ARG LAMBDA_TASK_ROOT="/var/task"
-
 FROM rasa/duckling:0.2.0.2-r1
-ARG LAMBDA_TASK_ROOT
 
-RUN apt-get update
-RUN apt-get install -y python3
-RUN apt-get install -y python3-pip
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.6.2 /lambda-adapter /opt/extensions/lambda-adapter
 
-RUN pip3 install --upgrade pip
-RUN pip3 install awslambdaric --target ${LAMBDA_TASK_ROOT}
+ENV PORT=8000
+EXPOSE 8000
 
-ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/bin/aws-lambda-rie
-RUN chmod +x /usr/bin/aws-lambda-rie
-
-WORKDIR /var/task
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
-
-COPY app.py ${LAMBDA_TASK_ROOT}
-COPY lambda-entrypoint.sh /lambda-entrypoint.sh
-CMD [ "app.handler" ]
-ENTRYPOINT [ "/lambda-entrypoint.sh" ]
+CMD ["/usr/local/bin/duckling-example-exe", "-p", "8000", "--no-access-log", "--no-error-log"]
