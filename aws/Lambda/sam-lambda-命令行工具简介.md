@@ -24,6 +24,34 @@ Default region name [None]: us-west-2
 Default output format [None]: json
 ```
 
+## 快速入门
+
+1. 创建项目
+
+```shell
+sam init
+```
+
+2. 构建应用程序
+
+```shell
+sam build
+```
+
+3. 本地测试
+
+```shell
+sam local start-api
+
+curl http://127.0.0.1:3000/hello
+```
+
+4. 部署到 aws
+
+```shell
+sam deploy --guided
+```
+
 ## 参考链接
 
 - [aws 命令行工具安装](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
