@@ -52,6 +52,13 @@ curl http://127.0.0.1:3000/hello
 sam deploy --guided
 ```
 
+5. 删除函数
+
+```shell
+sam delete
+```
+
 ## 参考链接
 
-- [aws 命令行工具安装](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- [sam 快速入门](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started.html)
+- [sam web 应用适配](https://github.com/awslabs/aws-lambda-web-adapter/tree/main/examples/gin)
