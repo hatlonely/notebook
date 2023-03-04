@@ -2,6 +2,7 @@ FROM golang:1.18-alpine AS build_base
 RUN apk add --no-cache git
 WORKDIR /tmp/gin
 COPY . .
+ENV GOPROXY https://goproxy.io
 RUN go mod download
 RUN GOOS=linux CGO_ENABLED=0 go build -o bootstrap .
 

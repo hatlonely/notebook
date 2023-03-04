@@ -15,7 +15,7 @@ push:
 
 # 本地运行
 run:
-	docker run -ti --rm -p 9000:8080 ${REGISTRY}/${NAME}:${VERSION}
+	docker run -ti --rm -p 9000:8000 ${REGISTRY}/${NAME}:${VERSION}
 
 # 本地测试
 test:
