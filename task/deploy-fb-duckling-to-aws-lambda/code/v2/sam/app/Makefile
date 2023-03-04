@@ -19,4 +19,4 @@ run:
 
 # 本地测试
 test:
-	@curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"key1":"val1","key2":"val2"}'
+	echo curl -XPOST https://mlyyjs6bva7sop2hbvaw72wszi0wezea.lambda-url.ap-northeast-2.on.aws/parse --data 'locale=en_GB&text=tomorrow at eight'
