@@ -1,7 +1,7 @@
 NAME ?= duckling-for-lambda
 VERSION ?= 1.0.0
-AWS_ACCOUNT_ID = 354292498874
-AWS_REGION_ID = ap-southeast-2
+AWS_ACCOUNT_ID = 864651255535
+AWS_REGION_ID = ap-northeast-2
 REGISTRY ?= ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION_ID}.amazonaws.com
 
 image:
