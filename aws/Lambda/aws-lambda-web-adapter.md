@@ -5,3 +5,5 @@
 ## 参考链接
 
 - [sam web 应用适配](https://github.com/awslabs/aws-lambda-web-adapter/tree/main/examples/gin)
+
+curl -XPOST http://uw56peafbzciceqrb7hwxzy7vy0ddfoe.lambda-url.ap-northeast-2.on.aws/parse --data 'locale=en_GB&text=tomorrow at eight'
