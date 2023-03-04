@@ -7,14 +7,18 @@ Globals:
     Timeout: 10
 
 Resources:
-  GinFunction:
+  DucklingFunction:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
       MemorySize: 256
-      Events:
-        APIEvent:
-          Type: HttpApi
+      # 函数 url
+      FunctionUrlConfig:
+        AuthType: NONE
+      # Api-Gateway
+#      Events:
+#        APIEvent:
+#          Type: HttpApi
     Metadata:
       DockerTag: v1
       DockerContext: ./app
@@ -22,5 +26,6 @@ Resources:
 
 Outputs:
   GinApi:
-    Description: "API Gateway endpoint URL for Prod stage for Gin function"
-    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/"
+    Description: "duckling sam template"
+    Value:
+      Fn::GetAtt: HelloWorldFunctionUrl.FunctionUrl
