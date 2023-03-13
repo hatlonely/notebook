@@ -2,7 +2,7 @@
 
 ## 安装
 
-1.  安装 CDK
+1. 安装 CDK
 
 ```shell
 npm install -g aws-cdk

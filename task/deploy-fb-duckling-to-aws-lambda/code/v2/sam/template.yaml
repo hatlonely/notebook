@@ -15,10 +15,6 @@ Resources:
       # 函数 url
       FunctionUrlConfig:
         AuthType: NONE
-      # Api-Gateway
-#      Events:
-#        APIEvent:
-#          Type: HttpApi
     Metadata:
       DockerTag: v1
       DockerContext: ./app
@@ -28,4 +24,4 @@ Outputs:
   GinApi:
     Description: "duckling sam template"
     Value:
-      Fn::GetAtt: HelloWorldFunctionUrl.FunctionUrl
+      Fn::GetAtt: DucklingFunction.FunctionUrl
