@@ -50,7 +50,7 @@ resource "alicloud_ots_table" "ots-tf-remote-table" {
 }
 
 output "description" {
-  value = <<EOT
+  value = <<EOF
 terraform {
   backend "oss" {
     bucket              = "${alicloud_oss_bucket.oss-tf-state.bucket}"
@@ -61,7 +61,7 @@ terraform {
     tablestore_table    = "${alicloud_ots_table.ots-tf-remote-table.table_name}"
   }
 }
-EOT
+EOF
 }
 ```
 
