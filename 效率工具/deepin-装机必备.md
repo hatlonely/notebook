@@ -37,5 +37,6 @@ ssh-keygen -t rsa -b 4096 -C "hatlonely@foxmail.com"
 cat ~/.ssh/id_rsa.pub
 ```
 
-github.com
+[github.com](https://github.com/settings/keys)->【New SSH Key】添加 ssh key
 
+## 
