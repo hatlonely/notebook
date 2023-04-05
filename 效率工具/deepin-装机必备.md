@@ -86,9 +86,11 @@ fc-cache -f -v
 2. 安装到 `/usr/local` 目录下
 
 ```shell
+#!/usr/bin/env bash
+
 tar -xzvf go1.18.10.linux-amd64.tar.gz && sudo mv go /usr/local/go1.18
 tar -xzvf go1.19.8.linux-amd64.tar.gz && sudo mv go /usr/local/go1.19
-echo export PATH=\$PATH:/usr/local/go1.18/bin >> ~/.zshrc
-echo export GOPATH=\$HOME/go >> ~/.zshrc
-echo export GOPROXY=goproxy.cn >> ~/.zshrc
+echo export PATH=\$PATH:/usr/local/go1.18/bin >> $HOME/.zshrc
+echo export GOPATH=\$HOME/go >> $HOME/.zshrc
+echo export GOPROXY=goproxy.cn >> $HOME/.zshrc
 ```
