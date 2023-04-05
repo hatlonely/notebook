@@ -114,3 +114,5 @@ sudo chmod +x /usr/share/albert/external/copyq
 
 - alfred 替代方案: <https://medium.com/curiouscaloo/macos-to-ubuntu-part1-alfred-replacement-7864b4d26397>
 - albert: <https://albertlauncher.github.io/using/>
+- albert github: <https://github.com/albertlauncher/albert>
+- copyq: <https://github.com/hluk/CopyQ>
