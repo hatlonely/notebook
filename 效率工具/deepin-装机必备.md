@@ -63,3 +63,32 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 sudo service docker start
 ```
+
+## 字体安装
+
+
+1. 从 <https://fonts.google.com> 下载字体
+2. 解压字体文件到 `/usr/share/fonts/truetype` 即可
+
+```shell
+#!/usr/bin/env bash
+
+for i in $(ls fonts); do
+  sudo unzip -o -d "/usr/share/fonts/truetype/${i%.*}" "fonts/$i"
+done
+
+fc-cache -f -v
+```
+
+## go 环境安装
+
+1. 从 go 官网下载安装包 <https://go.dev/dl/>
+2. 安装到 `/usr/local` 目录下
+
+```shell
+tar -xzvf go1.18.10.linux-amd64.tar.gz && sudo mv go /usr/local/go1.18
+tar -xzvf go1.19.8.linux-amd64.tar.gz && sudo mv go /usr/local/go1.19
+echo export PATH=\$PATH:/usr/local/go1.18/bin >> ~/.zshrc
+echo export GOPATH=\$HOME/go >> ~/.zshrc
+echo export GOPROXY=goproxy.cn >> ~/.zshrc
+```
