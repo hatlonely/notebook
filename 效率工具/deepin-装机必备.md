@@ -18,6 +18,12 @@
   - 秘钥交换协议: aes128-sha1-modp2048
   - 安全封装协议: aes128-sha1
 
+## apt
+
+```shell
+apt install tree
+```
+
 ## zsh
 
 ```shell
@@ -84,13 +90,27 @@ fc-cache -f -v
 
 1. 从 go 官网下载安装包 <https://go.dev/dl/>
 2. 安装到 `/usr/local` 目录下
+## albert
+
+参考链接：<https://albertlauncher.github.io/installing/>
+
+1. 查看操作系统: `cat /etc/debian_version`
+2. 下载对应安装包: <https://software.opensuse.org/download.html?project=home:manuelschneid3r&package=albert>
+3. 安装 `CopyQ`
 
 ```shell
-#!/usr/bin/env bash
+sudo add-apt-repository ppa:hluk/copyq
+sudo apt update
+sudo apt install copyq
 
-tar -xzvf go1.18.10.linux-amd64.tar.gz && sudo mv go /usr/local/go1.18
-tar -xzvf go1.19.8.linux-amd64.tar.gz && sudo mv go /usr/local/go1.19
-echo export PATH=\$PATH:/usr/local/go1.18/bin >> $HOME/.zshrc
-echo export GOPATH=\$HOME/go >> $HOME/.zshrc
-echo export GOPROXY=goproxy.cn >> $HOME/.zshrc
+whereis albert
+sudo mkdir -p /usr/share/albert/external
+sudo curl "https://gist.githubusercontent.com/BarbUk/d443d09c6649b4b1225c1d6b96d9c7fd/raw/f300b1b88c2088ea0b4f3822b2d2a073e878a380/copyq" -o /usr/share/albert/external/copyq
+sudo chmod +x /usr/share/albert/external/copyq
 ```
+
+
+## 参考链接
+
+- alfred 替代方案: <https://medium.com/curiouscaloo/macos-to-ubuntu-part1-alfred-replacement-7864b4d26397>
+- albert: <https://albertlauncher.github.io/using/>
