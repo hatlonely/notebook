@@ -109,6 +109,15 @@ sudo curl "https://gist.githubusercontent.com/BarbUk/d443d09c6649b4b1225c1d6b96d
 sudo chmod +x /usr/share/albert/external/copyq
 ```
 
+## mac 快捷键
+
+参考链接: <https://github.com/rbreaves/kinto>
+
+```shell
+/bin/bash -c "$(wget -qO- https://raw.githubusercontent.com/rbreaves/kinto/HEAD/install/linux.sh || curl -fsSL https://raw.githubusercontent.com/rbreaves/kinto/HEAD/install/linux.sh)"
+pip3 install vte
+sudo apt install -y vte-2.91
+```
 
 ## 参考链接
 
