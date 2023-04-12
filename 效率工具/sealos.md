@@ -46,6 +46,10 @@ tar -zxvf /data/sealos_4.1.4_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv
 
 ```shell
 sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 \
-     --masters 192.168.0.10,192.168.0.11,192.168.64.12 \
+     --masters 192.168.0.10,192.168.0.11,192.168.0.12 \
      --nodes 192.168.0.20,192.168.0.21 -p [your-ssh-passwd]
 ```
+
+## 参考链接
+
+- sealos 项目: <https://github.com/labring/sealos>
