@@ -33,7 +33,7 @@ wget  https://github.com/labring/sealos/releases/download/v4.1.4/sealos_4.1.4_li
 方案二：通过本地下载的 nas 安装
 
 ```shell
-apt apt update
+apt apt update -y
 apt install -y nfs-common
 
 mkdir -p /data
@@ -50,6 +50,14 @@ sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1
      --nodes 192.168.0.20,192.168.0.21 -p [your-ssh-passwd]
 ```
 
+常见命令
+
+```shell
+sealos reset
+sealos delete masters 192.168.64.12
+```
+
 ## 参考链接
 
 - sealos 项目: <https://github.com/labring/sealos>
+- 中文教程: <https://sealos.io/zh-Hans/docs/getting-started/customize-cluster>
