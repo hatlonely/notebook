@@ -1,5 +1,13 @@
 # sealos
 
+## 安装依赖
+
+```shell
+apt apt update -y
+apt install -y nfs-common
+apt install -y socat
+```
+
 ## 主机互连
 
 1. 登录所有主机，切换到 root 用户，设置密码
@@ -26,6 +34,11 @@ service ssh restart
 方案一: 直接通过网络下载，github 的网络比较慢
 
 ```shell
+# 4.0
+wget -c https://sealyun-home.oss-cn-beijing.aliyuncs.com/sealos-4.0/latest/sealos-amd64 -O sealos && \
+    chmod +x sealos && mv sealos /usr/bin
+
+# 4.1.4
 wget  https://github.com/labring/sealos/releases/download/v4.1.4/sealos_4.1.4_linux_amd64.tar.gz  && \
     tar -zxvf sealos_4.1.4_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
 ```
@@ -33,22 +46,32 @@ wget  https://github.com/labring/sealos/releases/download/v4.1.4/sealos_4.1.4_li
 方案二：通过本地下载的 nas 安装
 
 ```shell
-apt apt update -y
-apt install -y nfs-common
-
 mkdir -p /data
 mount 192.168.0.101:/nfs/data /data
 
+# 4.0
+cp /data/sealos /usr/bin
+
+# 4.1.4
 tar -zxvf /data/sealos_4.1.4_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
 ```
 
 ## 安装 k8s
 
+1. 生成集群文件
+
 ```shell
-sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 \
+sealos gen labring/kubernetes:v1.24.0 labring/calico:v3.22.1 \
      --masters 192.168.0.10,192.168.0.11,192.168.0.12 \
-     --nodes 192.168.0.20,192.168.0.21 -p [your-ssh-passwd]
+     --nodes 192.168.0.20 -p [passowrd] > Clusterfile
 ```
+
+2. 执行安装
+
+```shell
+sealos apply -f Clusterfile
+```
+
 
 常见命令
 
