@@ -34,13 +34,8 @@ service ssh restart
 方案一: 直接通过网络下载，github 的网络比较慢
 
 ```shell
-# 4.0
-wget -c https://sealyun-home.oss-cn-beijing.aliyuncs.com/sealos-4.0/latest/sealos-amd64 -O sealos && \
-    chmod +x sealos && mv sealos /usr/bin
-
-# 4.1.4
-wget  https://github.com/labring/sealos/releases/download/v4.1.4/sealos_4.1.4_linux_amd64.tar.gz  && \
-    tar -zxvf sealos_4.1.4_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
+wget https://github.com/labring/sealos/releases/download/v4.1.7/sealos_4.1.7_linux_amd64.tar.gz && \
+  tar -zxvf sealos_4.1.7_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
 ```
 
 方案二：通过本地下载的 nas 安装
@@ -49,11 +44,7 @@ wget  https://github.com/labring/sealos/releases/download/v4.1.4/sealos_4.1.4_li
 mkdir -p /data
 mount 192.168.0.101:/nfs/data /data
 
-# 4.0
-cp /data/sealos /usr/bin
-
-# 4.1.4
-tar -zxvf /data/sealos_4.1.4_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
+tar -zxvf /data/sealos_4.1.7_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv sealos /usr/bin
 ```
 
 ## 安装 k8s
