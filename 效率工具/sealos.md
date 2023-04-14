@@ -54,7 +54,7 @@ tar -zxvf /data/sealos_4.1.7_linux_amd64.tar.gz sealos &&  chmod +x sealos && mv
 ```shell
 sealos gen labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 \
      --masters 192.168.0.10,192.168.0.11,192.168.0.12 \
-     --nodes 192.168.0.20 -p [password] > Clusterfile
+     --nodes 192.168.0.20,192.168.0.21 -p [password] > Clusterfile
 ```
 
 2. 执行安装
