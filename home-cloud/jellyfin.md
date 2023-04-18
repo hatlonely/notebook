@@ -11,7 +11,7 @@ CPU 型号: i7-10700，支持 Quick Sync Video，CPU
 wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | sudo apt-key add -
 sudo apt-add-repository 'deb [arch=amd64] https://repositories.intel.com/graphics/ubuntu focal main'
 sudo apt update -y
-sudo apt install -y intel-media-va-driver-non-free
+apt install -y vainfo
 ```
 
 把驱动 mount 进容器，并且设置 `privileged: true`（device 需要按照这种方式 mount 才行）
