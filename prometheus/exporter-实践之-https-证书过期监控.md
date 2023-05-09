@@ -120,7 +120,7 @@ if err := http.ListenAndServe(":9100", nil); err != nil {
 - `prometheus.io/port: "9100"`: metrics 端口 9100
 - `prometheus.io/path: /metrics`: metrics 路径 `/metrics`
 
-```shell
+```text
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -153,6 +153,19 @@ spec:
             - containerPort: 9100
 ```
 
+有些域名设置了自动 dns，在 vpc 内部解析到一个内网地址，而对应的服务却在其他地区，可以在 deployments 中指定公网 dns 服务器来解决
+
+```yaml
+# spec.template.spec 下新增
+dnsPolicy: "None"
+dnsConfig:
+  nameservers:
+    - 223.5.5.5
+```
+
+- 国内 dns 服务器地址参考: <https://dnsdaquan.com/>
+- kubernetes dns 设置: <https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/>
+
 ## 数据存储
 
 prometheus 自带后端，但其可视化以及告警服务都需要额外部署和运维，直接使用 SLS 可以避免这部分工作。
@@ -161,7 +174,7 @@ prometheus 自带后端，但其可视化以及告警服务都需要额外部署
 
 ```yaml
 global:
-  scrape_interval:     15s
+  scrape_interval: 15s
   evaluation_interval: 15s
 remote_write:
   - url: "https://${SLS_PROJECT}.${REGION_ID}-intranet.log.aliyuncs.com/prometheus/${SLS_PROJECT}/${SLS_LOGSTORE}/api/v1/write"
