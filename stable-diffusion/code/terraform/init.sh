@@ -2,7 +2,7 @@
 
 function InstallDocker() {
   sudo apt-get update
-  sudo apt-get install \
+  sudo apt-get install -y \
       ca-certificates \
       curl \
       gnupg
@@ -24,7 +24,7 @@ function InstallCuda() {
   echo install
 }
 
-func main() {
+function main() {
   InstallDocker
   InstallCuda
 }
