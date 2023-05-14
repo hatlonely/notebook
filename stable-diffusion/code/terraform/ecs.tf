@@ -12,7 +12,7 @@ terraform {
 }
 
 provider "alicloud" {
-  region = "cn-chengdu"
+  region = "us-east-1"
 }
 
 provider "random" {}
@@ -25,7 +25,7 @@ resource "alicloud_vpc" "vpc" {
 resource "alicloud_vswitch" "vsw" {
   vpc_id     = alicloud_vpc.vpc.id
   cidr_block = "172.16.0.0/21"
-  zone_id    = "cn-chengdu-a"
+  zone_id    = "us-east-1b"
 }
 
 resource "alicloud_security_group" "security_group" {
@@ -54,10 +54,11 @@ resource "random_password" "password" {
 }
 
 resource "alicloud_instance" "instance" {
-  availability_zone          = "cn-chengdu-a"
+  availability_zone          = "us-east-1b"
   security_groups            = alicloud_security_group.security_group.*.id
   #  instance_type              = data.alicloud_instance_types.ecs_4c8g.instance_types[0].id
-  instance_type              = "ecs.vgn7i-vws-m4.xlarge"
+  #  instance_type              = "ecs.vgn7i-vws-m4.xlarge"
+  instance_type              = "ecs.gn7i-c8g1.2xlarge"
   system_disk_category       = "cloud_efficiency"
   image_id                   = "ubuntu_22_04_x64_20G_alibase_20230208.vhd"
   instance_name              = "tf-test-ecs"
