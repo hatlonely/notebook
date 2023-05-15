@@ -24,16 +24,26 @@ resource "vultr_firewall_rule" "firewall_rule_ssh" {
   subnet            = "0.0.0.0"
   subnet_size       = 0
   port              = "22"
-  notes             = "shadowsocks"
+  notes             = "ssh"
 }
 
-resource "vultr_firewall_rule" "firewall_rule_tcp" {
+resource "vultr_firewall_rule" "firewall_rule_14053" {
   firewall_group_id = vultr_firewall_group.firewall_group.id
   protocol          = "tcp"
   ip_type           = "v4"
   subnet            = "0.0.0.0"
   subnet_size       = 0
   port              = "14053"
+  notes             = "shadowsocks"
+}
+
+resource "vultr_firewall_rule" "firewall_rule_5355" {
+  firewall_group_id = vultr_firewall_group.firewall_group.id
+  protocol          = "tcp"
+  ip_type           = "v4"
+  subnet            = "0.0.0.0"
+  subnet_size       = 0
+  port              = "5355"
   notes             = "shadowsocks"
 }
 
@@ -44,6 +54,13 @@ resource "vultr_instance" "instance" {
   backups           = "disabled"
   hostname          = "vpn-hl"
   firewall_group_id = vultr_firewall_group.firewall_group.id
+
+  connection {
+    type     = "ssh"
+    user     = "root"
+    password = self.default_password
+    host     = self.main_ip
+  }
 
   provisioner "file" {
     source      = "init.sh"
