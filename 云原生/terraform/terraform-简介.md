@@ -17,6 +17,14 @@ brew upgrade hashicorp/tap/terraform
 terraform -help
 ```
 
+### Ubuntu 安装
+
+```shell
+ wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+ sudo apt update && sudo apt install terraform
+```
+
 ## Terraform 语法
 
 关于 hcl 的介绍可以参考 [hashicorp-hcl-简介](https://github.com/hatlonely/notebook/blob/master/golang/%E4%B8%89%E6%88%BF%E5%BA%93/hashicorp-hcl/hashicorp-hcl-%E9%85%8D%E7%BD%AE%E7%AE%80%E4%BB%8B.md)
