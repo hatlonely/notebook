@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "vultr" {
-  api_key     = "xxx"
+  api_key     = "CFII3KVAHJCAHM6SEU77CCK6QS2CHDPRGAIQ"
   rate_limit  = 100
   retry_limit = 3
 }
