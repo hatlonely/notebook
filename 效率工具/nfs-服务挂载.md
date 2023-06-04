@@ -1,4 +1,4 @@
-# nfs
+# nfs 服务挂载
 
 ## ubuntu
 
