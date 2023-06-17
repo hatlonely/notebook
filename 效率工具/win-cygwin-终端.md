@@ -2,6 +2,8 @@
 
 cygwin 是 windows 下兼容 unix 命令的终端，默认提供 bash，可以安装 zsh，可以直接集成在 Jetbrains 中。
 
+PS: 试了一下 wsl/git bash/msys2/cygwin，最后还是选择了 cygwin，因为 cygwin 可以直接集成在 Jetbrains 中，而且可以直接使用 windows 的文件系统，不需要像 wsl 那样需要挂载，关键是 wsl 的 bug 还比较多，体验很差。
+
 ## cygwin 安装
 
 1. 下载 cygwin 安装包 <https://cygwin.com/setup-x86_64.exe>
