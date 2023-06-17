@@ -10,7 +10,7 @@ PS: 试了一下 wsl/git bash/msys2/cygwin，最后还是选择了 cygwin，因�
 2. 在下载目录打开终端，输入如下命令安装
 
 ```shell
-C:\Users\Admin\Downloads\setup-x86_64.exe --no-admin -q -P wget,tar,git,nano,vim,iconv
+C:\Users\Admin\Downloads\setup-x86_64.exe --no-admin -q -P wget,tar,git,nano,vim,iconv,make
 ```
 
 3. 设置 `UTF-8` 编码。打开安装好的 cygwin 终端，右键 `Options` -> `Text` -> `Locale`，设置 `Locale` 为 `zh_CN`，`Character set` 为 `UTF-8`
