@@ -1,0 +1,54 @@
+# win cygwin 终端
+
+cygwin 是 windows 下兼容 unix 命令的终端，默认提供 bash，可以安装 zsh，可以直接集成在 Jetbrains 中。
+
+## cygwin 安装
+
+1. 下载 cygwin 安装包 <https://cygwin.com/setup-x86_64.exe>
+2. 在下载目录打开终端，输入如下命令安装
+
+```shell
+C:\Users\Admin\Downloads\setup-x86_64.exe --no-admin -q -P wget,tar,git,nano,vim,iconv
+```
+
+3. 安装包管理工具 apt-cyg
+
+```shell
+wget https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+install apt-cyg /bin
+```
+
+## 安装 zsh
+
+1. 打开 cygwin 终端，执行如下命令安装 zsh
+
+```shell
+apt-cyg install zsh
+```
+
+2. 安装 zsh 主题，oh my zsh
+
+```shell
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+3. 设置 zsh 编码（默认中文显示会是乱码，需要配置语言）
+
+```shell
+echo "export LANG=zh_CN.UTF-8" >> ~/.zshrc
+```
+
+4. 设置 zsh 主题
+
+```shell
+sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' ~/.zshrc
+```
+
+## Jetbrains 配置
+
+1. 打开 Jetbrains，打开 Settings -> Tools -> Terminal
+2. 设置 Shell path 为 `C:\cygwin64\bin\zsh.exe`
+
+## 参考链接
+
+- [cygwin 官网](https://cygwin.com/setup-x86_64.exe)
