@@ -52,12 +52,8 @@ def test_filterwarnings():
     assert api_v1() == 1
 
 
-@pytest.fixture()
-def fixture():
-    return 1
-
-
 # 使用 fixture
-@pytest.mark.usefixtures("fixture")
-def test_fixture(fixture):
-    assert fixture == 1
+# fixture 需要定义在 conftest.py 中
+@pytest.mark.usefixtures("custom_fixture")
+def test_fixture():
+    assert True
