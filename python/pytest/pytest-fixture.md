@@ -44,6 +44,27 @@ def test_db_error(init_db):
     raise Exception("DB error")
 ```
 
+## 返回值
+
+fixture 也可以返回一个值，一般就是环境中的对象，比如往数据库中插入的数据。
+
+```python
+@pytest.fixture()
+def init_db_2():
+    print("Init DB")
+    yield [1, 2, 3]  # 如果不需要清理，这里也可以直接用 return 返回
+    print("Drop DB")
+
+
+# fixture 也可以返回一个值
+# Output:
+# test_3_fixture.py::test_db_2 Init DB
+# PASSED                                      [100%][1, 2, 3]
+# Drop DB
+def test_db_2(init_db_2):
+    print(init_db_2)
+```
+
 ## 参考链接
 
 - [pytest 官网文档](https://docs.pytest.org/en/7.3.x/how-to/fixtures.html)
