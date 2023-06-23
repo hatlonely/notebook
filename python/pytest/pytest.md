@@ -4,8 +4,16 @@ pytest 是 python 的一个测试框架
 
 ## 安装
 
+1. 执行命令安装
+
 ```shell
 pip install -U pytest
+```
+
+2. 检查安装是否成功
+
+```shell
+pytest --version
 ```
 
 ## 快速入门
