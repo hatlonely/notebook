@@ -1,15 +1,21 @@
-# pytest fixture
+#!/usr/bin/env python3
 
-fixture 用来为测试用例提供一个固定的测试环境，比如数据库的连接，一个预先登录的浏览器，或者一个预先登录的用户。是
-Setup/Teardown 机制的升级版。
-
-## 基本用法
-
-使用 `@pytest.fixture` 装饰器来定义 fixture 函数。使用 fixture 的函数会先执行 fixture 中的代码，直到遇到 `yield`
-关键字，然后执行测试用例，最后再执行 `yield` 后的代码。如果使用了多个 fixture 函数，这些 fixture 会依次执行。
-
-```python
 import pytest
+
+
+@pytest.fixture()
+def setup():
+    print("Setup")
+
+
+@pytest.fixture()
+def teardown():
+    yield
+    print("Teardown")
+
+
+def test_setup_teardown(setup, teardown):
+    print("Test")
 
 
 @pytest.fixture()
@@ -42,4 +48,3 @@ def test_db(init_db):
 # Drop DB
 def test_db_error(init_db):
     raise Exception("DB error")
-```
