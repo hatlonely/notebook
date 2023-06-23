@@ -43,3 +43,8 @@ def test_db(init_db):
 def test_db_error(init_db):
     raise Exception("DB error")
 ```
+
+## 参考链接
+
+- [pytest 官网文档](https://docs.pytest.org/en/7.3.x/how-to/fixtures.html)
+- [知乎-pytest中fixture详解](https://zhuanlan.zhihu.com/p/443523226)
