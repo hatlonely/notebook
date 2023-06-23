@@ -101,3 +101,7 @@ def custom_fixture():
 def test_fixture():
     assert True
 ```
+
+## 参考链接
+
+- [pytest 官网文档](https://docs.pytest.org/en/7.3.x/how-to/mark.html)
