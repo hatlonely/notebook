@@ -9,3 +9,6 @@ terraform.tfstate*
 .terraform/
 
 *.zip
+
+__pycache__/
+
