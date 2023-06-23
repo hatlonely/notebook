@@ -19,6 +19,20 @@ def test_sum():
     assert sum(1, 2, 3, 4, 5, 6) == 21
 ```
 
+`*args` 也可以作为实际参数传递给其他函数
+
+```python
+def sum2(*args):
+    return sum(*args)
+
+
+def test_sum2():
+    assert sum2(1, 2) == 3
+    assert sum2(1, 2, 3) == 6
+    assert sum2(1, 2, 3, 4, 5) == 15
+    assert sum2(1, 2, 3, 4, 5, 6) == 21
+```
+
 ## **kwargs
 
 `**kwargs` 表示任意数量的关键字参数，相当于可变长命名参数，本质是一个字典。和字典参数的差别是，传参的时候可以不用 `{}`
@@ -34,4 +48,16 @@ def introduce(**kwargs):
 def test_introduce():
     assert introduce(name="Tom", age=18) == "Tom 18"
     assert introduce(name="Jerry", age=20) == "Jerry 20"
+```
+
+`**kwargs` 也可以作为实际参数传递给其他函数
+
+```python
+def introduce2(**kwargs):
+    return introduce(**kwargs)
+
+
+def test_introduct2():
+    assert introduce2(name="Tom", age=18) == "Tom 18"
+    assert introduce2(name="Jerry", age=20) == "Jerry 20"
 ```
