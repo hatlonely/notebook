@@ -3,7 +3,8 @@
 import pytest
 
 
-def test_assert():
+# 断言
+def test_assertions():
     assert True
     assert 1 == 1
     assert 3 > 2
@@ -16,6 +17,7 @@ def test_assert():
     assert 1 in {1, 2, 3}
 
 
+# 异常
 def test_exceptions():
     # 检查代码中是否抛出了除零异常
     with pytest.raises(ZeroDivisionError):
