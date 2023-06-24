@@ -57,3 +57,8 @@ def test_filterwarnings():
 @pytest.mark.usefixtures("custom_fixture")
 def test_fixture():
     assert True
+
+
+@pytest.mark.slow
+def test_custom_slow():
+    assert True

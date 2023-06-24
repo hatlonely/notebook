@@ -102,6 +102,32 @@ def test_fixture():
     assert True
 ```
 
+## 自定义标记
+
+可以自定义标记，然后在 case 中使用自定义标记，一般用于指定 case 运行。
+
+1. 在 `pytest.ini` 中定义自定义标记
+
+```ini
+[pytest]
+markers =
+    slow: marks tests as slow (deselect with '-m "not slow"')
+```
+
+2. 在 python 中使用自定义标记 `test_4_marker.py`
+
+```python
+@pytest.mark.slow
+def test_custom_slow():
+    assert True
+```
+
+3. 指定运行自定义标记的 case
+
+```shell
+pytest test_4_marker.py -m slow
+```
+
 ## 参考链接
 
 - [pytest 官网文档](https://docs.pytest.org/en/7.3.x/how-to/mark.html)
