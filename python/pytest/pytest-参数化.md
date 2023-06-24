@@ -61,3 +61,7 @@ class TestParametrize:
     def test_parametrize2(self, a, b, c):
         assert c - b == a
 ```
+
+## 参考链接
+
+- [pytest 官网文档](https://docs.pytest.org/en/7.3.x/how-to/parametrize.html)

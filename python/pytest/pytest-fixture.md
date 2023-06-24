@@ -65,6 +65,59 @@ def test_db_2(init_db_2):
     print(init_db_2)
 ```
 
+## autouse
+
+fixture 之间如果有依赖关系，可以使用 `autouse=True` 来自动使用 fixture。否则需要在测试用例中显式指定所有的 fixture。
+
+```python
+@pytest.fixture()
+def init_db_3():
+    return []
+
+
+@pytest.fixture(autouse=True)
+def insert1(init_db_3):
+    print("Insert 1")
+    init_db_3.append(1)
+    return init_db_3
+
+
+@pytest.fixture(autouse=True)
+def insert2(insert1):
+    print("Insert 2")
+    insert1.append(2)
+    return insert1
+
+
+def test_db_3(insert2):
+    assert insert2 == [1, 2]
+```
+
+## 作用域
+
+fixture 有如下五种作用域：
+
+- `function`: 默认作用域，每个测试用例都会执行一次
+- `class`: 每个测试类执行一次
+- `module`: 每个测试模块执行一次
+- `package`: 每个测试包执行一次
+- `session`: 每个测试会话执行一次，即全局只执行一次
+
+```python
+# 在一次测试调用中，fixture 只会执行一次
+@pytest.fixture(scope="session")
+def session_fixture():
+    print("Session fixture")
+
+
+def test_session_1(session_fixture):
+    print("Test session 1")
+
+
+def test_session_2(session_fixture):
+    print("Test session 2")
+```
+
 ## 参考链接
 
 - [pytest 官网文档](https://docs.pytest.org/en/7.3.x/how-to/fixtures.html)
