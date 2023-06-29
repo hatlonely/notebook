@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
 
-def test_case1():
-    print("test_case1")
-    assert 1 == 1
+def test_case1(environment):
+    assert environment.options.oss.endpoint == "oss-cn-hangzhou.aliyuncs.com"
+    assert environment.options.imm.endpoint == "imm.cn-hangzhou.aliyuncs.com"
