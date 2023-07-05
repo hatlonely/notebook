@@ -27,6 +27,9 @@ def test_series_2():
     series = pd.Series([1, 3, 5, 7, 6, 8], index=['a', 'b', 'c', 'd', 'e', 'f'])
     assert series['a'] == 1
     assert series['b'] == 3
+    assert series['c'] == 5
+    assert series['d':'e'].tolist() == [7, 6]
+    assert series['d':'e'].equals(pd.Series([7, 6], index=['d', 'e']))
 
     assert isinstance(series.index, pd.core.indexes.base.Index)
     assert series.index.tolist() == ['a', 'b', 'c', 'd', 'e', 'f']
