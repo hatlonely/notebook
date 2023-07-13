@@ -2,6 +2,8 @@
 
 import pytest
 
+from my_checker import checker
+
 
 # 断言
 def test_assertions():
@@ -42,3 +44,10 @@ def test_exceptions():
 # 自定义断言消息。自定义消息在 conftest 中定义
 def test_assertrepr_compare():
     assert "123" == "456"
+
+
+# 断言在其他文件中
+# 在 pytest.ini 中增加 python_files = *_checker.py 可以获得 pytest 的错误提示
+# 否则只会报一个 AssertError
+def test_checker():
+    checker()

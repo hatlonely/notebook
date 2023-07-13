@@ -76,6 +76,54 @@ test_2_assertion.py:44: AssertionError
 ================================== short test summary info ==================================
 ```
 
+## 非 test 文件的断言
+
+断言函数在 `my_checker.py` 中
+
+```python
+def checker():
+    a = 5
+    b = 3
+    assert a == b
+```
+
+在 pytest.ini 中增加配置
+
+```ini
+python_files = *_checker.py
+```
+
+在测试文件中调用该断言函数
+
+```python
+from my_checker import checker
+
+
+# 断言在其他文件中
+# 在 pytest.ini 中增加 python_files = *_checker.py 可以获得 pytest 的错误提示
+# 否则只会报一个 AssertError
+def test_checker():
+    checker()
+```
+
+执行测试会得到失败的错误消息，这个输出和 pytest 原生的提示也不一样，不太理想
+
+```shell
+test_2_assertion.py::test_checker FAILED                                 [100%]
+test_2_assertion.py:51 (test_checker)
+5 != 3
+
+Expected :3
+Actual   :5
+<Click to see difference>
+
+def test_checker():
+>       checker()
+
+test_2_assertion.py:53:
+```
+
 ## 参考链接
 
 - [pytest 官网文档](https://docs.pytest.org/en/7.3.x/how-to/assert.html)
+- [pytest 配置文件](https://docs.pytest.org/en/7.1.x/reference/reference.html#confval-python_files)
