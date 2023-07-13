@@ -78,6 +78,8 @@ test_2_assertion.py:44: AssertionError
 
 ## 非 test 文件的断言
 
+### pytest 机制
+
 断言函数在 `my_checker.py` 中
 
 ```python
@@ -99,9 +101,6 @@ python_files = *_checker.py
 from my_checker import checker
 
 
-# 断言在其他文件中
-# 在 pytest.ini 中增加 python_files = *_checker.py 可以获得 pytest 的错误提示
-# 否则只会报一个 AssertError
 def test_checker():
     checker()
 ```
@@ -121,6 +120,46 @@ def test_checker():
 >       checker()
 
 test_2_assertion.py:53:
+```
+
+### python 原生 assert 机制
+
+直接在断言出增加参数设置断言消息 `my_checker.py`
+
+```python
+def checker():
+    a = 5
+    b = 3
+    assert a == b, f"assert {a} == {b}"
+```
+
+在测试文件中调用该断言函数
+
+```python
+from my_checker import checker
+
+
+def test_checker():
+    checker()
+```
+
+执行测试得到失败的错误消息，这个输出和 pytest 的提示是一致的，但需要再每次断言的时候手动编写断言消息
+
+```shell
+test_2_assertion.py:51 (test_checker)
+def test_checker():
+>       checker()
+
+test_2_assertion.py:53:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def checker():
+        a = 5
+        b = 3
+>       assert a == b, f"assert {a} == {b}"
+E       assert 5 == 3
+
+my_checker.py:4: AssertionError
 ```
 
 ## 参考链接
