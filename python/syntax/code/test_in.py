@@ -20,6 +20,7 @@ def test_object_in():
     ]
 
     assert set([hash((i.x, i.y)) for i in l1]) >= set([hash((i.x, i.y)) for i in l2])
+    assert all(any(i.x == j.x and i.y == j.y for i in l1) for j in l2)
 
 
 class Point1(Point):
