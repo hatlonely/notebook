@@ -7,6 +7,21 @@ class Point:
     y: int
 
 
+def test_object_in():
+    l1 = [
+        Point(x=1, y=1),
+        Point(x=2, y=2),
+        Point(x=3, y=3),
+    ]
+
+    l2 = [
+        Point(x=2, y=2),
+        Point(x=3, y=3),
+    ]
+
+    assert set([hash((i.x, i.y)) for i in l1]) >= set([hash((i.x, i.y)) for i in l2])
+
+
 class Point1(Point):
     def __init__(self, point):
         super().__init__(x=point.x, y=point.y)
