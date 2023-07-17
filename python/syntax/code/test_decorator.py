@@ -98,7 +98,7 @@ def json_object(cls):
     def _init_from_dict__(self, d: dict):
         for field, field_type in cls.__annotations__.items():
             # 跳过不存在的字段
-            if field not in d:
+            if field not in d or not d.get(field):
                 continue
             # 列表类型
             if hasattr(field_type, "__class_getitem__") and field_type.__origin__ is list and field_type.__args__:
@@ -110,7 +110,10 @@ def json_object(cls):
             else:
                 setattr(self, field, field_type(d.get(field)))
 
-    def _init__(self, s, type_="json"):
+    def _init__(self, s=None, type_="json"):
+        if not s:
+            return
+
         t = type(s)
         if t is str or t is bytes:
             if type_ == "json":
@@ -122,8 +125,14 @@ def json_object(cls):
     def _str__(self):
         return json.dumps(vars(self), default=lambda x: vars(x), indent=2)
 
+    def create(**kwargs):
+        obj = cls()
+        _init_from_dict__(obj, kwargs)
+        return obj
+
     setattr(cls, "__init__", _init__)
     setattr(cls, "__str__", _str__)
+    setattr(cls, "create", create)
 
     return cls
 
@@ -203,3 +212,32 @@ def test_json():
     assert a.key2 == "val2"
     assert a.b.cs[0].key4 == "val4"
     assert a.bs[0].cs[0].key4 == "val4"
+
+    a = A.create(
+        key1=1,
+        key2=2,
+    )
+    print(a)
+
+# def trace_method(cls):
+#     def method_decorator(method):
+#         def decorator(*args, **kwargs):
+#             # print(method.__name__, "req", json.dumps(args[1:]), json.dumps(kwargs, indent=2))
+#             res = method(*args, **kwargs)
+#             # print(method.__name__, "res", json.dumps(res, default=lambda x: vars(x), indent=2))
+#             return res
+#
+#         return decorator
+#
+#     for attr in cls.__dict__:
+#         method = getattr(cls, attr)
+#         if not callable(method):
+#             continue
+#         if isinstance(method, type):
+#             continue
+#         if method.__name__ in ["sign", "sign_params"]:
+#             continue
+#         if method.__name__.startswith("__"):
+#             continue
+#         print(attr, method)
+#         setattr(cls, attr, method_decorator(method))
