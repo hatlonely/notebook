@@ -2,7 +2,7 @@
 
 ## 断言
 
-```shell
+```python
 def test_assertions():
     assert True
     assert 1 == 1
@@ -18,7 +18,9 @@ def test_assertions():
 
 ## 异常
 
-```shell
+期望抛出异常需要使用 `pytest.raises`，直接使用 `try...expect` 语法可能会因为没有进入异常分支，从而跳过异常验证逻辑
+
+```python
 def test_exceptions():
     # 检查代码中是否抛出了除零异常
     with pytest.raises(ZeroDivisionError):
@@ -38,6 +40,17 @@ def test_exceptions():
             raise ValueError("Exception 123 raised")
 
         f()
+```
+
+不要在 `try` 分支中断言，断言本身也是一种异常，如果出错会直接进入错误处理逻辑，无法正确抛出异常
+
+```python
+# assert 本身也是也是一种异常，会被 try 捕获，下面代码会测试通过
+def test_try_assert():
+    try:
+        assert 1 == 2
+    except Exception as e:
+        pass
 ```
 
 ## 自定义断言消息
@@ -122,7 +135,7 @@ def test_checker():
 test_2_assertion.py:53:
 ```
 
-### python 原生 assert 机制
+### \[推荐\] python 原生 assert 机制
 
 直接在断言出增加参数设置断言消息 `my_checker.py`
 

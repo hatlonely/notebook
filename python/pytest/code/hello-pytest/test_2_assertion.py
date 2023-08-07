@@ -49,3 +49,11 @@ def test_assertrepr_compare():
 # 断言在其他文件中
 def test_checker():
     checker()
+
+
+# assert 本身也是也是一种异常，会被 try 捕获，下面代码会测试通过
+def test_try_assert():
+    try:
+        assert 1 == 2
+    except Exception as e:
+        pass
