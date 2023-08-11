@@ -42,7 +42,7 @@ def detect_authors_from_git_logs(filename):
 
 
 def detect_authors_from_git_blame(file, func):
-    if func:
+    if func:  # doctest 场景
         status, stdout = subprocess.getstatusoutput(
             f"git --no-pager blame -c -e -L :{func} {file}"
         )
@@ -50,8 +50,6 @@ def detect_authors_from_git_blame(file, func):
         status, stdout = subprocess.getstatusoutput(
             f"git --no-pager blame -c -e {file}"
         )
-    for line in stdout.split("\n"):
-        line = line.split("\t")[1].split("@")[0][2:]
     authors = ["@" + i.split("\t")[1].split("@")[0][2:] for i in stdout.split("\n")]
     author_times = {}
     for author in authors:
@@ -66,8 +64,8 @@ def detect_authors_from_git_blame(file, func):
 def pytest_html_results_table_row(report, cells):
     cells.pop()
     file, _, func = report.location
-    func = func.split("[")[0]
-    func = func.split(".")[0]
+    func = func.split("[")[0]  # pytest.mark.parameterize，参数在中括号中
+    func = func.split(".")[0]  # 测试类，只取类名
     cells.append(html.td(detect_authors_from_git_blame(file, func)))
 
 
