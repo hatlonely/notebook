@@ -2,8 +2,8 @@
 
 import subprocess
 
+import py._xmlgen
 import pytest
-from py._xmlgen import html
 
 
 # 自定义断言消息
@@ -23,7 +23,7 @@ def pytest_html_report_title(report):
 
 def pytest_html_results_table_header(cells):
     cells.pop()
-    cells.append(html.th("Author"))
+    cells.append(py._xmlgen.html.th("Author"))
 
 
 def detect_authors_from_git_logs(filename):
@@ -41,6 +41,7 @@ def detect_authors_from_git_logs(filename):
     return ' '.join(authors)
 
 
+# 从文件的 git blame 中获取作者信息，并按照代码行数排序
 def detect_authors_from_git_blame(file, func):
     if func:  # doctest 场景
         status, stdout = subprocess.getstatusoutput(
@@ -58,6 +59,9 @@ def detect_authors_from_git_blame(file, func):
         else:
             author_times[author] += 1
     authors = sorted(author_times.keys(), key=lambda x: author_times[x], reverse=True)
+    # 取 commit 次数最多的 3 位同学
+    if len(authors) > 3:
+        authors = authors[:3]
     return ' '.join(authors)
 
 
@@ -66,7 +70,7 @@ def pytest_html_results_table_row(report, cells):
     file, _, func = report.location
     func = func.split("[")[0]  # pytest.mark.parameterize，参数在中括号中
     func = func.split(".")[0]  # 测试类，只取类名
-    cells.append(html.td(detect_authors_from_git_blame(file, func)))
+    cells.append(py._xmlgen.html.td(detect_authors_from_git_blame(file, func)))
 
 
 @pytest.hookimpl(hookwrapper=True)
