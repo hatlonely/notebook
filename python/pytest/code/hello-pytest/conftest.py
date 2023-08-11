@@ -42,9 +42,16 @@ def detect_authors_from_git_logs(filename):
 
 
 def detect_authors_from_git_blame(file, func):
-    status, stdout = subprocess.getstatusoutput(
-        f"git --no-pager blame -c -e -L :{func} {file}"
-    )
+    if func:
+        status, stdout = subprocess.getstatusoutput(
+            f"git --no-pager blame -c -e -L :{func} {file}"
+        )
+    else:
+        status, stdout = subprocess.getstatusoutput(
+            f"git --no-pager blame -c -e {file}"
+        )
+    for line in stdout.split("\n"):
+        line = line.split("\t")[1].split("@")[0][2:]
     authors = ["@" + i.split("\t")[1].split("@")[0][2:] for i in stdout.split("\n")]
     author_times = {}
     for author in authors:
@@ -58,7 +65,10 @@ def detect_authors_from_git_blame(file, func):
 
 def pytest_html_results_table_row(report, cells):
     cells.pop()
-    cells.append(html.td(detect_authors_from_git_blame(report.nodeid.split("::")[0])))
+    file, _, func = report.location
+    func = func.split("[")[0]
+    func = func.split(".")[0]
+    cells.append(html.td(detect_authors_from_git_blame(file, func)))
 
 
 @pytest.hookimpl(hookwrapper=True)
