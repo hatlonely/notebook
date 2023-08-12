@@ -77,3 +77,23 @@ def pytest_html_results_table_row(report, cells):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
+
+
+# pytest 命令行参数支持
+#   --no-skips: 不要跳过测试
+def pytest_addoption(parser):
+    parser.addoption(
+        "--no-skips",
+        action="store_true",
+        default=False, help="disable skip marks"
+    )
+
+
+enable_skip = True
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_cmdline_preparse(config, args):
+    if "--no-skips" in args:
+        global enable_skip
+        enable_skip = False

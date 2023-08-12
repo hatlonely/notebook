@@ -5,6 +5,8 @@ import warnings
 
 import pytest
 
+from conftest import enable_skip
+
 
 # 跳过
 # Output:
@@ -21,6 +23,11 @@ def test_skip():
 # Skipped: test skipif
 @pytest.mark.skipif(1 > 0, reason="test skipif")
 def test_skipif():
+    assert True
+
+
+@pytest.mark.skipif(enable_skip, reason="test enable skip if")
+def test_skipif_enable():
     assert True
 
 
