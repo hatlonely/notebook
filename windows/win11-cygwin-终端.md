@@ -47,6 +47,20 @@ echo "export LANG=zh_CN.UTF-8" >> ~/.zshrc
 sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/g' ~/.zshrc
 ```
 
+5. 设置 PATH
+
+```shell
+mount --change-cygdrive-prefix /
+export CYGDRIVE_PREFIX=""
+export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=${CYGDRIVE_PREFIX}/c/Users/hatlo/scoop/shims:$PATH
+export PATH=${CYGDRIVE_PREFIX}/c/Users/hatlo/AppData/Roaming/Microsoft/Windows/Start\ Menu/Programs:$PATH
+export PATH=${CYGDRIVE_PREFIX}/c/Users/hatlo/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0/LocalCache/local-packages/Python311/Scripts:$PATH
+export APPDATA=C:\\Users\\hatlo\\AppData\\Roaming
+```
+
+> 执行 windows 命令访问文件路径时，由于 cygwin 的文件路径和 windows 不一样，需要使用 `cygpath` 命令转换一下，例如 `cygpath -wp ${TMP}/tls/tls.crt`
+
 ## Jetbrains 配置
 
 1. 打开 Jetbrains，打开 Settings -> Tools -> Terminal
