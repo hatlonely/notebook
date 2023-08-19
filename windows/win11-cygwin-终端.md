@@ -54,6 +54,7 @@ mount --change-cygdrive-prefix /
 export CYGDRIVE_PREFIX=""
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 export PATH=${CYGDRIVE_PREFIX}/c/Users/hatlo/scoop/shims:$PATH
+export PATH=${CYGDRIVE_PREFIX}/c/ProgramData/chocolatey/bin:$PATH 
 export PATH=${CYGDRIVE_PREFIX}/c/Users/hatlo/AppData/Roaming/Microsoft/Windows/Start\ Menu/Programs:$PATH
 export PATH=${CYGDRIVE_PREFIX}/c/Users/hatlo/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0/LocalCache/local-packages/Python311/Scripts:$PATH
 export APPDATA=C:\\Users\\hatlo\\AppData\\Roaming
