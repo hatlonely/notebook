@@ -12,6 +12,8 @@ terraform {
   }
 }
 
+## 创建一个 RAM 用户
+
 # 1. 创建一个 RAM 用户
 resource "alicloud_ram_user" "tf-test-user" {
   name  = "tf-test-user"
@@ -34,10 +36,10 @@ resource "alicloud_ram_user_policy_attachment" "tf-test-user-policy-aliyun-ecs-f
 
 # 4. 添加自定义策略
 resource "alicloud_ram_policy" "tf-test-policy" {
-  name        = "tf-test-policy"
-  description = "tf-test-policy"
-  force       = true
-  document    = <<EOF
+  policy_name     = "tf-test-policy"
+  description     = "tf-test-policy"
+  force           = true
+  policy_document = <<EOF
   {
     "Version": "1",
     "Statement": [
@@ -70,4 +72,35 @@ credential:
     accessKeyId: ${alicloud_ram_access_key.tf-test-user-ak.id}
     accessKeySecret: ${alicloud_ram_access_key.tf-test-user-ak.secret}
 EOF
+}
+
+## 创建一个 RAM 角色
+
+# 1. 创建一个 RAM 角色，允许 ECS 服务扮演该角色
+resource "alicloud_ram_role" "tf-test-role" {
+  name     = "tf-test-role"
+  force    = true
+  document = <<EOF
+  {
+    "Version": "1",
+    "Statement": [
+      {
+        "Action": "sts:AssumeRole",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": [
+            "ecs.aliyuncs.com"
+          ]
+        }
+      }
+    ]
+  }
+  EOF
+}
+
+# 2. 给角色添加 AliyunECSFullAccess 策略
+resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-full-access" {
+  policy_name = "AliyunECSFullAccess"
+  policy_type = "System"
+  role_name   = alicloud_ram_role.tf-test-role.name
 }
