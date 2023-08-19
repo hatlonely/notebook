@@ -85,7 +85,34 @@ EOF
 ## 创建一个 RAM 角色
 
 ```terraform
+# 1. 创建一个 RAM 角色，允许 ECS 服务扮演该角色
+resource "alicloud_ram_role" "tf-test-role" {
+  name     = "tf-test-role"
+  force    = true
+  document = <<EOF
+  {
+    "Version": "1",
+    "Statement": [
+      {
+        "Action": "sts:AssumeRole",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": [
+            "ecs.aliyuncs.com"
+          ]
+        }
+      }
+    ]
+  }
+  EOF
+}
 
+# 2. 给角色添加 AliyunECSFullAccess 策略
+resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-full-access" {
+  policy_name = "AliyunECSFullAccess"
+  policy_type = "System"
+  role_name   = alicloud_ram_role.tf-test-role.name
+}
 ```
 
 ## 参考链接
