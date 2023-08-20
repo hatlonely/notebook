@@ -61,12 +61,12 @@ resource "alicloud_slb_server_group" "tf-test-server-group" {
 resource "alicloud_slb_server_group_server_attachment" "tf-test-server-group-server-attachment" {
   server_group_id = alicloud_slb_server_group.tf-test-server-group.id
   server_id       = alicloud_instance.tf-test-ecs.id
-  port            = 8000
+  port            = 80
 }
 
 resource "alicloud_slb_listener" "tf-test-listener" {
   load_balancer_id = alicloud_slb_load_balancer.tf-test-load-balancer.id
-  backend_port     = 8000
+  backend_port     = 80
   frontend_port    = 80
   protocol         = "tcp"
   bandwidth        = 1
