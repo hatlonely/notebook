@@ -142,7 +142,7 @@ resource "alicloud_instance" "tf-test-ecs" {
 
   provisioner "remote-exec" {
     inline = [
-      "bash -c \"$$(curl -fsSL http://100.100.100.200/latest/user-data)\""
+      "bash -c \"$(curl -fsSL http://100.100.100.200/latest/user-data)\""
     ]
   }
 }
