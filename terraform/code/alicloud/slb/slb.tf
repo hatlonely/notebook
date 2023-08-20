@@ -53,6 +53,12 @@ resource "alicloud_slb_load_balancer" "tf-test-load-balancer" {
   internet_charge_type = "PayByTraffic"
 }
 
+output "slb_connection" {
+  value = <<EOF
+curl http://${alicloud_slb_load_balancer.tf-test-load-balancer.address}:8000
+EOF
+}
+
 ## 创建一台 ecs
 
 # 自动获取实例类型
@@ -105,7 +111,7 @@ resource "alicloud_instance" "tf-test-ecs" {
   host_name                  = "tf-test-ecs"
   password                   = random_password.password.result
   user_data                  = base64encode(file("${path.module}/init.sh"))
-  
+
   provisioner "remote-exec" {
     inline = [
       "bash -c \"$$(curl -fsSL http://100.100.100.200/latest/user-data)\""
@@ -113,9 +119,9 @@ resource "alicloud_instance" "tf-test-ecs" {
   }
 }
 
-output "connection" {
+output "ecs_connection" {
   value = <<EOF
-  ssh root@${alicloud_instance.tf-test-ecs.public_ip}
-  ${nonsensitive(alicloud_instance.tf-test-ecs.password)}
+ssh root@${alicloud_instance.tf-test-ecs.public_ip}
+${nonsensitive(alicloud_instance.tf-test-ecs.password)}
 EOF
 }
