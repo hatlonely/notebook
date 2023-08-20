@@ -53,6 +53,26 @@ resource "alicloud_slb_load_balancer" "tf-test-load-balancer" {
   internet_charge_type = "PayByTraffic"
 }
 
+resource "alicloud_slb_server_group" "tf-test-server-group" {
+  name             = "tf-test-server-group"
+  load_balancer_id = alicloud_slb_load_balancer.tf-test-load-balancer.id
+}
+
+resource "alicloud_slb_server_group_server_attachment" "tf-test-server-group-server-attachment" {
+  server_group_id = alicloud_slb_server_group.tf-test-server-group.id
+  server_id       = alicloud_instance.tf-test-ecs.id
+  port            = 8000
+}
+
+resource "alicloud_slb_listener" "tf-test-listener" {
+  load_balancer_id = alicloud_slb_load_balancer.tf-test-load-balancer.id
+  backend_port     = 8000
+  frontend_port    = 80
+  protocol         = "tcp"
+  bandwidth        = 1
+  server_group_id  = alicloud_slb_server_group.tf-test-server-group.id
+}
+
 output "slb_connection" {
   value = <<EOF
 curl http://${alicloud_slb_load_balancer.tf-test-load-balancer.address}:8000
