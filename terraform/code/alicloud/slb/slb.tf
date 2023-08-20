@@ -81,32 +81,27 @@ EOF
 
 ## 创建一台 ecs
 
-# 自动获取实例类型
 data "alicloud_instance_types" "type-1c1g" {
   cpu_core_count = 1
   memory_size    = 1
 }
 
-# 自动获取镜像
 data "alicloud_images" "ubuntu_22" {
   name_regex = "^ubuntu_22"
   owners     = "system"
 }
 
-# 生成密码
 resource "random_password" "password" {
   length           = 16
   special          = true
   override_special = "!@#$%^&*()[]{}_-=+/?<>"
 }
 
-# 创建安全组，现在安全组只能创建在 VPC 内，但其规则可以是公网或内网
 resource "alicloud_security_group" "tf-test-security-group" {
   name   = "tf-test-security-group"
   vpc_id = alicloud_vpc.tf-test-vpc.id
 }
 
-# 创建安全组规则，nic_type 必须为 intranet，但其规则对公网同样有效
 resource "alicloud_security_group_rule" "tf-test-security-group-rule" {
   type              = "ingress"
   ip_protocol       = "tcp"
@@ -118,7 +113,6 @@ resource "alicloud_security_group_rule" "tf-test-security-group-rule" {
   cidr_ip           = "123.113.97.7/32"
 }
 
-# 创建一台带公网 ip 密码登录的 ECS
 resource "alicloud_instance" "tf-test-ecs" {
   count           = var.instance_number
   image_id        = data.alicloud_images.ubuntu_22.images[0].id
@@ -148,8 +142,5 @@ resource "alicloud_instance" "tf-test-ecs" {
 }
 
 output "ecs_connection" {
-  value = <<EOF
-ssh root@${alicloud_instance.tf-test-ecs[0].public_ip}
-${nonsensitive(alicloud_instance.tf-test-ecs[0].password)}
-EOF
+  value = alicloud_instance.tf-test-ecs.*.public_ip
 }
