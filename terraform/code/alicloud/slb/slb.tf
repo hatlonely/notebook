@@ -105,6 +105,12 @@ resource "alicloud_instance" "tf-test-ecs" {
   host_name                  = "tf-test-ecs"
   password                   = random_password.password.result
   user_data                  = base64encode(file("${path.module}/init.sh"))
+  
+  provisioner "remote-exec" {
+    inline = [
+      "bash -c \"$$(curl -fsSL http://100.100.100.200/latest/user-data)\""
+    ]
+  }
 }
 
 output "connection" {
