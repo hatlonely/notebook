@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 function install_docker() {
   sudo apt-get update -y
   sudo apt-get install -y ca-certificates curl gnupg
