@@ -41,7 +41,6 @@ data "alicloud_images" "ubuntu_22" {
   owners     = "system"
 }
 
-
 # 创建 VPC
 resource "alicloud_vpc" "tf-test-vpc" {
   vpc_name   = "tf-test-vpc"
