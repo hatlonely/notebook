@@ -50,7 +50,7 @@ resource "alicloud_slb_load_balancer" "tf-test-load-balancer" {
   load_balancer_name   = "tf-test-load-balancer"
   address_type         = "internet"
   load_balancer_spec   = "slb.s1.small"
-  internet_charge_type = "paybytraffic"
+  internet_charge_type = "PayByTraffic"
 }
 
 ## 创建一台 ecs
@@ -104,6 +104,7 @@ resource "alicloud_instance" "tf-test-ecs" {
   internet_charge_type       = "PayByTraffic"
   host_name                  = "tf-test-ecs"
   password                   = random_password.password.result
+  user_data                  = base64encode(file("${path.module}/init.sh"))
 }
 
 output "connection" {
