@@ -12,10 +12,14 @@ terraform {
   }
 }
 
-
 provider "alicloud" {
   region = "cn-beijing"
   alias  = "cn-beijing"
+}
+
+variable "instance_number" {
+  type    = number
+  default = 1
 }
 
 ## 创建 VPC
@@ -54,8 +58,9 @@ resource "alicloud_slb_server_group" "tf-test-server-group" {
 }
 
 resource "alicloud_slb_server_group_server_attachment" "tf-test-server-group-server-attachment" {
+  count           = var.instance_number
   server_group_id = alicloud_slb_server_group.tf-test-server-group.id
-  server_id       = alicloud_instance.tf-test-ecs.id
+  server_id       = alicloud_instance.tf-test-ecs[count.index].id
   port            = 80
 }
 
@@ -115,17 +120,25 @@ resource "alicloud_security_group_rule" "tf-test-security-group-rule" {
 
 # 创建一台带公网 ip 密码登录的 ECS
 resource "alicloud_instance" "tf-test-ecs" {
+  count           = var.instance_number
   image_id        = data.alicloud_images.ubuntu_22.images[0].id
   instance_type   = data.alicloud_instance_types.type-1c1g.instance_types[0].id
   security_groups = [
     alicloud_security_group.tf-test-security-group.id,
   ]
-  vswitch_id                 = alicloud_vswitch.tf-test-vswitch[0].id
+  vswitch_id                 = alicloud_vswitch.tf-test-vswitch[count.index % length(alicloud_vswitch.tf-test-vswitch)].id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
   host_name                  = "tf-test-ecs"
   password                   = random_password.password.result
   user_data                  = base64encode(file("${path.module}/init.sh"))
+
+  connection {
+    type     = "ssh"
+    user     = "root"
+    password = random_password.password.result
+    host     = self.public_ip
+  }
 
   provisioner "remote-exec" {
     inline = [
@@ -136,7 +149,7 @@ resource "alicloud_instance" "tf-test-ecs" {
 
 output "ecs_connection" {
   value = <<EOF
-ssh root@${alicloud_instance.tf-test-ecs.public_ip}
-${nonsensitive(alicloud_instance.tf-test-ecs.password)}
+ssh root@${alicloud_instance.tf-test-ecs[0].public_ip}
+${nonsensitive(alicloud_instance.tf-test-ecs[0].password)}
 EOF
 }
