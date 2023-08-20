@@ -1,6 +1,18 @@
 # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/mns_topic
 
-provider "alicloud" {}
+terraform {
+  required_providers {
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "1.209.0"
+    }
+  }
+}
+
+provider "alicloud" {
+  region = "cn-beijing"
+  alias  = "cn-beijing"
+}
 
 data "alicloud_regions" "regions" {
   current = true
