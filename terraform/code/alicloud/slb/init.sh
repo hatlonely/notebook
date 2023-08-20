@@ -39,7 +39,7 @@ EOF
 
 function start_service() {
   sudo docker run \
-    -p 8000:80 \
+    -p 80:80 \
     -v /root/nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf \
     nginx &
 }
