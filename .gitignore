@@ -13,3 +13,5 @@ terraform.tfstate*
 __pycache__/
 
 secret.yaml
+
+*.pem
