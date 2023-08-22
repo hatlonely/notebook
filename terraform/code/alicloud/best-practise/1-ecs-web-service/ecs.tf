@@ -97,8 +97,13 @@ resource "alicloud_instance" "tf-test-jump-server" {
     source      = "${path.module}/id_rsa"
     destination = "/root/id_rsa"
   }
-}
 
+  provisioner "remote-exec" {
+    inline = [
+      "chmod 600 /root/id_rsa"
+    ]
+  }
+}
 
 # 输出连接跳板机的命令
 output "connection-jump-server" {
