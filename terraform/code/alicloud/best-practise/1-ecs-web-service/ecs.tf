@@ -16,12 +16,24 @@ data "alicloud_images" "ubuntu_22" {
   owners     = "system"
 }
 
-# 生成登录秘钥
+# 生成登录秘钥对
 resource "tls_private_key" "tf-test-key-pair" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
+# 保存秘钥
+resource "local_file" "tf-test-id-rsa" {
+  filename = "id_rsa"
+  content  = tls_private_key.tf-test-key-pair.private_key_pem
+}
+
+resource "local_file" "tf-test-id-rsa-pub" {
+  filename = "id_rsa.pub"
+  content  = tls_private_key.tf-test-key-pair.public_key_openssh
+}
+
+# 创建秘钥对
 resource "alicloud_ecs_key_pair" "tf-test-key-pair" {
   key_pair_name = "tf-test-key-pair"
   public_key    = tls_private_key.tf-test-key-pair.public_key_openssh
@@ -75,16 +87,6 @@ resource "alicloud_instance" "tf-test-jump-server" {
   key_name                   = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
 }
 
-# 保存秘钥
-resource "local_file" "tf-test-id-rsa" {
-  filename = "id_rsa"
-  content  = tls_private_key.tf-test-key-pair.private_key_pem
-}
-
-resource "local_file" "tf-test-id-rsa-pub" {
-  filename = "id_rsa.pub"
-  content  = tls_private_key.tf-test-key-pair.public_key_openssh
-}
 
 # 输出连接跳板机的命令
 output "connection-jump-server" {
