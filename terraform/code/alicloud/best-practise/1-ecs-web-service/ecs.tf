@@ -45,7 +45,7 @@ resource "alicloud_security_group_rule" "tf-test-security-group-rule" {
 }
 
 # 创建服务实例（无公网地址）
-resource "alicloud_instance" "tf-test-ecs" {
+resource "alicloud_instance" "tf-test-web-service" {
   count           = var.instance_number
   image_id        = data.alicloud_images.ubuntu_22.images[0].id
   instance_type   = data.alicloud_instance_types.web-instance-types.instance_types[0].id
@@ -54,7 +54,8 @@ resource "alicloud_instance" "tf-test-ecs" {
   ]
   vswitch_id           = alicloud_vswitch.tf-test-vswitch[count.index % length(alicloud_vswitch.tf-test-vswitch)].id
   internet_charge_type = "PayByTraffic"
-  host_name            = "tf-test-ecs"
+  instance_name        = "tf-test-web-service-${count.index + 1}"
+  host_name            = "tf-test-web-service-${count.index + 1}"
   user_data            = base64encode(file("${path.module}/init.sh"))
   key_name             = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
 }
@@ -69,7 +70,8 @@ resource "alicloud_instance" "tf-test-jump-server" {
   vswitch_id                 = alicloud_vswitch.tf-test-vswitch[0].id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
-  host_name                  = "tf-test-ecs"
+  instance_name              = "tf-test-jump-server"
+  host_name                  = "tf-test-jump-server"
   key_name                   = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
 }
 
