@@ -68,7 +68,6 @@ resource "alicloud_instance" "tf-test-web-service" {
   internet_charge_type = "PayByTraffic"
   instance_name        = "tf-test-web-service-${count.index + 1}"
   host_name            = "tf-test-web-service-${count.index + 1}"
-  user_data            = base64encode(file("${path.module}/init.sh"))
   key_name             = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
 }
 
@@ -139,6 +138,10 @@ resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-f
 }
 
 resource "alicloud_oos_execution" "tf-test-web-service-init" {
+  for_each = {
+    for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
+  }
+
   template_name = "ACS-ECS-BulkyRunCommand"
   parameters    = jsonencode({
     regionId       = "cn-beijing"
@@ -202,7 +205,7 @@ EOT
     username       = "root"
     targets        = {
       Type        = "ResourceIds"
-      ResourceIds = alicloud_instance.tf-test-web-service.*.id
+      ResourceIds = [each.value.id]
       RegionId    = "cn-beijing"
     }
     resourceType  = "ALIYUN::ECS::Instance"
