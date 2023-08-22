@@ -85,6 +85,18 @@ resource "alicloud_instance" "tf-test-jump-server" {
   instance_name              = "tf-test-jump-server"
   host_name                  = "tf-test-jump-server"
   key_name                   = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
+
+  connection {
+    type        = "ssh"
+    user        = "root"
+    host        = self.public_ip
+    private_key = tls_private_key.tf-test-key-pair.private_key_pem
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/id_rsa"
+    destination = "/root/id_rsa"
+  }
 }
 
 
