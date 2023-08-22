@@ -109,3 +109,103 @@ resource "alicloud_instance" "tf-test-jump-server" {
 output "connection-jump-server" {
   value = "ssh -i id_rsa root@${alicloud_instance.tf-test-jump-server.public_ip}"
 }
+
+# 创建 OOS 执行所需的 RAM 角色
+resource "alicloud_ram_role" "tf-test-oos-service-role" {
+  name     = "tf-test-oos-service-role"
+  force    = true
+  document = <<EOF
+  {
+    "Version": "1",
+    "Statement": [
+      {
+        "Action": "sts:AssumeRole",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": [
+            "oos.aliyuncs.com"
+          ]
+        }
+      }
+    ]
+  }
+  EOF
+}
+
+resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-full-access" {
+  policy_name = "AliyunECSFullAccess"
+  policy_type = "System"
+  role_name   = alicloud_ram_role.tf-test-oos-service-role.name
+}
+
+resource "alicloud_oos_execution" "tf-test-web-service-init" {
+  template_name = "ACS-ECS-BulkyRunCommand"
+  parameters    = jsonencode({
+    regionId       = "cn-beijing"
+    commandContent = <<EOT
+#!/usr/bin/env bash
+
+function install_docker() {
+  sudo apt-get update -y
+  sudo apt-get install -y ca-certificates curl gnupg
+  sudo install -m 0755 -d /etc/apt/keyrings
+  sudo rm -rf /etc/apt/keyrings/docker.gpg
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  sudo chmod a+r /etc/apt/keyrings/docker.gpg
+  echo \
+    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get update -y
+  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+}
+
+function prepare_config() {
+  mkdir -p /root/nginx/etc/nginx/conf.d/
+  cat > /root/nginx/etc/nginx/conf.d/default.conf <<EOF
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  _;
+
+    access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+EOF
+}
+
+function start_service() {
+  sudo docker run \
+    -p 80:80 \
+    -v /root/nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf \
+    nginx &
+}
+
+function main() {
+  install_docker
+  prepare_config
+  start_service
+}
+
+main
+EOT
+    workingDir     = "/root"
+    username       = "root"
+    targets        = {
+      Type        = "ResourceIds"
+      ResourceIds = alicloud_instance.tf-test-web-service.*.id
+      RegionId    = "cn-beijing"
+    }
+    resourceType  = "ALIYUN::ECS::Instance"
+    OOSAssumeRole = alicloud_ram_role.tf-test-oos-service-role.name
+  })
+}
