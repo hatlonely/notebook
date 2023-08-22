@@ -56,6 +56,7 @@ resource "alicloud_instance" "tf-test-ecs" {
   internet_charge_type = "PayByTraffic"
   host_name            = "tf-test-ecs"
   user_data            = base64encode(file("${path.module}/init.sh"))
+  key_name             = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
 }
 
 # 创建跳板机
