@@ -43,3 +43,10 @@ resource "alicloud_eip_association" "tf-test-eip-association" {
   allocation_id = alicloud_eip_address.tf-test-eip.id
   instance_id   = alicloud_nat_gateway.tf-test-nat-gateway.id
 }
+
+resource "alicloud_snat_entry" "tf-test-snat-entry" {
+  for_each          = alicloud_vswitch.tf-test-vswitch
+  snat_table_id     = alicloud_nat_gateway.tf-test-nat-gateway.snat_table_ids
+  source_vswitch_id = each.value.id
+  snat_ip           = alicloud_eip_address.tf-test-eip.ip_address
+}
