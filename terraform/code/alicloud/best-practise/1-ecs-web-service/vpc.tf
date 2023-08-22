@@ -16,3 +16,11 @@ resource "alicloud_vswitch" "tf-test-vswitch" {
   vpc_id     = alicloud_vpc.tf-test-vpc.id
   cidr_block = cidrsubnet(alicloud_vpc.tf-test-vpc.cidr_block, 8, each.key)
 }
+
+resource "alicloud_nat_gateway" "tf-test-nat-gateway" {
+  vpc_id           = alicloud_vpc.tf-test-vpc.id
+  nat_gateway_name = "tf-test-nat-gateway"
+  payment_type     = "PayAsYouGo"
+  vswitch_id       = alicloud_vswitch.tf-test-vswitch.0.id
+  nat_type         = "Enhanced"
+}
