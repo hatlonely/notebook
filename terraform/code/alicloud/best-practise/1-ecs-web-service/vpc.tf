@@ -44,6 +44,7 @@ resource "alicloud_eip_association" "tf-test-eip-association" {
   instance_id   = alicloud_nat_gateway.tf-test-nat-gateway.id
 }
 
+# 创建SNAT条目
 resource "alicloud_snat_entry" "tf-test-snat-entry" {
   for_each          = alicloud_vswitch.tf-test-vswitch
   snat_table_id     = alicloud_nat_gateway.tf-test-nat-gateway.snat_table_ids
