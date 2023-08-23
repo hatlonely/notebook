@@ -28,13 +28,31 @@ data "aws_ami" "ubuntu_22" {
 
 # 创建 vpc
 resource "aws_vpc" "tf-test-vpc" {
-  cidr_block = "172.31.0.0/16"
+  cidr_block = "10.0.0.0/16"
 }
 
 resource "aws_subnet" "tf-test-subnet" {
   vpc_id            = aws_vpc.tf-test-vpc.id
   availability_zone = "us-east-1a"
-  cidr_block        = "172.31.1.0/24"
+  cidr_block        = "10.0.1.0/24"
+}
+
+resource "aws_internet_gateway" "tf-test-internet-gateway" {
+  vpc_id = aws_vpc.tf-test-vpc.id
+}
+
+resource "aws_route_table" "tf-test-route-table" {
+  vpc_id = aws_vpc.tf-test-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.tf-test-internet-gateway.id
+  }
+}
+
+resource "aws_route_table_association" "tf-test-route-table-association-subnet" {
+  route_table_id = aws_route_table.tf-test-route-table.id
+  subnet_id      = aws_subnet.tf-test-subnet.id
 }
 
 # 生成登录秘钥对
@@ -66,9 +84,9 @@ resource "aws_security_group" "tf-test-security-group" {
   vpc_id = aws_vpc.tf-test-vpc.id
   ingress {
     description      = "ssh"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
