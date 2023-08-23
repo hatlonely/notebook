@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 更新系统
-sudo apt update && sudo apt upgrade && sudo apt autoremove
+sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
 
 # 安装工具链
 sudo apt install -y --no-install-recommends build-essential autoconf libtool \
