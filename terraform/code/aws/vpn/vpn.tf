@@ -9,6 +9,11 @@ terraform {
       source  = "hashicorp/tls"
       version = "4.0.4"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.5.1"
+    }
   }
 }
 
@@ -120,8 +125,16 @@ resource "aws_instance" "tf-test-instance" {
   associate_public_ip_address = true
 }
 
-output "connection" {
-  value = "ssh -i id_rsa ubuntu@${aws_instance.tf-test-instance.public_ip}"
+# 生成密码
+resource "random_password" "ss_password" {
+  length  = 16
+  special = false
+}
+
+# 随机端口
+resource "random_integer" "ss_port" {
+  max = 2000
+  min = 8000
 }
 
 # 创建启动脚本
@@ -163,8 +176,8 @@ runtimeConfig:
             sudo bash -c 'cat > /etc/shadowsocks-libev/config.json <<EOF
             {
                 "server": "0.0.0.0",
-                "server_port": 12674,
-                "password": "abc123",
+                "server_port": ${random_integer.ss_port.result},
+                "password": "${random_password.ss_password.result}",
                 "timeout": 300,
                 "method": "aes-256-gcm",
                 "fast_open": false,
@@ -206,4 +219,12 @@ resource "aws_ssm_association" "tf-test-ssm-association-init-instance" {
     key    = "InstanceIds"
     values = [aws_instance.tf-test-instance.id]
   }
+}
+
+output "connection" {
+  value = <<EOF
+host: ${aws_instance.tf-test-instance.public_ip}
+port: ${random_integer.ss_port.result}
+password: ${random_password.ss_password.result}
+EOF
 }
