@@ -137,6 +137,12 @@ resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-f
   role_name   = alicloud_ram_role.tf-test-oos-service-role.name
 }
 
+resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-log-full-access" {
+  policy_name = "AliyunLOGFullAccess"
+  policy_type = "System"
+  role_name   = alicloud_ram_role.tf-test-oos-service-role.name
+}
+
 resource "alicloud_oos_execution" "tf-test-web-service-init-logtail" {
   for_each = {
     for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
