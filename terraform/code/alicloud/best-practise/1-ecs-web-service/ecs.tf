@@ -190,6 +190,7 @@ function start_service() {
   sudo docker run \
     -p 80:80 \
     -v /root/nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf \
+    -v /root/nginx/var/log/nginx:/var/log/nginx \
     nginx &
 }
 
