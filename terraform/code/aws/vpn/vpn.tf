@@ -113,3 +113,61 @@ resource "aws_instance" "tf-test-instance" {
 output "connection" {
   value = "ssh -i id_rsa ubuntu@${aws_instance.tf-test-instance.public_ip}"
 }
+
+data "aws_iam_policy_document" "tf-test-iam-assume-role" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = [
+        "ssm.amazonaws.com"
+      ]
+    }
+    actions = [
+      "sts:AssumeRole"
+    ]
+  }
+}
+
+resource "aws_iam_role" "tf-test-ssm-role" {
+  name               = "tf-test-ssm-role"
+  assume_role_policy = data.aws_iam_policy_document.tf-test-iam-assume-role.json
+}
+
+
+resource "aws_iam_role_policy_attachment" "tf-test-role-policy-attachment" {
+  role       = aws_iam_role.tf-test-ssm-role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_ssm_activation" "tf-test-ssm-activation" {
+  name     = "tf-test-ssm-activation"
+  iam_role = aws_iam_role.tf-test-ssm-role.name
+}
+
+resource "aws_ssm_document" "tf-test-ssm-document-init-instance" {
+  name            = "tf-test-ssm-document-init-instance"
+  document_type   = "Command"
+  document_format = "YAML"
+  content         = <<EOF
+schemaVersion: '1.2'
+description: test ssm
+parameters: {}
+runtimeConfig:
+  'aws:runShellScript':
+    properties:
+      - id: '0.aws:runShellScript'
+        runCommand:
+          - |
+            #!/bin/bash
+            echo hello world > 1.txt
+EOF
+}
+
+resource "aws_ssm_association" "tf-test-ssm-association-init-instance" {
+  name = aws_ssm_document.tf-test-ssm-document-init-instance.name
+  targets {
+    key    = "InstanceIds"
+    values = [aws_instance.tf-test-instance.id]
+  }
+}
