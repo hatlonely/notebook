@@ -63,8 +63,9 @@ resource "tls_private_key" "tf-test-key-pair" {
 
 # 保存秘钥
 resource "local_file" "tf-test-id-rsa" {
-  filename = "id_rsa"
-  content  = tls_private_key.tf-test-key-pair.private_key_pem
+  filename        = "id_rsa"
+  content         = tls_private_key.tf-test-key-pair.private_key_pem
+  file_permission = "0600"
 }
 
 resource "local_file" "tf-test-id-rsa-pub" {
