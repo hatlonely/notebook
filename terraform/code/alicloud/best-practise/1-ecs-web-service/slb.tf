@@ -31,3 +31,4 @@ output "slb_connection" {
 curl http://${alicloud_slb_load_balancer.tf-test-load-balancer.address}
 EOF
 }
+
