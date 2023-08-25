@@ -99,8 +99,8 @@ resource "aws_security_group" "tf-test-security-group" {
 
   ingress {
     description      = "ssh"
-    from_port        = 12674
-    to_port          = 12674
+    from_port        = random_integer.ss_port.result
+    to_port          = random_integer.ss_port.result
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
@@ -115,32 +115,6 @@ resource "aws_security_group" "tf-test-security-group" {
   }
 }
 
-# 创建 IAM 角色
-data "aws_iam_policy_document" "tf-test-iam-assume-role" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = [
-        "ssm.amazonaws.com"
-      ]
-    }
-    actions = [
-      "sts:AssumeRole"
-    ]
-  }
-}
-
-resource "aws_iam_role" "tf-test-ssm-role" {
-  name               = "tf-test-ssm-role"
-  assume_role_policy = data.aws_iam_policy_document.tf-test-iam-assume-role.json
-}
-
-resource "aws_iam_role_policy_attachment" "tf-test-role-policy-attachment" {
-  role       = aws_iam_role.tf-test-ssm-role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
 # 创建 EC2 实例
 resource "aws_instance" "tf-test-instance" {
   ami                         = data.aws_ami.ubuntu_22.id
@@ -149,7 +123,7 @@ resource "aws_instance" "tf-test-instance" {
   vpc_security_group_ids      = [aws_security_group.tf-test-security-group.id]
   subnet_id                   = aws_subnet.tf-test-subnet.id
   associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_role.tf-test-ssm-role.name
+  iam_instance_profile        = "AmazonSSMRoleForInstancesQuickSetup"
 }
 
 # 生成密码
