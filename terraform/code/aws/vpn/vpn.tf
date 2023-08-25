@@ -110,6 +110,7 @@ resource "aws_security_group" "tf-test-security-group" {
   }
 }
 
+# 创建 EC2 实例
 resource "aws_instance" "tf-test-instance" {
   ami                         = data.aws_ami.ubuntu_22.id
   instance_type               = "t3.nano"
@@ -123,6 +124,7 @@ output "connection" {
   value = "ssh -i id_rsa ubuntu@${aws_instance.tf-test-instance.public_ip}"
 }
 
+# 创建启动脚本
 resource "aws_ssm_document" "tf-test-ssm-document-init-instance" {
   name            = "tf-test-ssm-document-init-instance"
   document_type   = "Command"
@@ -197,6 +199,7 @@ runtimeConfig:
 EOT
 }
 
+# 执行启动脚本
 resource "aws_ssm_association" "tf-test-ssm-association-init-instance" {
   name = aws_ssm_document.tf-test-ssm-document-init-instance.name
   targets {
