@@ -133,8 +133,8 @@ resource "random_password" "ss_password" {
 
 # 随机端口
 resource "random_integer" "ss_port" {
-  max = 2000
-  min = 8000
+  max = 60000
+  min = 20000
 }
 
 # 创建启动脚本
