@@ -137,6 +137,23 @@ resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-f
   role_name   = alicloud_ram_role.tf-test-oos-service-role.name
 }
 
+resource "alicloud_oos_execution" "tf-test-web-service-init-logtail" {
+  for_each = {
+    for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
+  }
+
+  template_name = "ACS-LOG-BulkyInstallLogtail"
+  parameters    = jsonencode({
+    regionId = "cn-beijing"
+    targets  = {
+      Type        = "ResourceIds"
+      ResourceIds = [each.value.id]
+      RegionId    = "cn-beijing"
+    }
+    OOSAssumeRole = alicloud_ram_role.tf-test-oos-service-role.name
+  })
+}
+
 resource "alicloud_oos_execution" "tf-test-web-service-init" {
   for_each = {
     for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
@@ -161,6 +178,11 @@ function install_docker() {
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   sudo apt-get update -y
   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+}
+
+
+function install_logtail() {
+  echo ${var.sls_logtail_user_define} >/etc/ilogtail/user_defined_id
 }
 
 function prepare_config() {
@@ -196,6 +218,7 @@ function start_service() {
 
 function main() {
   install_docker
+  install_logtail
   prepare_config
   start_service
 }

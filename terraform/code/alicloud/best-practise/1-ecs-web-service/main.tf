@@ -31,3 +31,8 @@ variable "instance_number" {
   type    = number
   default = 1
 }
+
+variable "sls_logtail_user_define" {
+  type    = string
+  default = "tf-test-machine-group-web-service"
+}
