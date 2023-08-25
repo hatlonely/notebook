@@ -105,7 +105,7 @@ resource "aws_instance" "tf-test-instance" {
   ami                         = data.aws_ami.ubuntu_22.id
   instance_type               = "t3.nano"
   key_name                    = aws_key_pair.tf-test-key-pair.key_name
-  security_groups             = [aws_security_group.tf-test-security-group.id]
+  vpc_security_group_ids      = [aws_security_group.tf-test-security-group.id]
   subnet_id                   = aws_subnet.tf-test-subnet.id
   associate_public_ip_address = true
 }
