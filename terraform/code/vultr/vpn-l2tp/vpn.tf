@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "vultr" {
-  api_key     = "CFII3KVAHJCAHM6SEU77CCK6QS2CHDPRGAIQ"
+  api_key     = "xxx"
   rate_limit  = 100
   retry_limit = 3
 }
@@ -33,7 +33,7 @@ resource "vultr_instance" "instance" {
   }
 
   provisioner "file" {
-    source = "~/.ssh/id_rsa.pub"
+    source      = "~/.ssh/id_rsa.pub"
     destination = "/root/id_rsa.pub"
   }
 
