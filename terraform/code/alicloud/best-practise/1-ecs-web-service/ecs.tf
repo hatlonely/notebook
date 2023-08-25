@@ -138,7 +138,7 @@ resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-f
 }
 
 resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-log-full-access" {
-  policy_name = "AliyunLOGFullAccess"
+  policy_name = "AliyunLogFullAccess"
   policy_type = "System"
   role_name   = alicloud_ram_role.tf-test-oos-service-role.name
 }

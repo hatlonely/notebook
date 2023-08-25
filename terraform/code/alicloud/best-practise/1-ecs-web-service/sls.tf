@@ -22,7 +22,13 @@ resource "alicloud_log_store_index" "tf-test-store-index" {
     token          = "#$^*\r\n\t"
   }
   field_search {
-    name             = "requestId"
+    name             = "http_user_agent"
+    enable_analytics = true
+    type             = "text"
+    token            = " #$^*\r\n\t"
+  }
+  field_search {
+    name             = "remote_addr"
     enable_analytics = true
     type             = "text"
     token            = " #$^*\r\n\t"
@@ -47,7 +53,7 @@ resource "alicloud_logtail_config" "tf-test-logtail-config" {
   output_type  = "LogService"
   input_detail = <<EOF
   {
-    "logPath": "/root/nginx/var/log/nginx",
+    "logPath": "/root/nginx/var/log",
     "filePattern": "access.log",
     "logType": "common_reg_log",
     "topicFormat": "default",
@@ -56,9 +62,11 @@ resource "alicloud_logtail_config" "tf-test-logtail-config" {
     "fileEncoding": "utf8",
     "maxDepth": 10,
     "key": [
-      "remote_addr", "remote_user", "time_local", "request", "status", "body_bytes_sent",
-      "http_referer", "http_user_agent", "gzip_ratio"
-    ]
+      "remote_addr", "remote_user", "time_local", "request", "version", "status", "body_bytes_sent",
+      "http_referer", "http_user_agent"
+    ],
+    "logBeginRegex": ".*",
+    "regex": "(\\S+)\\s-\\s(\\S+)\\s\\[([^]]+)]\\s\"(\\w+)([^\"]+)\"\\s(\\d+)\\s(\\d+)[^-]+([^\"]+)\"\\s\"([^\"]+).*"
  }
 EOF
 }
