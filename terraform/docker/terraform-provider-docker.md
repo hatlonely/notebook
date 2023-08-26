@@ -37,4 +37,4 @@ resource "docker_container" "nginx" {
 ## 参考链接
 
 - [api 文档](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs)
-- [完整代码](code/docker/main.tf)
+- [完整代码](../code/docker/container/main.tf)
