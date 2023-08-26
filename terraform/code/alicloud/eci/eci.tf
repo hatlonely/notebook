@@ -30,7 +30,7 @@ resource "alicloud_vpc" "tf-test-vpc" {
 
 # 创建 VSwitch
 resource "alicloud_vswitch" "tf-test-vswitch" {
-  zone_id    = "cn-beijing-b"
+  zone_id    = "cn-beijing-i"
   vpc_id     = alicloud_vpc.tf-test-vpc.id
   cidr_block = "172.16.0.0/24"
 }
@@ -60,9 +60,11 @@ resource "alicloud_eci_container_group" "tf-test-eci-container-group" {
   restart_policy       = "OnFailure"
   cpu                  = 1
   memory               = 1
+  auto_create_eip      = true
+  eip_bandwidth        = 5
 
   containers {
-    image             = "nginx:stable"
+    image             = "registry-vpc.cn-beijing.aliyuncs.com/eci_open/nginx"
     name              = "nginx"
     image_pull_policy = "IfNotPresent"
     ports {
