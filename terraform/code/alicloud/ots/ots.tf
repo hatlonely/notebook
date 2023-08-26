@@ -12,7 +12,6 @@ provider "alicloud" {
   alias  = "cn-beijing"
 }
 
-
 resource "alicloud_ots_instance" "tf-test-ots-instance" {
   name = "tf-test"
 }
