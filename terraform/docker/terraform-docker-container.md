@@ -1,4 +1,4 @@
-# terraform provider docker
+# terraform docker container
 
 `kreuzwerker/docker` 提供了对 docker 资源的管理
 
