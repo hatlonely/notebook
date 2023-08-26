@@ -59,7 +59,7 @@ resource "alicloud_eci_container_group" "tf-test-eci-container-group" {
   vswitch_id           = alicloud_vswitch.tf-test-vswitch.id
   restart_policy       = "OnFailure"
   cpu                  = 1
-  memory               = 1
+  memory               = 2
   auto_create_eip      = true
   eip_bandwidth        = 5
 
@@ -72,4 +72,8 @@ resource "alicloud_eci_container_group" "tf-test-eci-container-group" {
       protocol = "TCP"
     }
   }
+}
+
+output "connection" {
+  value = "curl http://${alicloud_eci_container_group.tf-test-eci-container-group.internet_ip}"
 }
