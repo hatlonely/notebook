@@ -26,6 +26,7 @@ resource "alicloud_eci_container_group" "tf-test-eci-container-group" {
   cpu                  = 1
   memory               = 2
   auto_create_eip      = false
+  #  sls_enable           = true
 
   containers {
     image             = "registry-vpc.cn-beijing.aliyuncs.com/eci_open/nginx"
@@ -34,6 +35,21 @@ resource "alicloud_eci_container_group" "tf-test-eci-container-group" {
     ports {
       port     = 80
       protocol = "TCP"
+    }
+
+    environment_vars {
+      key   = "aliyun_logs_stdout"
+      value = "stdout"
+    }
+
+    environment_vars {
+      key   = "aliyun_logs_stdout_project"
+      value = alicloud_log_project.tf-test-project.name
+    }
+
+    environment_vars {
+      key   = "aliyun_logs_stdout_machinegroup"
+      value = "tf-test-eci-machinegroup"
     }
   }
 }
