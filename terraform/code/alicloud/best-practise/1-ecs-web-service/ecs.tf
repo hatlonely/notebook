@@ -149,6 +149,7 @@ resource "alicloud_ram_role_policy_attachment" "ram-role-policy-attachment-aliyu
   role_name   = alicloud_ram_role.ram-role-oos-service.name
 }
 
+# 安装日志服务 agent
 resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
   depends_on = [null_resource.after-30-seconds-instance]
 
@@ -166,6 +167,7 @@ resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
   })
 }
 
+# 安装云监控 agent
 resource "alicloud_oos_execution" "oos-execution-install-cms-agent" {
   depends_on = [null_resource.after-30-seconds-instance]
 
@@ -174,6 +176,7 @@ resource "alicloud_oos_execution" "oos-execution-install-cms-agent" {
   template_name = "ACS-ECS-ConfigureCloudMonitorAgent"
   parameters    = jsonencode({
     regionId = "cn-beijing"
+    action   = "install"
     targets  = {
       Type        = "ResourceIds"
       ResourceIds = [each.value.id]
@@ -183,6 +186,7 @@ resource "alicloud_oos_execution" "oos-execution-install-cms-agent" {
   })
 }
 
+# 启动服务
 resource "alicloud_oos_execution" "oos-execution-start-service" {
   depends_on = [null_resource.after-30-seconds-instance]
 
