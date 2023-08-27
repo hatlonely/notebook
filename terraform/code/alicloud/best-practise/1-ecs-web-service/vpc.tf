@@ -44,6 +44,7 @@ resource "alicloud_eip_association" "eip-association-nat-gateway" {
   instance_id   = alicloud_nat_gateway.nat-gateway.id
 }
 
+# 等待 eip 和 nat gateway 绑定完成
 resource "null_resource" "after-30-seconds-eip-association-nat-gateway" {
   depends_on = [alicloud_eip_association.eip-association-nat-gateway]
 

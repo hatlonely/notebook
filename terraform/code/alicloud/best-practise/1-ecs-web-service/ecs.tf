@@ -72,6 +72,7 @@ resource "alicloud_instance" "instances" {
   key_name             = alicloud_ecs_key_pair.ecs-key-pair.key_pair_name
 }
 
+# 等待实例创建完成
 resource "null_resource" "after-30-seconds-instance" {
   depends_on = [
     alicloud_instance.instances
