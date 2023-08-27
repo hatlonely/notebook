@@ -27,6 +27,11 @@ provider "alicloud" {
   alias  = "cn-beijing"
 }
 
+variable "name" {
+  type    = string
+  default = "tf-test-web-service"
+}
+
 variable "instance_number" {
   type    = number
   default = 2
