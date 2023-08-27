@@ -14,18 +14,18 @@ locals {
 }
 
 # 创建VPC
-resource "alicloud_vpc" "tf-test-vpc" {
+resource "alicloud_vpc" "vpc" {
   vpc_name   = "tf-test-vpc"
   cidr_block = "172.16.0.0/16"
 }
 
 # 创建交换机
-resource "alicloud_vswitch" "tf-test-vswitch" {
+resource "alicloud_vswitch" "vswitchs" {
   for_each = {
     for idx, zone in local.ecs_available_zone_cn_beijing : idx => zone
   }
 
   zone_id    = each.value
-  vpc_id     = alicloud_vpc.tf-test-vpc.id
-  cidr_block = cidrsubnet(alicloud_vpc.tf-test-vpc.cidr_block, 8, each.key)
+  vpc_id     = alicloud_vpc.vpc.id
+  cidr_block = cidrsubnet(alicloud_vpc.vpc.cidr_block, 8, each.key)
 }

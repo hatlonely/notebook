@@ -1,7 +1,7 @@
 # 创建安全组，现在安全组只能创建在 VPC 内，但其规则可以是公网或内网
 resource "alicloud_security_group" "security-group" {
   name   = "${var.name}-security-group"
-  vpc_id = alicloud_vpc.tf-test-vpc.id
+  vpc_id = alicloud_vpc.vpc.id
 }
 
 # 创建安全组规则，nic_type 必须为 intranet，但其规则对公网同样有效
@@ -21,7 +21,7 @@ resource "alicloud_eci_container_group" "eci-container-group" {
 
   container_group_name = "tf-test-eci-container-group"
   security_group_id    = alicloud_security_group.security-group.id
-  vswitch_id           = alicloud_vswitch.tf-test-vswitch[count.index % length(alicloud_vswitch.tf-test-vswitch)].id
+  vswitch_id           = alicloud_vswitch.vswitchs[count.index % length(alicloud_vswitch.vswitchs)].id
   restart_policy       = "OnFailure"
   cpu                  = 1
   memory               = 2
