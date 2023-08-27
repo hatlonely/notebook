@@ -166,6 +166,23 @@ resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
   })
 }
 
+resource "alicloud_oos_execution" "oos-execution-install-cms-agent" {
+  depends_on = [null_resource.after-30-seconds-instance]
+
+  for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
+
+  template_name = "ACS-ECS-ConfigureCloudMonitorAgent"
+  parameters    = jsonencode({
+    regionId = "cn-beijing"
+    targets  = {
+      Type        = "ResourceIds"
+      ResourceIds = [each.value.id]
+      RegionId    = "cn-beijing"
+    }
+    OOSAssumeRole = alicloud_ram_role.ram-role-oos-service.name
+  })
+}
+
 resource "alicloud_oos_execution" "oos-execution-start-service" {
   depends_on = [null_resource.after-30-seconds-instance]
 
