@@ -44,32 +44,32 @@ resource "alicloud_log_store_index" "tf-test-store-index" {
 #  identify_list = [var.sls_logtail_user_define]
 #}
 
-# 创建日志库配置
-resource "alicloud_logtail_config" "tf-test-logtail-config" {
-  name         = "tf-test-logtail-config"
-  project      = alicloud_log_project.tf-test-project.name
-  logstore     = alicloud_log_store.tf-test-store.name
-  input_type   = "file"
-  output_type  = "LogService"
-  input_detail = <<EOF
-  {
-    "logPath": "/root/nginx/var/log",
-    "filePattern": "access.log",
-    "logType": "common_reg_log",
-    "topicFormat": "default",
-    "discardUnmatch": false,
-    "enableRawLog": true,
-    "fileEncoding": "utf8",
-    "maxDepth": 10,
-    "key": [
-      "remote_addr", "remote_user", "time_local", "request", "version", "status", "body_bytes_sent",
-      "http_referer", "http_user_agent"
-    ],
-    "logBeginRegex": ".*",
-    "regex": "(\\S+)\\s-\\s(\\S+)\\s\\[([^]]+)]\\s\"(\\w+)([^\"]+)\"\\s(\\d+)\\s(\\d+)[^-]+([^\"]+)\"\\s\"([^\"]+).*"
- }
-EOF
-}
+## 创建日志库配置
+#resource "alicloud_logtail_config" "tf-test-logtail-config" {
+#  name         = "tf-test-logtail-config"
+#  project      = alicloud_log_project.tf-test-project.name
+#  logstore     = alicloud_log_store.tf-test-store.name
+#  input_type   = "file"
+#  output_type  = "LogService"
+#  input_detail = <<EOF
+#  {
+#    "logPath": "/root/nginx/var/log",
+#    "filePattern": "access.log",
+#    "logType": "common_reg_log",
+#    "topicFormat": "default",
+#    "discardUnmatch": false,
+#    "enableRawLog": true,
+#    "fileEncoding": "utf8",
+#    "maxDepth": 10,
+#    "key": [
+#      "remote_addr", "remote_user", "time_local", "request", "version", "status", "body_bytes_sent",
+#      "http_referer", "http_user_agent"
+#    ],
+#    "logBeginRegex": ".*",
+#    "regex": "(\\S+)\\s-\\s(\\S+)\\s\\[([^]]+)]\\s\"(\\w+)([^\"]+)\"\\s(\\d+)\\s(\\d+)[^-]+([^\"]+)\"\\s\"([^\"]+).*"
+# }
+#EOF
+#}
 
 ## 关联日志库配置
 #resource "alicloud_logtail_attachment" "tf-test-logtail-attachment" {
