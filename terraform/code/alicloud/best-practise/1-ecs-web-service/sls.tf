@@ -130,6 +130,7 @@ resource "alicloud_log_dashboard" "log-dashboard" {
 EOF
 }
 
+# 创建告警
 resource "alicloud_log_alert" "log-alert-status-not-200" {
   alert_displayname = "status-not-200"
   alert_name        = "status-not-200"
@@ -167,7 +168,7 @@ resource "alicloud_log_alert" "log-alert-status-not-200" {
     end            = "now"
     power_sql_mode = "disable"
     project        = alicloud_log_project.log-project.name
-    query          = "* | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t"
+    query          = "status != 200 | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t"
     region         = "cn-beijing"
     start          = "-300s"
     store          = alicloud_log_store.log-store-access-log.name
