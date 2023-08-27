@@ -26,7 +26,6 @@ resource "alicloud_eci_container_group" "eci-container-group" {
   cpu                  = 1
   memory               = 2
   auto_create_eip      = false
-  #  sls_enable           = true
 
   containers {
     image             = "registry-vpc.cn-beijing.aliyuncs.com/eci_open/nginx"
@@ -38,18 +37,18 @@ resource "alicloud_eci_container_group" "eci-container-group" {
     }
 
     environment_vars {
-      key   = "aliyun_logs_stdout"
+      key   = "aliyun_logs_stdout-test"
       value = "stdout"
     }
 
     environment_vars {
-      key   = "aliyun_logs_stdout_project"
+      key   = "aliyun_logs_stdout-test_project"
       value = alicloud_log_project.log-project.name
     }
 
     environment_vars {
-      key   = "aliyun_logs_stdout_machinegroup"
-      value = "tf-test-eci-machinegroup"
+      key   = "aliyun_logs_stdout-test_machinegroup"
+      value = "${var.name}-machinegroup"
     }
   }
 }
