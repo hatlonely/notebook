@@ -152,9 +152,7 @@ resource "alicloud_ram_role_policy_attachment" "ram-role-policy-attachment-aliyu
 resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
   depends_on = [null_resource.after-30-seconds-instance]
 
-  for_each = {
-    for idx, instance in alicloud_instance.instances : idx => instance
-  }
+  for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
 
   template_name = "ACS-ECS-BulkyInstallLogAgent"
   parameters    = jsonencode({
@@ -171,9 +169,7 @@ resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
 resource "alicloud_oos_execution" "oos-execution-start-service" {
   depends_on = [null_resource.after-30-seconds-instance]
 
-  for_each = {
-    for idx, instance in alicloud_instance.instances : idx => instance
-  }
+  for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
 
   template_name = "ACS-ECS-BulkyRunCommand"
   parameters    = jsonencode({
