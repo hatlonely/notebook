@@ -194,7 +194,7 @@ server {
     listen  [::]:80;
     server_name  _;
 
-    access_log  /var/log/nginx/host.access.log  main;
+    access_log  /var/log/nginx/access.log  main;
 
     location / {
         root   /usr/share/nginx/html;
