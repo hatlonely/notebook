@@ -65,8 +65,8 @@ resource "alicloud_cms_group_metric_rule" "cms-group-metric-rule-cpu-total" {
     info {
       comparison_operator = "GreaterThanOrEqualToThreshold"
       statistics          = "Average"
-      threshold           = 60
-      times               = 3
+      threshold           = 1
+      times               = 1
     }
   }
 }
