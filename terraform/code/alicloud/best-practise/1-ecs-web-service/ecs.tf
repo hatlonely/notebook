@@ -148,7 +148,7 @@ resource "alicloud_oos_execution" "tf-test-web-service-init-logtail" {
     for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
   }
 
-  template_name = "ACS-LOG-BulkyInstallLogtail"
+  template_name = "ACS-ECS-BulkyInstallLogAgent"
   parameters    = jsonencode({
     regionId = "cn-beijing"
     targets  = {
