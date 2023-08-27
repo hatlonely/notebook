@@ -1,40 +1,40 @@
-# 创建日志服务项目
-resource "alicloud_log_project" "tf-test-project" {
-  name = "tf-test-project"
-}
-
-# 创建日志服务日志库
-resource "alicloud_log_store" "tf-test-store" {
-  name                  = "tf-test-store"
-  project               = alicloud_log_project.tf-test-project.name
-  shard_count           = 3
-  auto_split            = true
-  max_split_shard_count = 60
-  append_meta           = true
-}
-
-# 创建日志服务索引
-resource "alicloud_log_store_index" "tf-test-store-index" {
-  logstore = alicloud_log_store.tf-test-store.name
-  project  = alicloud_log_project.tf-test-project.name
-  full_text {
-    case_sensitive = true
-    token          = "#$^*\r\n\t"
-  }
-  field_search {
-    name             = "http_user_agent"
-    enable_analytics = true
-    type             = "text"
-    token            = " #$^*\r\n\t"
-  }
-  field_search {
-    name             = "remote_addr"
-    enable_analytics = true
-    type             = "text"
-    token            = " #$^*\r\n\t"
-  }
-}
-
+## 创建日志服务项目
+#resource "alicloud_log_project" "tf-test-project" {
+#  name = "tf-test-project"
+#}
+#
+## 创建日志服务日志库
+#resource "alicloud_log_store" "tf-test-store" {
+#  name                  = "tf-test-store"
+#  project               = alicloud_log_project.tf-test-project.name
+#  shard_count           = 3
+#  auto_split            = true
+#  max_split_shard_count = 60
+#  append_meta           = true
+#}
+#
+## 创建日志服务索引
+#resource "alicloud_log_store_index" "tf-test-store-index" {
+#  logstore = alicloud_log_store.tf-test-store.name
+#  project  = alicloud_log_project.tf-test-project.name
+#  full_text {
+#    case_sensitive = true
+#    token          = "#$^*\r\n\t"
+#  }
+#  field_search {
+#    name             = "http_user_agent"
+#    enable_analytics = true
+#    type             = "text"
+#    token            = " #$^*\r\n\t"
+#  }
+#  field_search {
+#    name             = "remote_addr"
+#    enable_analytics = true
+#    type             = "text"
+#    token            = " #$^*\r\n\t"
+#  }
+#}
+#
 ## 创建日志服务机器组
 #resource "alicloud_log_machine_group" "tf-test-machine-group" {
 #  name          = "tf-test-machine-group"
