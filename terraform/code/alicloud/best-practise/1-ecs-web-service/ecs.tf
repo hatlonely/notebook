@@ -72,6 +72,16 @@ resource "alicloud_instance" "instances" {
   key_name             = alicloud_ecs_key_pair.ecs-key-pair.key_pair_name
 }
 
+resource "null_resource" "after-30-seconds-instance" {
+  depends_on = [
+    alicloud_instance.instances
+  ]
+
+  provisioner "local-exec" {
+    command = "sleep 30"
+  }
+}
+
 # 创建跳板机
 resource "alicloud_instance" "instance-jump-server" {
   image_id        = data.alicloud_images.images-ubuntu-22.images[0].id
@@ -139,6 +149,8 @@ resource "alicloud_ram_role_policy_attachment" "ram-role-policy-attachment-aliyu
 }
 
 resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
+  depends_on = [null_resource.after-30-seconds-instance]
+
   for_each = {
     for idx, instance in alicloud_instance.instances : idx => instance
   }
@@ -156,6 +168,8 @@ resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
 }
 
 resource "alicloud_oos_execution" "oos-execution-start-service" {
+  depends_on = [null_resource.after-30-seconds-instance]
+
   for_each = {
     for idx, instance in alicloud_instance.instances : idx => instance
   }
