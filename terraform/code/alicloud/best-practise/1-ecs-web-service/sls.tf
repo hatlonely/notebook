@@ -129,3 +129,66 @@ resource "alicloud_log_dashboard" "log-dashboard" {
   ]
 EOF
 }
+
+resource "alicloud_log_alert" "log-alert-status-not-200" {
+  alert_displayname = "status-not-200"
+  alert_name        = "status-not-200"
+  project_name      = alicloud_log_project.log-project.name
+  auto_annotation   = true
+  mute_until        = 0
+  no_data_fire      = false
+  no_data_severity  = 6
+  send_resolved     = false
+  threshold         = 1
+  type              = "default"
+  version           = "2.0"
+
+  annotations {
+    key   = "title"
+    value = "$${alert_name}告警触发"
+  }
+  annotations {
+    key   = "desc"
+    value = "$${alert_name}告警触发"
+  }
+
+  group_configuration {
+    fields = []
+    type   = "no_group"
+  }
+
+  policy_configuration {
+    action_policy_id = "sls.builtin"
+    alert_policy_id  = "sls.builtin.dynamic"
+    repeat_interval  = "1m"
+  }
+
+  query_list {
+    end            = "now"
+    power_sql_mode = "disable"
+    project        = alicloud_log_project.log-project.name
+    query          = "* | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t"
+    region         = "cn-beijing"
+    start          = "-300s"
+    store          = alicloud_log_store.log-store-access-log.name
+    store_type     = "log"
+    time_span_type = "Relative"
+  }
+
+  schedule {
+    day_of_week     = 0
+    delay           = 0
+    hour            = 0
+    interval        = "1m"
+    run_immediately = true
+    type            = "FixedRate"
+  }
+
+  severity_configurations {
+    eval_condition = {
+      "condition"       = ""
+      "count_condition" = ""
+    }
+    severity = 6
+  }
+}
