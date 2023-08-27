@@ -44,8 +44,18 @@ resource "alicloud_eip_association" "eip-association-nat-gateway" {
   instance_id   = alicloud_nat_gateway.nat-gateway.id
 }
 
+resource "null_resource" "after-30-seconds-eip-association-nat-gateway" {
+  depends_on = [alicloud_eip_association.eip-association-nat-gateway]
+
+  provisioner "local-exec" {
+    command = "sleep 30"
+  }
+}
+
 # 创建SNAT条目
 resource "alicloud_snat_entry" "snat-entry" {
+  depends_on = [null_resource.after-30-seconds-eip-association-nat-gateway]
+
   for_each          = alicloud_vswitch.vswitchs
   snat_table_id     = alicloud_nat_gateway.nat-gateway.snat_table_ids
   source_vswitch_id = each.value.id

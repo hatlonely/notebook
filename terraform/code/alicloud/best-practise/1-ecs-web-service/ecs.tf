@@ -138,12 +138,6 @@ resource "alicloud_ram_role_policy_attachment" "ram-role-policy-attachment-aliyu
   role_name   = alicloud_ram_role.ram-role-oos-service.name
 }
 
-resource "alicloud_ram_role_policy_attachment" "ram-role-policy-attachment-aliyun-log-full-access" {
-  policy_name = "AliyunLogFullAccess"
-  policy_type = "System"
-  role_name   = alicloud_ram_role.ram-role-oos-service.name
-}
-
 resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
   for_each = {
     for idx, instance in alicloud_instance.instances : idx => instance
