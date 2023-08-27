@@ -44,7 +44,7 @@ resource "alicloud_eci_container_group" "eci-container-group" {
 
     environment_vars {
       key   = "aliyun_logs_stdout_project"
-      value = alicloud_log_project.tf-test-project.name
+      value = alicloud_log_project.log-project.name
     }
 
     environment_vars {
