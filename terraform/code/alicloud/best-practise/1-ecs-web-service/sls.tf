@@ -33,6 +33,11 @@ resource "alicloud_log_store_index" "log-store-index-access-log" {
     type             = "text"
     token            = " #$^*\r\n\t"
   }
+  field_search {
+    name             = "status"
+    enable_analytics = true
+    type             = "long"
+  }
 }
 
 # 创建日志服务机器组
@@ -76,4 +81,51 @@ resource "alicloud_logtail_attachment" "logtail-attachment-access-log" {
   logtail_config_name = alicloud_logtail_config.logtail-config-access-log.name
   machine_group_name  = alicloud_log_machine_group.log-machine-group.name
   project             = alicloud_log_project.log-project.name
+}
+
+# 创建 dashboard
+# 不建议使用 terraform 创建 dashboard，因为 dashboard 的配置比较复杂，不如 gui 配置简单
+resource "alicloud_log_dashboard" "log-dashboard" {
+  project_name   = alicloud_log_project.log-project.name
+  dashboard_name = "log-dashboard"
+  display_name   = "log-dashboard"
+  attribute      = "{\"type\":\"grid\"}"
+  char_list      = <<EOF
+  [
+    {
+      "action": {},
+      "title": "${var.name}-pv",
+      "type": "linepro",
+      "search": {
+        "chartQueries": [
+          {
+            "datasource": "logstore",
+            "logstore": "${alicloud_log_store.log-store-access-log.name}",
+            "project": "${alicloud_log_project.log-project.name}",
+            "query": "* | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t",
+            "tokenQuery": "* | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t"
+          }
+        ],
+        "logstore": "${alicloud_log_store.log-store-access-log.name}",
+        "topic": "",
+        "query": "@",
+        "start": "-3600s",
+        "end": "now"
+      },
+      "display": {
+        "xAxis": [
+          "time"
+        ],
+        "yAxis": [
+          "pv"
+        ],
+        "xPos": 0,
+        "yPos": 0,
+        "width": 10,
+        "height": 12,
+        "displayName": "${var.name} pv"
+      }
+    }
+  ]
+EOF
 }
