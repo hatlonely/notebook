@@ -121,8 +121,8 @@ resource "alicloud_log_dashboard" "log-dashboard" {
         ],
         "xPos": 0,
         "yPos": 0,
-        "width": 10,
-        "height": 12,
+        "width": 20,
+        "height": 10,
         "displayName": "${var.name} pv"
       }
     }
