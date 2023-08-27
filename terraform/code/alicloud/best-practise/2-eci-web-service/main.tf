@@ -29,5 +29,5 @@ provider "alicloud" {
 
 variable "instance_number" {
   type    = number
-  default = 1
+  default = 2
 }
