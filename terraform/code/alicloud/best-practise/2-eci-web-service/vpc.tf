@@ -1,5 +1,16 @@
-data "alicloud_zones" "zones" {
-  available_resource_creation = "VSwitch"
+locals {
+  ecs_available_zone_cn_beijing = [
+    "cn-beijing-l",
+    "cn-beijing-k",
+    "cn-beijing-j",
+    "cn-beijing-i",
+    "cn-beijing-h",
+    "cn-beijing-g",
+    "cn-beijing-f",
+    "cn-beijing-e",
+    "cn-beijing-d",
+    "cn-beijing-c",
+  ]
 }
 
 # 创建VPC
@@ -11,7 +22,7 @@ resource "alicloud_vpc" "tf-test-vpc" {
 # 创建交换机
 resource "alicloud_vswitch" "tf-test-vswitch" {
   for_each = {
-    for idx, zone in data.alicloud_zones.zones.zones : idx => zone
+    for idx, zone in local.ecs_available_zone_cn_beijing : idx => zone
   }
 
   zone_id    = each.value.id
