@@ -43,7 +43,7 @@ resource "alicloud_ecs_key_pair" "ecs-key-pair" {
 # 创建安全组
 resource "alicloud_security_group" "security-group" {
   name   = "${var.name}-security-group"
-  vpc_id = alicloud_vpc.tf-test-vpc.id
+  vpc_id = alicloud_vpc.vpc.id
 }
 
 resource "alicloud_security_group_rule" "security-group-rule-allow-ssh" {
@@ -65,7 +65,7 @@ resource "alicloud_instance" "instances" {
   security_groups = [
     alicloud_security_group.security-group.id,
   ]
-  vswitch_id           = alicloud_vswitch.tf-test-vswitch[count.index % length(alicloud_vswitch.tf-test-vswitch)].id
+  vswitch_id           = alicloud_vswitch.vswitchs[count.index % length(alicloud_vswitch.vswitchs)].id
   internet_charge_type = "PayByTraffic"
   instance_name        = "${var.name}-${count.index + 1}"
   host_name            = "${var.name}-${count.index + 1}"
@@ -79,7 +79,7 @@ resource "alicloud_instance" "instance-jump-server" {
   security_groups = [
     alicloud_security_group.security-group.id,
   ]
-  vswitch_id                 = alicloud_vswitch.tf-test-vswitch[0].id
+  vswitch_id                 = alicloud_vswitch.vswitchs[0].id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
   instance_name              = "${var.name}-jump-server"
