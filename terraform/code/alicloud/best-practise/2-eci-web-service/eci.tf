@@ -17,6 +17,11 @@ resource "alicloud_security_group_rule" "security-group-rule" {
 }
 
 resource "alicloud_eci_container_group" "eci-container-group" {
+  depends_on = [
+    alicloud_log_store.log-store-access-log,
+    alicloud_logtail_config.logtail-config-access-log,
+  ]
+
   count = var.instance_number
 
   container_group_name = "tf-test-eci-container-group"
@@ -37,17 +42,17 @@ resource "alicloud_eci_container_group" "eci-container-group" {
     }
 
     environment_vars {
-      key   = "aliyun_logs_stdout-test"
+      key   = "aliyun_logs_${var.name}-access-log"
       value = "stdout"
     }
 
     environment_vars {
-      key   = "aliyun_logs_stdout-test_project"
+      key   = "aliyun_logs_${var.name}-access-log_project"
       value = alicloud_log_project.log-project.name
     }
 
     environment_vars {
-      key   = "aliyun_logs_stdout-test_machinegroup"
+      key   = "aliyun_logs_${var.name}-access-log_machinegroup"
       value = "${var.name}-machinegroup"
     }
   }

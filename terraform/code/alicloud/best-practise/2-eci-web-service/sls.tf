@@ -3,7 +3,7 @@ resource "alicloud_log_project" "log-project" {
   name = "${var.name}-project"
 }
 
-# 创建日志服务日志库
+## 创建日志服务日志库
 resource "alicloud_log_store" "log-store-access-log" {
   name                  = "${var.name}-access-log"
   project               = alicloud_log_project.log-project.name
@@ -11,69 +11,48 @@ resource "alicloud_log_store" "log-store-access-log" {
   auto_split            = true
   max_split_shard_count = 60
   append_meta           = true
+  retention_period      = 90
 }
-
-# 创建日志服务索引
-resource "alicloud_log_store_index" "log-store-index-access-log" {
-  logstore = alicloud_log_store.log-store-access-log.name
-  project  = alicloud_log_project.log-project.name
-  full_text {
-    case_sensitive = true
-    token          = "#$^*\r\n\t"
-  }
-  field_search {
-    name             = "http_user_agent"
-    enable_analytics = true
-    type             = "text"
-    token            = " #$^*\r\n\t"
-  }
-  field_search {
-    name             = "remote_addr"
-    enable_analytics = true
-    type             = "text"
-    token            = " #$^*\r\n\t"
-  }
-}
-
-## 创建日志服务机器组
-#resource "alicloud_log_machine_group" "log-machine-group" {
-#  name          = "${var.name}-machine-group"
-#  project       = alicloud_log_project.log-project.name
-#  identify_type = "userdefined"
-#  topic         = "${var.name}-machine-group-topic"
-#  identify_list = [var.name]
-#}
 
 # 创建日志库配置
+# TODO 目前不支持解析日志格式，只有单行日志
 resource "alicloud_logtail_config" "logtail-config-access-log" {
-  name         = "${var.name}-logtail-config"
-  project      = alicloud_log_project.log-project.name
-  logstore     = alicloud_log_store.log-store-access-log.name
-  input_type   = "file"
-  output_type  = "LogService"
-  input_detail = <<EOF
-  {
-    "logPath": "/root/nginx/var/log",
-    "filePattern": "access.log",
-    "logType": "common_reg_log",
-    "topicFormat": "default",
-    "discardUnmatch": false,
-    "enableRawLog": true,
-    "fileEncoding": "utf8",
-    "maxDepth": 10,
-    "key": [
-      "remote_addr", "remote_user", "time_local", "request", "version", "status", "body_bytes_sent",
-      "http_referer", "http_user_agent"
-    ],
-    "logBeginRegex": ".*",
-    "regex": "(\\S+)\\s-\\s(\\S+)\\s\\[([^]]+)]\\s\"(\\w+)([^\"]+)\"\\s(\\d+)\\s(\\d+)[^-]+([^\"]+)\"\\s\"([^\"]+).*"
- }
-EOF
-}
+  name        = "${var.name}-access-log"
+  project     = alicloud_log_project.log-project.name
+  logstore    = alicloud_log_store.log-store-access-log.name
+  input_type  = "plugin"
+  output_type = "LogService"
 
-## 关联日志库配置
-#resource "alicloud_logtail_attachment" "logtail-attachment-access-log" {
-#  logtail_config_name = alicloud_logtail_config.logtail-config-access-log.name
-#  machine_group_name  = alicloud_log_machine_group.log-machine-group.name
-#  project             = alicloud_log_project.log-project.name
-#}
+  input_detail = jsonencode(
+    {
+      adjustTimezone  = false
+      delayAlarmBytes = 0
+      discardNonUtf8  = false
+      enableRawLog    = false
+      enableTag       = false
+      filterKey       = []
+      filterRegex     = []
+      localStorage    = true
+      logTimezone     = ""
+      maxSendRate     = -1
+      mergeType       = "topic"
+      plugin          = {
+        inputs = [
+          {
+            detail = {
+              IncludeEnv = {
+                "aliyun_logs_${var.name}-access-log" = "stdout"
+              }
+              Stderr = true
+              Stdout = true
+            }
+            type = "service_docker_stdout"
+          },
+        ]
+      }
+      priority       = 0
+      sendRateExpire = 0
+      sensitive_keys = []
+    }
+  )
+}
