@@ -1,95 +1,96 @@
 # 服务实例类型
-data "alicloud_instance_types" "web-instance-types" {
+data "alicloud_instance_types" "instance-types" {
   cpu_core_count = 1
   memory_size    = 1
 }
 
 # 跳板机实例类型
-data "alicloud_instance_types" "jump-server-instance-types" {
+data "alicloud_instance_types" "instance-types-jump-server" {
   cpu_core_count = 1
   memory_size    = 1
 }
 
 # 服务基础镜像
-data "alicloud_images" "ubuntu_22" {
+data "alicloud_images" "images-ubuntu-22" {
   name_regex = "^ubuntu_22"
   owners     = "system"
 }
 
 # 生成登录秘钥对
-resource "tls_private_key" "tf-test-key-pair" {
+resource "tls_private_key" "tls-rsa-key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 # 保存秘钥
-resource "local_file" "tf-test-id-rsa" {
-  filename = "id_rsa"
-  content  = tls_private_key.tf-test-key-pair.private_key_pem
+resource "local_file" "file-id-rsa" {
+  filename        = "id_rsa"
+  content         = tls_private_key.tls-rsa-key.private_key_pem
+  file_permission = "0600"
 }
 
-resource "local_file" "tf-test-id-rsa-pub" {
+resource "local_file" "file-id-rsa-pub" {
   filename = "id_rsa.pub"
-  content  = tls_private_key.tf-test-key-pair.public_key_openssh
+  content  = tls_private_key.tls-rsa-key.public_key_openssh
 }
 
 # 创建秘钥对
-resource "alicloud_ecs_key_pair" "tf-test-key-pair" {
+resource "alicloud_ecs_key_pair" "ecs-key-pair" {
   key_pair_name = "${var.name}-key-pair"
-  public_key    = tls_private_key.tf-test-key-pair.public_key_openssh
+  public_key    = tls_private_key.tls-rsa-key.public_key_openssh
 }
 
 # 创建安全组
-resource "alicloud_security_group" "tf-test-security-group" {
+resource "alicloud_security_group" "security-group" {
   name   = "${var.name}-security-group"
   vpc_id = alicloud_vpc.tf-test-vpc.id
 }
 
-resource "alicloud_security_group_rule" "tf-test-security-group-rule" {
+resource "alicloud_security_group_rule" "security-group-rule-allow-ssh" {
   type              = "ingress"
   ip_protocol       = "tcp"
   nic_type          = "intranet"
   policy            = "accept"
-  port_range        = "1/65535"
+  port_range        = "22/22"
   priority          = 1
-  security_group_id = alicloud_security_group.tf-test-security-group.id
+  security_group_id = alicloud_security_group.security-group.id
   cidr_ip           = "123.113.97.7/32"
 }
 
 # 创建服务实例（无公网地址）
-resource "alicloud_instance" "tf-test-web-service" {
+resource "alicloud_instance" "instances" {
   count           = var.instance_number
-  image_id        = data.alicloud_images.ubuntu_22.images[0].id
-  instance_type   = data.alicloud_instance_types.web-instance-types.instance_types[0].id
+  image_id        = data.alicloud_images.images-ubuntu-22.images[0].id
+  instance_type   = data.alicloud_instance_types.instance-types.instance_types[0].id
   security_groups = [
-    alicloud_security_group.tf-test-security-group.id,
+    alicloud_security_group.security-group.id,
   ]
   vswitch_id           = alicloud_vswitch.tf-test-vswitch[count.index % length(alicloud_vswitch.tf-test-vswitch)].id
   internet_charge_type = "PayByTraffic"
   instance_name        = "${var.name}-${count.index + 1}"
   host_name            = "${var.name}-${count.index + 1}"
-  key_name             = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
+  key_name             = alicloud_ecs_key_pair.ecs-key-pair.key_pair_name
 }
 
 # 创建跳板机
-resource "alicloud_instance" "tf-test-jump-server" {
-  image_id        = data.alicloud_images.ubuntu_22.images[0].id
-  instance_type   = data.alicloud_instance_types.jump-server-instance-types.instance_types[0].id
+resource "alicloud_instance" "instance-jump-server" {
+  image_id        = data.alicloud_images.images-ubuntu-22.images[0].id
+  instance_type   = data.alicloud_instance_types.instance-types-jump-server.instance_types[0].id
   security_groups = [
-    alicloud_security_group.tf-test-security-group.id,
+    alicloud_security_group.security-group.id,
   ]
   vswitch_id                 = alicloud_vswitch.tf-test-vswitch[0].id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
   instance_name              = "${var.name}-jump-server"
   host_name                  = "${var.name}-jump-server"
-  key_name                   = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
+  key_name                   = alicloud_ecs_key_pair.ecs-key-pair.key_pair_name
 
   connection {
     type        = "ssh"
     user        = "root"
     host        = self.public_ip
-    private_key = tls_private_key.tf-test-key-pair.private_key_pem
+    private_key = tls_private_key.tls-rsa-key.private_key_pem
   }
 
   provisioner "file" {
@@ -106,11 +107,11 @@ resource "alicloud_instance" "tf-test-jump-server" {
 
 # 输出连接跳板机的命令
 output "connection-jump-server" {
-  value = "ssh -i id_rsa root@${alicloud_instance.tf-test-jump-server.public_ip}"
+  value = "ssh -i id_rsa root@${alicloud_instance.instance-jump-server.public_ip}"
 }
 
 # 创建 OOS 执行所需的 RAM 角色
-resource "alicloud_ram_role" "tf-test-oos-service-role" {
+resource "alicloud_ram_role" "ram-role-oos-service" {
   name     = "${var.name}-oos-service-role"
   force    = true
   document = <<EOF
@@ -131,21 +132,21 @@ resource "alicloud_ram_role" "tf-test-oos-service-role" {
   EOF
 }
 
-resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-full-access" {
+resource "alicloud_ram_role_policy_attachment" "ram-role-policy-attachment-aliyun-ecs-full-access" {
   policy_name = "AliyunECSFullAccess"
   policy_type = "System"
-  role_name   = alicloud_ram_role.tf-test-oos-service-role.name
+  role_name   = alicloud_ram_role.ram-role-oos-service.name
 }
 
-resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-log-full-access" {
+resource "alicloud_ram_role_policy_attachment" "ram-role-policy-attachment-aliyun-log-full-access" {
   policy_name = "AliyunLogFullAccess"
   policy_type = "System"
-  role_name   = alicloud_ram_role.tf-test-oos-service-role.name
+  role_name   = alicloud_ram_role.ram-role-oos-service.name
 }
 
-resource "alicloud_oos_execution" "tf-test-web-service-init-logtail" {
+resource "alicloud_oos_execution" "oos-execution-install-log-agent" {
   for_each = {
-    for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
+    for idx, instance in alicloud_instance.instances : idx => instance
   }
 
   template_name = "ACS-ECS-BulkyInstallLogAgent"
@@ -156,13 +157,13 @@ resource "alicloud_oos_execution" "tf-test-web-service-init-logtail" {
       ResourceIds = [each.value.id]
       RegionId    = "cn-beijing"
     }
-    OOSAssumeRole = alicloud_ram_role.tf-test-oos-service-role.name
+    OOSAssumeRole = alicloud_ram_role.ram-role-oos-service.name
   })
 }
 
-resource "alicloud_oos_execution" "tf-test-web-service-init" {
+resource "alicloud_oos_execution" "oos-execution-start-service" {
   for_each = {
-    for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
+    for idx, instance in alicloud_instance.instances : idx => instance
   }
 
   template_name = "ACS-ECS-BulkyRunCommand"
@@ -239,6 +240,6 @@ EOT
       RegionId    = "cn-beijing"
     }
     resourceType  = "ALIYUN::ECS::Instance"
-    OOSAssumeRole = alicloud_ram_role.tf-test-oos-service-role.name
+    OOSAssumeRole = alicloud_ram_role.ram-role-oos-service.name
   })
 }

@@ -13,7 +13,7 @@ resource "alicloud_slb_server_group" "tf-test-server-group" {
 resource "alicloud_slb_server_group_server_attachment" "tf-test-server-group-server-attachment" {
   count           = var.instance_number
   server_group_id = alicloud_slb_server_group.tf-test-server-group.id
-  server_id       = alicloud_instance.tf-test-web-service[count.index].id
+  server_id       = alicloud_instance.instances[count.index].id
   port            = 80
 }
 
