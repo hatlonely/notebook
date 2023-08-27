@@ -1,12 +1,12 @@
 resource "alicloud_slb_load_balancer" "tf-test-load-balancer" {
-  load_balancer_name   = "tf-test-load-balancer"
+  load_balancer_name   = "${var.name}-load-balancer"
   address_type         = "internet"
   load_balancer_spec   = "slb.s1.small"
   internet_charge_type = "PayByTraffic"
 }
 
 resource "alicloud_slb_server_group" "tf-test-server-group" {
-  name             = "tf-test-server-group"
+  name             = "${var.name}-server-group"
   load_balancer_id = alicloud_slb_load_balancer.tf-test-load-balancer.id
 }
 

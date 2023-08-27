@@ -4,7 +4,7 @@ data "alicloud_zones" "zones" {
 
 # 创建VPC
 resource "alicloud_vpc" "tf-test-vpc" {
-  vpc_name   = "tf-test-vpc"
+  vpc_name   = "${var.name}-vpc"
   cidr_block = "172.16.0.0/16"
 }
 
@@ -22,7 +22,7 @@ resource "alicloud_vswitch" "tf-test-vswitch" {
 # 创建NAT网关
 resource "alicloud_nat_gateway" "tf-test-nat-gateway" {
   vpc_id           = alicloud_vpc.tf-test-vpc.id
-  nat_gateway_name = "tf-test-nat-gateway"
+  nat_gateway_name = "${var.name}-nat-gateway"
   payment_type     = "PayAsYouGo"
   vswitch_id       = alicloud_vswitch.tf-test-vswitch.0.id
   nat_type         = "Enhanced"

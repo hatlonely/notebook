@@ -5,7 +5,7 @@ resource "alicloud_log_project" "tf-test-project" {
 
 # 创建日志服务日志库
 resource "alicloud_log_store" "tf-test-store" {
-  name                  = "tf-test-store"
+  name                  = "${var.name}-access-log"
   project               = alicloud_log_project.tf-test-project.name
   shard_count           = 3
   auto_split            = true
@@ -37,16 +37,16 @@ resource "alicloud_log_store_index" "tf-test-store-index" {
 
 # 创建日志服务机器组
 resource "alicloud_log_machine_group" "tf-test-machine-group" {
-  name          = "tf-test-machine-group"
+  name          = "${var.name}-machine-group"
   project       = alicloud_log_project.tf-test-project.name
   identify_type = "userdefined"
-  topic         = "tf-test-machine-group-topic"
-  identify_list = [var.sls_logtail_user_define]
+  topic         = "${var.name}-machine-group-topic"
+  identify_list = [var.name]
 }
 
 # 创建日志库配置
 resource "alicloud_logtail_config" "tf-test-logtail-config" {
-  name         = "tf-test-logtail-config"
+  name         = "${var.name}-logtail-config"
   project      = alicloud_log_project.tf-test-project.name
   logstore     = alicloud_log_store.tf-test-store.name
   input_type   = "file"

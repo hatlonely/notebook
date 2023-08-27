@@ -35,13 +35,13 @@ resource "local_file" "tf-test-id-rsa-pub" {
 
 # 创建秘钥对
 resource "alicloud_ecs_key_pair" "tf-test-key-pair" {
-  key_pair_name = "tf-test-key-pair"
+  key_pair_name = "${var.name}-key-pair"
   public_key    = tls_private_key.tf-test-key-pair.public_key_openssh
 }
 
 # 创建安全组
 resource "alicloud_security_group" "tf-test-security-group" {
-  name   = "tf-test-security-group"
+  name   = "${var.name}-security-group"
   vpc_id = alicloud_vpc.tf-test-vpc.id
 }
 
@@ -66,8 +66,8 @@ resource "alicloud_instance" "tf-test-web-service" {
   ]
   vswitch_id           = alicloud_vswitch.tf-test-vswitch[count.index % length(alicloud_vswitch.tf-test-vswitch)].id
   internet_charge_type = "PayByTraffic"
-  instance_name        = "tf-test-web-service-${count.index + 1}"
-  host_name            = "tf-test-web-service-${count.index + 1}"
+  instance_name        = "${var.name}-${count.index + 1}"
+  host_name            = "${var.name}-${count.index + 1}"
   key_name             = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
 }
 
@@ -81,8 +81,8 @@ resource "alicloud_instance" "tf-test-jump-server" {
   vswitch_id                 = alicloud_vswitch.tf-test-vswitch[0].id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
-  instance_name              = "tf-test-jump-server"
-  host_name                  = "tf-test-jump-server"
+  instance_name              = "${var.name}-jump-server"
+  host_name                  = "${var.name}-jump-server"
   key_name                   = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
 
   connection {
@@ -111,7 +111,7 @@ output "connection-jump-server" {
 
 # 创建 OOS 执行所需的 RAM 角色
 resource "alicloud_ram_role" "tf-test-oos-service-role" {
-  name     = "tf-test-oos-service-role"
+  name     = "${var.name}-oos-service-role"
   force    = true
   document = <<EOF
   {
@@ -188,7 +188,7 @@ function install_docker() {
 
 
 function install_logtail() {
-  echo ${var.sls_logtail_user_define} >/etc/ilogtail/user_defined_id
+  echo ${var.name} >/etc/ilogtail/user_defined_id
 }
 
 function prepare_config() {
