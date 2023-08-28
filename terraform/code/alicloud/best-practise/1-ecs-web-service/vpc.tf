@@ -1,4 +1,4 @@
-data "alicloud_zones" "zones-available-vswitch" {
+data "alicloud_zones" "zones_vswitch" {
   available_resource_creation = "VSwitch"
 }
 
@@ -10,9 +10,7 @@ resource "alicloud_vpc" "vpc" {
 
 # 创建交换机
 resource "alicloud_vswitch" "vswitchs" {
-  for_each = {
-    for idx, zone in data.alicloud_zones.zones-available-vswitch.zones : idx => zone
-  }
+  for_each = {for idx, zone in data.alicloud_zones.zones_vswitch.zones : idx => zone}
 
   zone_id    = each.value.id
   vpc_id     = alicloud_vpc.vpc.id
@@ -20,7 +18,7 @@ resource "alicloud_vswitch" "vswitchs" {
 }
 
 # 创建NAT网关
-resource "alicloud_nat_gateway" "nat-gateway" {
+resource "alicloud_nat_gateway" "nat_gateway" {
   vpc_id           = alicloud_vpc.vpc.id
   nat_gateway_name = "${var.name}-nat-gateway"
   payment_type     = "PayAsYouGo"
@@ -39,14 +37,14 @@ resource "alicloud_eip_address" "eip-outbounds" {
 }
 
 # 绑定公网IP
-resource "alicloud_eip_association" "eip-association-nat-gateway" {
+resource "alicloud_eip_association" "eip_association_nat_gateway" {
   allocation_id = alicloud_eip_address.eip-outbounds.id
-  instance_id   = alicloud_nat_gateway.nat-gateway.id
+  instance_id   = alicloud_nat_gateway.nat_gateway.id
 }
 
 # 等待 eip 和 nat gateway 绑定完成
-resource "null_resource" "after-30-seconds-eip-association-nat-gateway" {
-  depends_on = [alicloud_eip_association.eip-association-nat-gateway]
+resource "null_resource" "after_30_seconds_eip_association_nat_gateway" {
+  depends_on = [alicloud_eip_association.eip_association_nat_gateway]
 
   provisioner "local-exec" {
     command = "sleep 30"
@@ -54,11 +52,11 @@ resource "null_resource" "after-30-seconds-eip-association-nat-gateway" {
 }
 
 # 创建SNAT条目
-resource "alicloud_snat_entry" "snat-entry" {
-  depends_on = [null_resource.after-30-seconds-eip-association-nat-gateway]
+resource "alicloud_snat_entry" "snat_entry" {
+  depends_on = [null_resource.after_30_seconds_eip_association_nat_gateway]
 
   for_each          = alicloud_vswitch.vswitchs
-  snat_table_id     = alicloud_nat_gateway.nat-gateway.snat_table_ids
+  snat_table_id     = alicloud_nat_gateway.nat_gateway.snat_table_ids
   source_vswitch_id = each.value.id
   snat_ip           = alicloud_eip_address.eip-outbounds.ip_address
 }
