@@ -1,12 +1,12 @@
 # 创建日志服务项目
-resource "alicloud_log_project" "log-project" {
+resource "alicloud_log_project" "log_project" {
   name = "${var.name}-project"
 }
 
 ## 创建日志服务日志库
-resource "alicloud_log_store" "log-store-access-log" {
+resource "alicloud_log_store" "log_store_access_log" {
   name                  = "${var.name}-access-log"
-  project               = alicloud_log_project.log-project.name
+  project               = alicloud_log_project.log_project.name
   shard_count           = 3
   auto_split            = true
   max_split_shard_count = 60
@@ -16,10 +16,10 @@ resource "alicloud_log_store" "log-store-access-log" {
 
 # 创建日志库配置
 # TODO 目前不支持解析日志格式，只有单行日志
-resource "alicloud_logtail_config" "logtail-config-access-log" {
+resource "alicloud_logtail_config" "logtail_config_access_log" {
   name        = "${var.name}-access-log"
-  project     = alicloud_log_project.log-project.name
-  logstore    = alicloud_log_store.log-store-access-log.name
+  project     = alicloud_log_project.log_project.name
+  logstore    = alicloud_log_store.log_store_access_log.name
   input_type  = "plugin"
   output_type = "LogService"
 
