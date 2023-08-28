@@ -17,13 +17,18 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = "us-east-1"
+variable "os" {
+  type    = string
+  default = "win"
 }
 
 variable "name" {
   type    = string
   default = "ss"
+}
+
+provider "aws" {
+  region = "us-east-1"
 }
 
 data "aws_ami" "ubuntu_22" {
@@ -184,7 +189,7 @@ runtimeConfig:
                 "server_port": ${random_integer.ss_port.result},
                 "password": "${random_password.ss_password.result}",
                 "timeout": 300,
-                "method": "aes-256-gcm",
+                "method": "${var.os == "win" ? "aes-256-gcm" : "aes-256-ctr"}",
                 "fast_open": false,
                 "workers": 1,
                 "prefer_ipv6": false
