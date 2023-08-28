@@ -46,7 +46,7 @@ resource "alicloud_security_group" "security_group" {
   vpc_id = alicloud_vpc.vpc.id
 }
 
-resource "alicloud_security_group_rule" "security-group-rule-allow-ssh" {
+resource "alicloud_security_group_rule" "security_group_rule_allow_ssh" {
   type              = "ingress"
   ip_protocol       = "tcp"
   nic_type          = "intranet"
@@ -122,7 +122,7 @@ output "connection_jump_server" {
 }
 
 # 创建 OOS 执行所需的 RAM 角色
-resource "alicloud_ram_role" "ram-role-oos-service" {
+resource "alicloud_ram_role" "ram_role_oos_service" {
   name     = "${var.name}-oos-service-role"
   force    = true
   document = <<EOF
@@ -146,7 +146,7 @@ resource "alicloud_ram_role" "ram-role-oos-service" {
 resource "alicloud_ram_role_policy_attachment" "ram_role_policy_attachment_aliyun_ecs_full_access" {
   policy_name = "AliyunECSFullAccess"
   policy_type = "System"
-  role_name   = alicloud_ram_role.ram-role-oos-service.name
+  role_name   = alicloud_ram_role.ram_role_oos_service.name
 }
 
 # 安装日志服务 agent
@@ -163,7 +163,7 @@ resource "alicloud_oos_execution" "oos_execution_install_log_agent" {
       ResourceIds = [each.value.id]
       RegionId    = "cn-beijing"
     }
-    OOSAssumeRole = alicloud_ram_role.ram-role-oos-service.name
+    OOSAssumeRole = alicloud_ram_role.ram_role_oos_service.name
   })
 }
 
@@ -182,7 +182,7 @@ resource "alicloud_oos_execution" "oos_execution_install_cms_agent" {
       ResourceIds = [each.value.id]
       RegionId    = "cn-beijing"
     }
-    OOSAssumeRole = alicloud_ram_role.ram-role-oos-service.name
+    OOSAssumeRole = alicloud_ram_role.ram_role_oos_service.name
   })
 }
 
@@ -266,6 +266,6 @@ EOT
       RegionId    = "cn-beijing"
     }
     resourceType  = "ALIYUN::ECS::Instance"
-    OOSAssumeRole = alicloud_ram_role.ram-role-oos-service.name
+    OOSAssumeRole = alicloud_ram_role.ram_role_oos_service.name
   })
 }
