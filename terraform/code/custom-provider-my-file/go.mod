@@ -1,6 +1,6 @@
 module github.com/hatlonely/notebook/terraform/code/custom-provider-my-file
 
-go 1.20
+go 1.18
 
 require github.com/hashicorp/terraform-plugin-sdk/v2 v2.28.0
 
