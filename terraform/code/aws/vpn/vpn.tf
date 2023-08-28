@@ -21,6 +21,10 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "name" {
+  type    = string
+  default = "ss"
+}
 
 data "aws_ami" "ubuntu_22" {
   owners      = ["amazon"]
@@ -80,13 +84,13 @@ resource "local_file" "file_id_rsa_pub" {
 
 # 创建秘钥对
 resource "aws_key_pair" "key_pair" {
-  key_name   = "tf-test-key-pair"
+  key_name   = "${var.name}-key-pair"
   public_key = tls_private_key.tls_private_key.public_key_openssh
 }
 
 # 创建安全组
 resource "aws_security_group" "security_group" {
-  name   = "tf-test-security-group"
+  name   = "${var.name}-security-group"
   vpc_id = aws_vpc.vpc.id
   ingress {
     description      = "ssh"
@@ -140,7 +144,7 @@ resource "random_integer" "ss_port" {
 
 # 创建启动脚本
 resource "aws_ssm_document" "ssm_document_init_instance" {
-  name            = "tf-test-ssm-document-init-instance"
+  name            = "${var.name}-ssm-document-init-instance"
   document_type   = "Command"
   document_format = "YAML"
   content         = <<EOT
