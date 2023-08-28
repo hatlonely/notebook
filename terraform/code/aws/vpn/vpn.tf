@@ -230,6 +230,6 @@ output "connection" {
   value = <<EOF
 host: ${aws_instance.instance.public_ip}
 port: ${random_integer.ss_port.result}
-password:  ${nonsensitive(random_password.ss_password.result)}
+password: ${nonsensitive(random_password.ss_password.result)}
 EOF
 }
