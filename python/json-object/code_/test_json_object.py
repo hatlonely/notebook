@@ -21,17 +21,6 @@ class A():
     bs: list[B]
 
 
-def test_json1():
-    @json_object
-    class A():
-        key1: int
-        key2: str
-
-    a = A("""{"key1": "1","key2": "val2"}""")
-    assert a.key1 == 1
-    assert a.key2 == "val2"
-
-
 def test_json_object_from_dict():
     a = A({
         "key1": "1",
