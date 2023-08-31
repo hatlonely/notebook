@@ -20,3 +20,11 @@ resource "myfile" "myfile" {
 output "myfile" {
   value = myfile.myfile
 }
+
+data "myfile" "myfile" {
+  directory = path.module
+}
+
+output "files" {
+  value = data.myfile.myfile
+}
