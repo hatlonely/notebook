@@ -24,30 +24,30 @@ variable "os" {
 
 provider "vultr" {}
 
-# 创建防火墙
-resource "vultr_firewall_group" "firewall_group" {
-  description = "shadowsocks firewall group"
-}
-
-resource "vultr_firewall_rule" "firewall_rule_ssh" {
-  firewall_group_id = vultr_firewall_group.firewall_group.id
-  protocol          = "tcp"
-  ip_type           = "v4"
-  subnet            = "0.0.0.0"
-  subnet_size       = 0
-  port              = "22"
-  notes             = "ssh"
-}
-
-resource "vultr_firewall_rule" "firewall_rule_ss" {
-  firewall_group_id = vultr_firewall_group.firewall_group.id
-  protocol          = "tcp"
-  ip_type           = "v4"
-  subnet            = "0.0.0.0"
-  subnet_size       = 0
-  port              = "${random_integer.ss_port.result}"
-  notes             = "shadowsocks"
-}
+## 创建防火墙
+#resource "vultr_firewall_group" "firewall_group" {
+#  description = "shadowsocks firewall group"
+#}
+#
+#resource "vultr_firewall_rule" "firewall_rule_ssh" {
+#  firewall_group_id = vultr_firewall_group.firewall_group.id
+#  protocol          = "tcp"
+#  ip_type           = "v4"
+#  subnet            = "0.0.0.0"
+#  subnet_size       = 0
+#  port              = "22"
+#  notes             = "ssh"
+#}
+#
+#resource "vultr_firewall_rule" "firewall_rule_ss" {
+#  firewall_group_id = vultr_firewall_group.firewall_group.id
+#  protocol          = "tcp"
+#  ip_type           = "v4"
+#  subnet            = "0.0.0.0"
+#  subnet_size       = 0
+#  port              = "${random_integer.ss_port.result}"
+#  notes             = "shadowsocks"
+#}
 
 # 获取操作系统镜像
 data vultr_os "ubuntu_22" {
@@ -175,7 +175,7 @@ resource "vultr_instance" "instance" {
   backups           = "disabled"
   hostname          = "shadowsocks"
   ssh_key_ids       = [vultr_ssh_key.vultr_ssh_key.id]
-  firewall_group_id = vultr_firewall_group.firewall_group.id
+#  firewall_group_id = vultr_firewall_group.firewall_group.id
 }
 
 output "connect" {
