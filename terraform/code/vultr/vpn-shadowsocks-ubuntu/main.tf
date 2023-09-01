@@ -26,7 +26,7 @@ terraform {
 }
 
 variable "os" {
-  type = string
+  type    = string
   default = "win"
 }
 
@@ -81,8 +81,8 @@ resource "tls_private_key" "tls_private_key" {
 
 # 保存秘钥
 resource "local_file" "file_id_rsa" {
-  filename = "id_rsa"
-  content  = tls_private_key.tls_private_key.private_key_pem
+  filename        = "id_rsa"
+  content         = tls_private_key.tls_private_key.private_key_pem
   file_permission = "0600"
 }
 
@@ -93,7 +93,7 @@ resource "local_file" "file_id_rsa_pub" {
 
 # 创建秘钥对
 resource "vultr_ssh_key" "vultr_ssh_key" {
-  name   = "ss-key"
+  name    = "ss-key"
   ssh_key = tls_private_key.tls_private_key.public_key_openssh
 }
 
