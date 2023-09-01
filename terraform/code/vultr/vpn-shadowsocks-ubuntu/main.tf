@@ -24,6 +24,7 @@ variable "os" {
 
 provider "vultr" {}
 
+# 创建防火墙
 resource "vultr_firewall_group" "firewall_group" {
   description = "shadowsocks firewall group"
 }
@@ -106,8 +107,11 @@ resource "vultr_startup_script" "startup_script_shadowsocks_init" {
   script = base64encode(<<EOT
 #!/usr/bin/env bash
 
+touch 1.txt
+echo hello world >/root/1.txt
+
 # 更新系统
-sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
+sudo apt update -y
 
 # 安装工具链
 sudo apt install -y --no-install-recommends build-essential autoconf libtool \
@@ -164,15 +168,14 @@ EOT
 
 # 创建实例
 resource "vultr_instance" "instance" {
-  plan     = "vc2-1c-1gb"
-  region   = data.vultr_region.us.id
-  os_id    = data.vultr_os.ubuntu_22.id
-  script_id = vultr_startup_script.startup_script_shadowsocks_init.id
-  backups  = "disabled"
-  hostname = "shadowsocks"
-  ssh_key_ids = [
-    vultr_ssh_key.vultr_ssh_key.id
-  ]
+  plan              = "vc2-1c-1gb"
+  region            = data.vultr_region.us.id
+  os_id             = data.vultr_os.ubuntu_22.id
+  script_id         = vultr_startup_script.startup_script_shadowsocks_init.id
+  backups           = "disabled"
+  hostname          = "shadowsocks"
+  ssh_key_ids       = [vultr_ssh_key.vultr_ssh_key.id]
+  firewall_group_id = vultr_firewall_group.firewall_group.id
 }
 
 output "connect" {
