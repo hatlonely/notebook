@@ -1,4 +1,12 @@
 terraform {
+  cloud {
+    organization = "hatlonely"
+
+    workspaces {
+      name = "vultr-shadowsocks"
+    }
+  }
+
   required_providers {
     vultr = {
       source  = "vultr/vultr"
