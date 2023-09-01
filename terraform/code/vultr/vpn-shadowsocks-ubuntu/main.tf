@@ -107,9 +107,6 @@ resource "vultr_startup_script" "startup_script_shadowsocks_init" {
   script = base64encode(<<EOT
 #!/usr/bin/env bash
 
-touch 1.txt
-echo hello world >/root/1.txt
-
 # 更新系统
 sudo apt update -y
 
