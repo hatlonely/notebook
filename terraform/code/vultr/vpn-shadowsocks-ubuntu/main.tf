@@ -24,6 +24,31 @@ variable "os" {
 
 provider "vultr" {}
 
+resource "vultr_firewall_group" "firewall_group" {
+  description = "shadowsocks firewall group"
+}
+
+resource "vultr_firewall_rule" "firewall_rule_ssh" {
+  firewall_group_id = vultr_firewall_group.firewall_group.id
+  protocol          = "tcp"
+  ip_type           = "v4"
+  subnet            = "0.0.0.0"
+  subnet_size       = 0
+  port              = "22"
+  notes             = "ssh"
+}
+
+resource "vultr_firewall_rule" "firewall_rule_ss" {
+  firewall_group_id = vultr_firewall_group.firewall_group.id
+  protocol          = "tcp"
+  ip_type           = "v4"
+  subnet            = "0.0.0.0"
+  subnet_size       = 0
+  port              = "${random_integer.ss_port.result}"
+  notes             = "shadowsocks"
+}
+
+# 获取操作系统镜像
 data vultr_os "ubuntu_22" {
   filter {
     name   = "name"
@@ -31,6 +56,7 @@ data vultr_os "ubuntu_22" {
   }
 }
 
+# 获取地区
 data vultr_region "us" {
   filter {
     name   = "city"
