@@ -5,38 +5,36 @@
 ## 创建 vpc
 
 ```terraform
-data "alicloud_zones" "zones" {
+data "alicloud_zones" "zones_vswitch" {
   available_resource_creation = "VSwitch"
 }
 
 # 创建VPC
-resource "alicloud_vpc" "tf-test-vpc" {
-  vpc_name   = "tf-test-vpc"
+resource "alicloud_vpc" "vpc" {
+  vpc_name   = "${var.name}-vpc"
   cidr_block = "172.16.0.0/16"
 }
 
 # 创建交换机
-resource "alicloud_vswitch" "tf-test-vswitch" {
-  for_each = {
-    for idx, zone in data.alicloud_zones.zones.zones : idx => zone
-  }
+resource "alicloud_vswitch" "vswitchs" {
+  for_each = {for idx, zone in data.alicloud_zones.zones_vswitch.zones : idx => zone}
 
   zone_id    = each.value.id
-  vpc_id     = alicloud_vpc.tf-test-vpc.id
-  cidr_block = cidrsubnet(alicloud_vpc.tf-test-vpc.cidr_block, 8, each.key)
+  vpc_id     = alicloud_vpc.vpc.id
+  cidr_block = cidrsubnet(alicloud_vpc.vpc.cidr_block, 8, each.key)
 }
 
 # 创建NAT网关
-resource "alicloud_nat_gateway" "tf-test-nat-gateway" {
-  vpc_id           = alicloud_vpc.tf-test-vpc.id
-  nat_gateway_name = "tf-test-nat-gateway"
+resource "alicloud_nat_gateway" "nat_gateway" {
+  vpc_id           = alicloud_vpc.vpc.id
+  nat_gateway_name = "${var.name}-nat-gateway"
   payment_type     = "PayAsYouGo"
-  vswitch_id       = alicloud_vswitch.tf-test-vswitch.0.id
+  vswitch_id       = alicloud_vswitch.vswitchs.0.id
   nat_type         = "Enhanced"
 }
 
 # 创建公网IP
-resource "alicloud_eip_address" "tf-test-eip" {
+resource "alicloud_eip_address" "eip-outbounds" {
   bandwidth            = "5"
   internet_charge_type = "PayByTraffic"
   payment_type         = "PayAsYouGo"
@@ -46,17 +44,28 @@ resource "alicloud_eip_address" "tf-test-eip" {
 }
 
 # 绑定公网IP
-resource "alicloud_eip_association" "tf-test-eip-association" {
-  allocation_id = alicloud_eip_address.tf-test-eip.id
-  instance_id   = alicloud_nat_gateway.tf-test-nat-gateway.id
+resource "alicloud_eip_association" "eip_association_nat_gateway" {
+  allocation_id = alicloud_eip_address.eip-outbounds.id
+  instance_id   = alicloud_nat_gateway.nat_gateway.id
+}
+
+# 等待 eip 和 nat gateway 绑定完成
+resource "null_resource" "after_30_seconds_eip_association_nat_gateway" {
+  depends_on = [alicloud_eip_association.eip_association_nat_gateway]
+
+  provisioner "local-exec" {
+    command = "sleep 30"
+  }
 }
 
 # 创建SNAT条目
-resource "alicloud_snat_entry" "tf-test-snat-entry" {
-  for_each          = alicloud_vswitch.tf-test-vswitch
-  snat_table_id     = alicloud_nat_gateway.tf-test-nat-gateway.snat_table_ids
+resource "alicloud_snat_entry" "snat_entry" {
+  depends_on = [null_resource.after_30_seconds_eip_association_nat_gateway]
+
+  for_each          = alicloud_vswitch.vswitchs
+  snat_table_id     = alicloud_nat_gateway.nat_gateway.snat_table_ids
   source_vswitch_id = each.value.id
-  snat_ip           = alicloud_eip_address.tf-test-eip.ip_address
+  snat_ip           = alicloud_eip_address.eip-outbounds.ip_address
 }
 ```
 
@@ -64,97 +73,109 @@ resource "alicloud_snat_entry" "tf-test-snat-entry" {
 
 ```terraform
 # 服务实例类型
-data "alicloud_instance_types" "web-instance-types" {
+data "alicloud_instance_types" "instance_types" {
   cpu_core_count = 1
   memory_size    = 1
 }
 
 # 跳板机实例类型
-data "alicloud_instance_types" "jump-server-instance-types" {
+data "alicloud_instance_types" "instance_types_jump_server" {
   cpu_core_count = 1
   memory_size    = 1
 }
 
 # 服务基础镜像
-data "alicloud_images" "ubuntu_22" {
+data "alicloud_images" "images_ubuntu_22" {
   name_regex = "^ubuntu_22"
   owners     = "system"
 }
 
 # 生成登录秘钥对
-resource "tls_private_key" "tf-test-key-pair" {
+resource "tls_private_key" "tls_private_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 # 保存秘钥
-resource "local_file" "tf-test-id-rsa" {
-  filename = "id_rsa"
-  content  = tls_private_key.tf-test-key-pair.private_key_pem
+resource "local_file" "file_id_rsa" {
+  filename        = "id_rsa"
+  content         = tls_private_key.tls_private_key.private_key_pem
+  file_permission = "0600"
 }
 
-resource "local_file" "tf-test-id-rsa-pub" {
+resource "local_file" "file_id_rsa_pub" {
   filename = "id_rsa.pub"
-  content  = tls_private_key.tf-test-key-pair.public_key_openssh
+  content  = tls_private_key.tls_private_key.public_key_openssh
 }
 
 # 创建秘钥对
-resource "alicloud_ecs_key_pair" "tf-test-key-pair" {
-  key_pair_name = "tf-test-key-pair"
-  public_key    = tls_private_key.tf-test-key-pair.public_key_openssh
+resource "alicloud_ecs_key_pair" "ecs_key_pair" {
+  key_pair_name = "${var.name}-key-pair"
+  public_key    = tls_private_key.tls_private_key.public_key_openssh
 }
 
 # 创建安全组
-resource "alicloud_security_group" "tf-test-security-group" {
-  name   = "tf-test-security-group"
-  vpc_id = alicloud_vpc.tf-test-vpc.id
+resource "alicloud_security_group" "security_group" {
+  name   = "${var.name}-security-group"
+  vpc_id = alicloud_vpc.vpc.id
 }
 
-resource "alicloud_security_group_rule" "tf-test-security-group-rule" {
+resource "alicloud_security_group_rule" "security_group_rule_allow_ssh" {
   type              = "ingress"
   ip_protocol       = "tcp"
   nic_type          = "intranet"
   policy            = "accept"
-  port_range        = "1/65535"
+  port_range        = "22/22"
   priority          = 1
-  security_group_id = alicloud_security_group.tf-test-security-group.id
+  security_group_id = alicloud_security_group.security_group.id
   cidr_ip           = "123.113.97.7/32"
 }
 
 # 创建服务实例（无公网地址）
-resource "alicloud_instance" "tf-test-web-service" {
+resource "alicloud_instance" "instances" {
   count           = var.instance_number
-  image_id        = data.alicloud_images.ubuntu_22.images[0].id
-  instance_type   = data.alicloud_instance_types.web-instance-types.instance_types[0].id
+  image_id        = data.alicloud_images.images_ubuntu_22.images[0].id
+  instance_type   = data.alicloud_instance_types.instance_types.instance_types[0].id
   security_groups = [
-    alicloud_security_group.tf-test-security-group.id,
+    alicloud_security_group.security_group.id,
   ]
-  vswitch_id           = alicloud_vswitch.tf-test-vswitch[count.index % length(alicloud_vswitch.tf-test-vswitch)].id
+  vswitch_id           = alicloud_vswitch.vswitchs[count.index % length(alicloud_vswitch.vswitchs)].id
   internet_charge_type = "PayByTraffic"
-  instance_name        = "tf-test-web-service-${count.index + 1}"
-  host_name            = "tf-test-web-service-${count.index + 1}"
-  key_name             = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
+  instance_name        = "${var.name}-${count.index + 1}"
+  host_name            = "${var.name}-${count.index + 1}"
+  key_name             = alicloud_ecs_key_pair.ecs_key_pair.key_pair_name
+}
+
+# 等待实例创建完成
+resource "null_resource" "after_30_seconds_instance" {
+  depends_on = [
+    alicloud_instance.instances
+  ]
+
+  provisioner "local-exec" {
+    command = "sleep 30"
+  }
 }
 
 # 创建跳板机
-resource "alicloud_instance" "tf-test-jump-server" {
-  image_id        = data.alicloud_images.ubuntu_22.images[0].id
-  instance_type   = data.alicloud_instance_types.jump-server-instance-types.instance_types[0].id
+resource "alicloud_instance" "instance_jump_server" {
+  image_id        = data.alicloud_images.images_ubuntu_22.images[0].id
+  instance_type   = data.alicloud_instance_types.instance_types_jump_server.instance_types[0].id
   security_groups = [
-    alicloud_security_group.tf-test-security-group.id,
+    alicloud_security_group.security_group.id,
   ]
-  vswitch_id                 = alicloud_vswitch.tf-test-vswitch[0].id
+  vswitch_id                 = alicloud_vswitch.vswitchs[0].id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
-  instance_name              = "tf-test-jump-server"
-  host_name                  = "tf-test-jump-server"
-  key_name                   = alicloud_ecs_key_pair.tf-test-key-pair.key_pair_name
+  instance_name              = "${var.name}-jump-server"
+  host_name                  = "${var.name}-jump-server"
+  key_name                   = alicloud_ecs_key_pair.ecs_key_pair.key_pair_name
 
   connection {
     type        = "ssh"
     user        = "root"
     host        = self.public_ip
-    private_key = tls_private_key.tf-test-key-pair.private_key_pem
+    private_key = tls_private_key.tls_private_key.private_key_pem
   }
 
   provisioner "file" {
@@ -170,13 +191,13 @@ resource "alicloud_instance" "tf-test-jump-server" {
 }
 
 # 输出连接跳板机的命令
-output "connection-jump-server" {
-  value = "ssh -i id_rsa root@${alicloud_instance.tf-test-jump-server.public_ip}"
+output "connection_jump_server" {
+  value = "ssh -i id_rsa root@${alicloud_instance.instance_jump_server.public_ip}"
 }
 
 # 创建 OOS 执行所需的 RAM 角色
-resource "alicloud_ram_role" "tf-test-oos-service-role" {
-  name     = "tf-test-oos-service-role"
+resource "alicloud_ram_role" "ram_role_oos_service" {
+  name     = "${var.name}-oos-service-role"
   force    = true
   document = <<EOF
   {
@@ -196,24 +217,19 @@ resource "alicloud_ram_role" "tf-test-oos-service-role" {
   EOF
 }
 
-resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-full-access" {
+resource "alicloud_ram_role_policy_attachment" "ram_role_policy_attachment_aliyun_ecs_full_access" {
   policy_name = "AliyunECSFullAccess"
   policy_type = "System"
-  role_name   = alicloud_ram_role.tf-test-oos-service-role.name
+  role_name   = alicloud_ram_role.ram_role_oos_service.name
 }
 
-resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-log-full-access" {
-  policy_name = "AliyunLogFullAccess"
-  policy_type = "System"
-  role_name   = alicloud_ram_role.tf-test-oos-service-role.name
-}
+# 安装日志服务 agent
+resource "alicloud_oos_execution" "oos_execution_install_log_agent" {
+  depends_on = [null_resource.after_30_seconds_instance]
 
-resource "alicloud_oos_execution" "tf-test-web-service-init-logtail" {
-  for_each = {
-    for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
-  }
+  for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
 
-  template_name = "ACS-LOG-BulkyInstallLogtail"
+  template_name = "ACS-ECS-BulkyInstallLogAgent"
   parameters    = jsonencode({
     regionId = "cn-beijing"
     targets  = {
@@ -221,14 +237,34 @@ resource "alicloud_oos_execution" "tf-test-web-service-init-logtail" {
       ResourceIds = [each.value.id]
       RegionId    = "cn-beijing"
     }
-    OOSAssumeRole = alicloud_ram_role.tf-test-oos-service-role.name
+    OOSAssumeRole = alicloud_ram_role.ram_role_oos_service.name
   })
 }
 
-resource "alicloud_oos_execution" "tf-test-web-service-init" {
-  for_each = {
-    for idx, instance in alicloud_instance.tf-test-web-service : idx => instance
-  }
+# 安装云监控 agent
+resource "alicloud_oos_execution" "oos_execution_install_cms_agent" {
+  depends_on = [null_resource.after_30_seconds_instance]
+
+  for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
+
+  template_name = "ACS-ECS-ConfigureCloudMonitorAgent"
+  parameters    = jsonencode({
+    regionId = "cn-beijing"
+    action   = "install"
+    targets  = {
+      Type        = "ResourceIds"
+      ResourceIds = [each.value.id]
+      RegionId    = "cn-beijing"
+    }
+    OOSAssumeRole = alicloud_ram_role.ram_role_oos_service.name
+  })
+}
+
+# 启动服务
+resource "alicloud_oos_execution" "oos_execution_start_service" {
+  depends_on = [null_resource.after_30_seconds_instance]
+
+  for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
 
   template_name = "ACS-ECS-BulkyRunCommand"
   parameters    = jsonencode({
@@ -253,7 +289,7 @@ function install_docker() {
 
 
 function install_logtail() {
-  echo ${var.sls_logtail_user_define} >/etc/ilogtail/user_defined_id
+  echo ${var.name} >/etc/ilogtail/user_defined_id
 }
 
 function prepare_config() {
@@ -264,7 +300,7 @@ server {
     listen  [::]:80;
     server_name  _;
 
-    access_log  /var/log/nginx/host.access.log  main;
+    access_log  /var/log/nginx/access.log  main;
 
     location / {
         root   /usr/share/nginx/html;
@@ -304,7 +340,7 @@ EOT
       RegionId    = "cn-beijing"
     }
     resourceType  = "ALIYUN::ECS::Instance"
-    OOSAssumeRole = alicloud_ram_role.tf-test-oos-service-role.name
+    OOSAssumeRole = alicloud_ram_role.ram_role_oos_service.name
   })
 }
 ```
@@ -312,37 +348,37 @@ EOT
 ## 创建 slb
 
 ```terraform
-resource "alicloud_slb_load_balancer" "tf-test-load-balancer" {
-  load_balancer_name   = "tf-test-load-balancer"
+resource "alicloud_slb_load_balancer" "slb_load_balancer" {
+  load_balancer_name   = "${var.name}-load-balancer"
   address_type         = "internet"
   load_balancer_spec   = "slb.s1.small"
   internet_charge_type = "PayByTraffic"
 }
 
-resource "alicloud_slb_server_group" "tf-test-server-group" {
-  name             = "tf-test-server-group"
-  load_balancer_id = alicloud_slb_load_balancer.tf-test-load-balancer.id
+resource "alicloud_slb_server_group" "slb_server_group" {
+  name             = "${var.name}-server-group"
+  load_balancer_id = alicloud_slb_load_balancer.slb_load_balancer.id
 }
 
 resource "alicloud_slb_server_group_server_attachment" "tf-test-server-group-server-attachment" {
   count           = var.instance_number
-  server_group_id = alicloud_slb_server_group.tf-test-server-group.id
-  server_id       = alicloud_instance.tf-test-web-service[count.index].id
+  server_group_id = alicloud_slb_server_group.slb_server_group.id
+  server_id       = alicloud_instance.instances[count.index].id
   port            = 80
 }
 
-resource "alicloud_slb_listener" "tf-test-listener" {
-  load_balancer_id = alicloud_slb_load_balancer.tf-test-load-balancer.id
+resource "alicloud_slb_listener" "slb_listener" {
+  load_balancer_id = alicloud_slb_load_balancer.slb_load_balancer.id
   backend_port     = 80
   frontend_port    = 80
   protocol         = "tcp"
   bandwidth        = 1
-  server_group_id  = alicloud_slb_server_group.tf-test-server-group.id
+  server_group_id  = alicloud_slb_server_group.slb_server_group.id
 }
 
 output "slb_connection" {
   value = <<EOF
-curl http://${alicloud_slb_load_balancer.tf-test-load-balancer.address}
+curl http://${alicloud_slb_load_balancer.slb_load_balancer.address}
 EOF
 }
 ```
@@ -351,14 +387,14 @@ EOF
 
 ```terraform
 # 创建日志服务项目
-resource "alicloud_log_project" "tf-test-project" {
-  name = "tf-test-project"
+resource "alicloud_log_project" "log_project" {
+  name = "${var.name}-project"
 }
 
 # 创建日志服务日志库
-resource "alicloud_log_store" "tf-test-store" {
-  name                  = "tf-test-store"
-  project               = alicloud_log_project.tf-test-project.name
+resource "alicloud_log_store" "log_store_access_log" {
+  name                  = "${var.name}-access-log"
+  project               = alicloud_log_project.log_project.name
   shard_count           = 3
   auto_split            = true
   max_split_shard_count = 60
@@ -366,9 +402,9 @@ resource "alicloud_log_store" "tf-test-store" {
 }
 
 # 创建日志服务索引
-resource "alicloud_log_store_index" "tf-test-store-index" {
-  logstore = alicloud_log_store.tf-test-store.name
-  project  = alicloud_log_project.tf-test-project.name
+resource "alicloud_log_store_index" "log-store-index-access-log" {
+  logstore = alicloud_log_store.log_store_access_log.name
+  project  = alicloud_log_project.log_project.name
   full_text {
     case_sensitive = true
     token          = "#$^*\r\n\t"
@@ -385,22 +421,27 @@ resource "alicloud_log_store_index" "tf-test-store-index" {
     type             = "text"
     token            = " #$^*\r\n\t"
   }
+  field_search {
+    name             = "status"
+    enable_analytics = true
+    type             = "long"
+  }
 }
 
 # 创建日志服务机器组
-resource "alicloud_log_machine_group" "tf-test-machine-group" {
-  name          = "tf-test-machine-group"
-  project       = alicloud_log_project.tf-test-project.name
+resource "alicloud_log_machine_group" "log_machine_group" {
+  name          = "${var.name}-machine-group"
+  project       = alicloud_log_project.log_project.name
   identify_type = "userdefined"
-  topic         = "tf-test-machine-group-topic"
-  identify_list = [var.sls_logtail_user_define]
+  topic         = "${var.name}-machine-group-topic"
+  identify_list = [var.name]
 }
 
 # 创建日志库配置
-resource "alicloud_logtail_config" "tf-test-logtail-config" {
-  name         = "tf-test-logtail-config"
-  project      = alicloud_log_project.tf-test-project.name
-  logstore     = alicloud_log_store.tf-test-store.name
+resource "alicloud_logtail_config" "logtail_config_access_log" {
+  name         = "${var.name}-logtail-config"
+  project      = alicloud_log_project.log_project.name
+  logstore     = alicloud_log_store.log_store_access_log.name
   input_type   = "file"
   output_type  = "LogService"
   input_detail = <<EOF
@@ -424,10 +465,198 @@ EOF
 }
 
 # 关联日志库配置
-resource "alicloud_logtail_attachment" "tf-test-logtail-attachment" {
-  logtail_config_name = alicloud_logtail_config.tf-test-logtail-config.name
-  machine_group_name  = alicloud_log_machine_group.tf-test-machine-group.name
-  project             = alicloud_log_project.tf-test-project.name
+resource "alicloud_logtail_attachment" "logtail_attachment_access_log" {
+  logtail_config_name = alicloud_logtail_config.logtail_config_access_log.name
+  machine_group_name  = alicloud_log_machine_group.log_machine_group.name
+  project             = alicloud_log_project.log_project.name
+}
+
+# 创建 dashboard
+# 不建议使用 terraform 创建 dashboard，因为 dashboard 的配置比较复杂，不如 gui 配置简单
+resource "alicloud_log_dashboard" "log_dashboard" {
+  project_name   = alicloud_log_project.log_project.name
+  dashboard_name = "log-dashboard"
+  display_name   = "log-dashboard"
+  attribute      = "{\"type\":\"grid\"}"
+  char_list      = <<EOF
+  [
+    {
+      "action": {},
+      "title": "${var.name}-pv",
+      "type": "linepro",
+      "search": {
+        "chartQueries": [
+          {
+            "datasource": "logstore",
+            "logstore": "${alicloud_log_store.log_store_access_log.name}",
+            "project": "${alicloud_log_project.log_project.name}",
+            "query": "* | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t",
+            "tokenQuery": "* | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t"
+          }
+        ],
+        "logstore": "${alicloud_log_store.log_store_access_log.name}",
+        "topic": "",
+        "query": "@",
+        "start": "-3600s",
+        "end": "now"
+      },
+      "display": {
+        "xAxis": [
+          "time"
+        ],
+        "yAxis": [
+          "pv"
+        ],
+        "xPos": 0,
+        "yPos": 0,
+        "width": 20,
+        "height": 10,
+        "displayName": "${var.name} pv"
+      }
+    }
+  ]
+EOF
+}
+
+# 创建告警
+resource "alicloud_log_alert" "log_alert_status_not_200" {
+  alert_displayname = "status-not-200"
+  alert_name        = "status-not-200"
+  project_name      = alicloud_log_project.log_project.name
+  auto_annotation   = true
+  mute_until        = 0
+  no_data_fire      = false
+  no_data_severity  = 6
+  send_resolved     = false
+  threshold         = 1
+  type              = "default"
+  version           = "2.0"
+
+  annotations {
+    key   = "title"
+    value = "$${alert_name}告警触发"
+  }
+  annotations {
+    key   = "desc"
+    value = "$${alert_name}告警触发"
+  }
+
+  group_configuration {
+    fields = []
+    type   = "no_group"
+  }
+
+  policy_configuration {
+    action_policy_id = "sls.builtin"
+    alert_policy_id  = "sls.builtin.dynamic"
+    repeat_interval  = "1m"
+  }
+
+  query_list {
+    end            = "now"
+    power_sql_mode = "disable"
+    project        = alicloud_log_project.log_project.name
+    query          = "status != 200 | SELECT date_trunc('minute', __time__) AS t, COUNT(*) AS pv GROUP BY t"
+    region         = "cn-beijing"
+    start          = "-300s"
+    store          = alicloud_log_store.log_store_access_log.name
+    store_type     = "log"
+    time_span_type = "Relative"
+  }
+
+  schedule {
+    day_of_week     = 0
+    delay           = 0
+    hour            = 0
+    interval        = "1m"
+    run_immediately = true
+    type            = "FixedRate"
+  }
+
+  severity_configurations {
+    eval_condition = {
+      "condition"       = ""
+      "count_condition" = ""
+    }
+    severity = 6
+  }
+}
+```
+
+## cms
+
+```terraform
+# 创建告警人
+resource "alicloud_cms_alarm_contact" "hatlonely" {
+  alarm_contact_name = "${var.name}-hatlonely"
+  describe           = "${var.name} hatlonely"
+  channels_mail      = "hatlonely@foxmail.com"
+}
+
+# 创建告警联系组
+resource "alicloud_cms_alarm_contact_group" "cms_alarm_contact_group" {
+  alarm_contact_group_name = "${var.name}-cms-alarm-contact-group"
+  contacts                 = [
+    alicloud_cms_alarm_contact.hatlonely.id,
+  ]
+}
+
+# 创建告警监控组
+resource "alicloud_cms_monitor_group" "cms_monitor_group" {
+  monitor_group_name = "${var.name}-cms-monitor-group"
+  contact_groups     = [
+    alicloud_cms_alarm_contact_group.cms_alarm_contact_group.id,
+  ]
+}
+
+# 创建告警监控组实例
+resource "alicloud_cms_monitor_group_instances" "cms_monitor_group_instances" {
+  for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
+
+  group_id = alicloud_cms_monitor_group.cms_monitor_group.id
+  instances {
+    instance_id   = each.value.id
+    instance_name = each.value.instance_name
+    region_id     = "cn-beijing"
+    category      = "ecs"
+  }
+}
+
+# 创建告警监控组规则
+resource "alicloud_cms_group_metric_rule" "cms_group_metric_rule_cpu_total" {
+  group_id               = alicloud_cms_monitor_group.cms_monitor_group.id
+  group_metric_rule_name = "cpu-total 超过阈值"
+  rule_id                = "acs_ecs_dashboard:cpu_total"
+  category               = "ecs"
+  metric_name            = "cpu_total"
+  namespace              = "acs_ecs_dashboard"
+  period                 = 60
+  interval               = 3600
+  silence_time           = 85800
+  no_effective_interval  = "00:00-05:30"
+
+  escalations {
+    critical {
+      comparison_operator = "GreaterThanOrEqualToThreshold"
+      statistics          = "Average"
+      threshold           = 80
+      times               = 3
+    }
+
+    warn {
+      comparison_operator = "GreaterThanOrEqualToThreshold"
+      statistics          = "Average"
+      threshold           = 70
+      times               = 3
+    }
+
+    info {
+      comparison_operator = "GreaterThanOrEqualToThreshold"
+      statistics          = "Average"
+      threshold           = 60
+      times               = 3
+    }
+  }
 }
 ```
 
