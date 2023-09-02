@@ -1,6 +1,6 @@
 # terraform 资源可视化工具
 
-## Terraform graph 命令
+## terraform graph 命令
 
 ```shell
 sudo apt install graphviz
@@ -10,7 +10,7 @@ terraform graph | dot -Tpng > graph.png
 
 效果比较差，很乱，基本没法看
 
-## Terraform Visual
+## terraform Visual
 
 用如下命令生成 json 文件后，上传到 <https://hieven.github.io/terraform-visual/> 即可
 
@@ -46,9 +46,12 @@ sudo apt install libgraph-easy-perl
 inframap generate . | dot -Tpng > graph.png
 ```
 
-比 terraform graph 命令生成的简洁一点，但是整体也还是没法看
+- aws google 等云厂商，直接集成了他们图标，这一点比较好
+- 比 terraform graph 命令生成的简洁一点，但是整体也还是没法看
+- random 库会报错，必须要部署之后才能根据 state 文件看到架构
+- 有一些资源会被忽略掉
 
-##  
+## rover
 
 ## 参考资料
 
