@@ -1,4 +1,12 @@
 terraform {
+  cloud {
+    organization = "hatlonely"
+
+    workspaces {
+      name = "aws-shadowsocks-ubuntu"
+    }
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
