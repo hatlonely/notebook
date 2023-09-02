@@ -81,3 +81,4 @@ gitGraph TB:
 ## 参考链接
 
 - [mermaid git graph](https://mermaid.js.org/syntax/gitgraph.html)
+- [git flow 概念基本介绍](https://blog.csdn.net/lt6210925/article/details/131263986)
