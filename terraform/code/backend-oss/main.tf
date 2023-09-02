@@ -21,16 +21,16 @@ provider "alicloud" {
   region     = var.region
 }
 
-resource "alicloud_oss_bucket" "oss-tf-state" {
+resource "alicloud_oss_bucket" "oss_bucket_tf_state" {
   bucket = "${var.name}-tf-state"
 }
 
-resource "alicloud_ots_instance" "ots-tf-remote" {
+resource "alicloud_ots_instance" "ots_instance_tf_remote" {
   name = "${var.name}-tf-remote"
 }
 
-resource "alicloud_ots_table" "ots-tf-remote-table" {
-  instance_name = alicloud_ots_instance.ots-tf-remote.name
+resource "alicloud_ots_table" "ots_table_statelock" {
+  instance_name = alicloud_ots_instance.ots_instance_tf_remote.name
   max_version   = 1
   table_name    = "statelock"
   time_to_live  = -1
@@ -44,12 +44,12 @@ output "description" {
   value = <<EOF
 terraform {
   backend "oss" {
-    bucket              = "${alicloud_oss_bucket.oss-tf-state.bucket}"
+    bucket              = "${alicloud_oss_bucket.oss_bucket_tf_state.bucket}"
     prefix              = ""
     key                 = ""
     region              = "${var.region}"
-    tablestore_endpoint = "https://${alicloud_ots_instance.ots-tf-remote.name}.${var.region}.ots.aliyuncs.com"
-    tablestore_table    = "${alicloud_ots_table.ots-tf-remote-table.table_name}"
+    tablestore_endpoint = "https://${alicloud_ots_instance.ots_instance_tf_remote.name}.${var.region}.ots.aliyuncs.com"
+    tablestore_table    = "${alicloud_ots_table.ots_table_statelock.table_name}"
   }
 }
 EOF
