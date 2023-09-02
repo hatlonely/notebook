@@ -53,7 +53,17 @@ inframap generate . | dot -Tpng > graph.png
 
 ## rover
 
+```shell
+printenv | grep "AWS" > .env
+docker run --rm -it -p 9000:9000 -v "$(pwd):/src" --env-file ./.env im2nguyen/rover
+```
+
+- 强制矩阵排列，视觉上规整了一些，但是线完全重叠在了一起，也没法看
+- 不支持阿里云
+
 ## 参考资料
 
 - [Best Tools to Visualize your Terraform](https://blog.brainboard.co/best-tools-to-visualize-your-terraform-d4b537f091dc)
 - [inframap 项目地址](https://github.com/cycloidio/inframap)
+- [rover 项目地址](https://github.com/im2nguyen/rover)
+- [blast radius 项目地址](https://github.com/28mm/blast-radius)
