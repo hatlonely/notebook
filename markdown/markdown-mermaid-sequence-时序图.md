@@ -1,4 +1,4 @@
-# 时序图（sequence）
+# markdown mermaid sequence 时序图
 
 ## 图标
 
