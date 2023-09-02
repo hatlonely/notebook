@@ -5,7 +5,7 @@ resource "alicloud_security_group" "security_group" {
 }
 
 # 创建安全组规则，nic_type 必须为 intranet，但其规则对公网同样有效
-resource "alicloud_security_group_rule" "security-group-rule" {
+resource "alicloud_security_group_rule" "security_group_rule" {
   type              = "ingress"
   ip_protocol       = "tcp"
   nic_type          = "intranet"
