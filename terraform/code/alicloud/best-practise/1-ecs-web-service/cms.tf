@@ -6,7 +6,7 @@ resource "alicloud_cms_alarm_contact" "hatlonely" {
 }
 
 # 创建告警联系组
-resource "alicloud_cms_alarm_contact_group" "cms-alarm-contact-group" {
+resource "alicloud_cms_alarm_contact_group" "cms_alarm_contact_group" {
   alarm_contact_group_name = "${var.name}-cms-alarm-contact-group"
   contacts                 = [
     alicloud_cms_alarm_contact.hatlonely.id,
@@ -14,18 +14,18 @@ resource "alicloud_cms_alarm_contact_group" "cms-alarm-contact-group" {
 }
 
 # 创建告警监控组
-resource "alicloud_cms_monitor_group" "cms-monitor-group" {
+resource "alicloud_cms_monitor_group" "cms_monitor_group" {
   monitor_group_name = "${var.name}-cms-monitor-group"
   contact_groups     = [
-    alicloud_cms_alarm_contact_group.cms-alarm-contact-group.id,
+    alicloud_cms_alarm_contact_group.cms_alarm_contact_group.id,
   ]
 }
 
 # 创建告警监控组实例
-resource "alicloud_cms_monitor_group_instances" "cms-monitor-group-instances" {
+resource "alicloud_cms_monitor_group_instances" "cms_monitor_group_instances" {
   for_each = {for idx, instance in alicloud_instance.instances : idx => instance}
 
-  group_id = alicloud_cms_monitor_group.cms-monitor-group.id
+  group_id = alicloud_cms_monitor_group.cms_monitor_group.id
   instances {
     instance_id   = each.value.id
     instance_name = each.value.instance_name
@@ -35,8 +35,8 @@ resource "alicloud_cms_monitor_group_instances" "cms-monitor-group-instances" {
 }
 
 # 创建告警监控组规则
-resource "alicloud_cms_group_metric_rule" "cms-group-metric-rule-cpu-total" {
-  group_id               = alicloud_cms_monitor_group.cms-monitor-group.id
+resource "alicloud_cms_group_metric_rule" "cms_group_metric_rule_cpu_total" {
+  group_id               = alicloud_cms_monitor_group.cms_monitor_group.id
   group_metric_rule_name = "cpu-total 超过阈值"
   rule_id                = "acs_ecs_dashboard:cpu_total"
   category               = "ecs"
