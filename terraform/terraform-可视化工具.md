@@ -61,13 +61,23 @@ docker run --rm -it -p 9000:9000 -v "$(pwd):/src" --env-file ./.env im2nguyen/ro
 - 强制矩阵排列，视觉上规整了一些，但是线完全重叠在了一起，也没法看
 - 不支持阿里云
 
-## blast radius（推荐）
-
-1. 安装
+## blast radius（不推荐）
 
 ```shell
-pip3 install blastradius
+docker run --rm -it -p 5000:5000 \
+  -v $(pwd):/data:ro \
+  --security-opt apparmor:unconfined \
+  --cap-add=SYS_ADMIN \
+  28mm/blast-radius
 ```
+
+项目地址也的效果没有跑出来，排列也不规整，也没有颜色区分，感觉像是一个阉割版本。
+运行的时候，也有很多报错，可能是长时间没有更新，terraform 有更新，不兼容了。
+
+## 结论
+
+目前来看，没有一个工具在可视化方面做得很好。可能 terraform 本身资源的关系就比较复杂，可视化也比较困难。
+另外 terraform 本身的更新迭代速度也比较快，社区没有持续维护的项目。
 
 ## 参考资料
 
