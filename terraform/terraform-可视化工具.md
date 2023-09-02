@@ -1,6 +1,6 @@
 # terraform 资源可视化工具
 
-## terraform graph 命令
+## terraform graph 命令（不推荐）
 
 ```shell
 sudo apt install graphviz
@@ -10,7 +10,7 @@ terraform graph | dot -Tpng > graph.png
 
 效果比较差，很乱，基本没法看
 
-## terraform Visual
+## terraform Visual（不推荐）
 
 用如下命令生成 json 文件后，上传到 <https://hieven.github.io/terraform-visual/> 即可
 
@@ -21,7 +21,7 @@ terraform show -json plan.out > plan.json
 
 资源平铺的方式，资源比较多得情况下太长了，并且丢失了资源之间的关系，也不理想
 
-## inframap
+## inframap（不推荐）
 
 1. 安装
 
@@ -51,7 +51,7 @@ inframap generate . | dot -Tpng > graph.png
 - random 库会报错，必须要部署之后才能根据 state 文件看到架构
 - 有一些资源会被忽略掉
 
-## rover
+## rover（不推荐）
 
 ```shell
 printenv | grep "AWS" > .env
@@ -60,6 +60,14 @@ docker run --rm -it -p 9000:9000 -v "$(pwd):/src" --env-file ./.env im2nguyen/ro
 
 - 强制矩阵排列，视觉上规整了一些，但是线完全重叠在了一起，也没法看
 - 不支持阿里云
+
+## blast radius（推荐）
+
+1. 安装
+
+```shell
+pip3 install blastradius
+```
 
 ## 参考资料
 
