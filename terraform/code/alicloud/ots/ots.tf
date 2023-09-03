@@ -7,13 +7,18 @@ terraform {
   }
 }
 
+variable "name" {
+  type    = string
+  default = "tf-test"
+}
+
 provider "alicloud" {
   region = "cn-beijing"
   alias  = "cn-beijing"
 }
 
 resource "alicloud_ots_instance" "ots_instance" {
-  name = "tf-test"
+  name = "${var.name}-ots"
 }
 
 output "connection" {
