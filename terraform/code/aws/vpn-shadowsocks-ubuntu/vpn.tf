@@ -25,14 +25,14 @@ terraform {
   }
 }
 
-variable "os" {
-  type    = string
-  default = "win"
-}
-
 variable "name" {
   type    = string
   default = "ss"
+}
+
+variable "encryption_method" {
+  type    = list(string)
+  default = ["aes-256-gcm", "aes-256-ctr"]
 }
 
 provider "aws" {
@@ -117,7 +117,7 @@ resource "aws_security_group" "security_group" {
   ingress {
     description      = "ssh"
     from_port        = random_integer.ss_port.result
-    to_port          = random_integer.ss_port.result
+    to_port          = random_integer.ss_port.result + length(var.encryption_method) - 1
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
@@ -172,58 +172,51 @@ runtimeConfig:
           - |
             #!/usr/bin/env bash
 
-            # 更新系统
-            sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
+            # 安装 shadowsocks-libev
+            # https://github.com/shadowsocks/shadowsocks-libev
+            sudo apt update
+            sudo apt install shadowsocks-libev
 
-            # 安装工具链
-            sudo apt install -y --no-install-recommends build-essential autoconf libtool \
-              libssl-dev gawk debhelper init-system-helpers pkg-config asciidoc \
-              xmlto apg libpcre3-dev zlib1g-dev libev-dev libudns-dev libsodium-dev \
-              libmbedtls-dev libc-ares-dev automake
-
-            # 编译安装
-            sudo apt install -y git
-            git clone https://github.com/shadowsocks/shadowsocks-libev.git
-            cd shadowsocks-libev
-            git submodule update --init
-            ./autogen.sh && ./configure --disable-documentation && make
-            sudo make install
-
-            # 配置
             sudo mkdir -p /etc/shadowsocks-libev
-            sudo bash -c 'cat > /etc/shadowsocks-libev/config.json <<EOF
+            ss_port=$${random_integer.ss_port.result}
+            for encryption_method in ${join(" ", var.encryption_method)}; do
+              # 配置文件
+              sudo bash -c "cat > /etc/shadowsocks-libev/config.$${encryption_method}.json <<EOF
             {
                 "server": "0.0.0.0",
-                "server_port": ${random_integer.ss_port.result},
+                "server_port": $${ss_port},
                 "password": "${random_password.ss_password.result}",
                 "timeout": 300,
-                "method": "${var.os == "win" ? "aes-256-gcm" : "aes-256-ctr"}",
+                "method": "aes-256-gcm",
                 "fast_open": false,
                 "workers": 1,
                 "prefer_ipv6": false
             }
             EOF
-            '
+            "
+              ((ss_port++))
 
-            # 配置服务
-            sudo bash -c 'cat > /etc/systemd/system/shadowsocks-libev.service <<EOF
+              # 配置服务
+              sudo bash -c "cat > /etc/systemd/system/shadowsocks-libev-$${encryption_method}.service <<EOF
             [Unit]
             Description=Shadowsocks-libev Server
             After=network.target
 
             [Service]
             Type=simple
-            ExecStart=/usr/local/bin/ss-server -c /etc/shadowsocks-libev/config.json -u
+            ExecStart=/usr/bin/ss-server -c /etc/shadowsocks-libev/config.$${encryption_method}.json -u
             Restart=on-abort
 
             [Install]
             WantedBy=multi-user.target
             EOF
-            '
+            "
 
-            # 启动服务
-            sudo systemctl start shadowsocks-libev
-            sudo systemctl enable shadowsocks-libev
+              # 启动服务
+              sudo systemctl start shadowsocks-libev-$${encryption_method}
+              sudo systemctl enable shadowsocks-libev-$${encryption_method}
+
+            done
 
         workingDirectory: /root
         timeoutSeconds: 600
