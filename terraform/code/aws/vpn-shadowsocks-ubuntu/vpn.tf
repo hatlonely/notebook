@@ -32,7 +32,7 @@ variable "name" {
 
 variable "encryption_method" {
   type    = list(string)
-  default = ["aes-256-gcm", "aes-256-ctr"]
+  default = ["aes-256-gcm", "aes-256-ctr", "chacha20-ietf-poly1305"]
 }
 
 provider "aws" {
@@ -176,6 +176,9 @@ runtimeConfig:
             # https://github.com/shadowsocks/shadowsocks-libev
             sudo apt update -y
             sudo apt install -y shadowsocks-libev
+            # 关闭默认服务
+            sudo systemctl disable shadowsocks-libev
+            sudo systemctl stop shadowsocks-libev
 
             sudo mkdir -p /etc/shadowsocks-libev
             ss_port=${random_integer.ss_port.result}
@@ -239,3 +242,8 @@ port: ${random_integer.ss_port.result}
 password: ${nonsensitive(random_password.ss_password.result)}
 EOF
 }
+
+#output "connection2" {
+#  value = join("\n", [
+#    for encryption_method in var.encryption_method : <<EOF
+#}

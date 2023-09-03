@@ -43,5 +43,4 @@ EOF
   # 启动服务
   sudo systemctl start shadowsocks-libev-${encryption_method}
   sudo systemctl enable shadowsocks-libev-${encryption_method}
-
 done
