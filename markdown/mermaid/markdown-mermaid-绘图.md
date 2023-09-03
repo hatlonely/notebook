@@ -10,6 +10,10 @@ jetbrains 需要安装插件 mermaid。安装步骤如下：
 1. 打开设置 **Setting** -> **Plugins** -> **Marketplace**
 2. 搜索 **mermaid**，安装 **Mermaid**
 
+## vscode 配置
+
+1. 安装插件 **Markdown Preview Mermaid Support** 即可
+
 ## 主题配置
 
 通过注释的方式可以配置主题，`%%{init: {'theme':'forest'}}%%`。可选的主题值包括：
