@@ -1,5 +1,7 @@
 # 科学上网 vultr shadowsocks ubuntu
 
+vultr 的网速比较快，家庭宽带测试基本可以达到 20MB/s（偶尔能到 30MB/s）而且相对稳定，费用上 6$/月，还算划算，流量 1TB 足够
+
 1. 登录 <https://my.vultr.com/> 账号
 2. Account -> API 获取 API key
 3. 将 API key 导入到环境变量中 `export VULTR_API_KEY="xxx"`
