@@ -235,15 +235,20 @@ resource "aws_ssm_association" "ssm_association_init_instance" {
   }
 }
 
-output "connection" {
-  value = <<EOF
-host: ${aws_instance.instance.public_ip}
-port: ${random_integer.ss_port.result}
-password: ${nonsensitive(random_password.ss_password.result)}
+output "ssh_connection" {
+  value = chomp(<<EOF
+ssh -i id_rsa ubuntu@${aws_instance.instance.public_ip}
 EOF
+  )
 }
 
-#output "connection2" {
-#  value = join("\n", [
-#    for encryption_method in var.encryption_method : <<EOF
-#}
+output "ss_connection" {
+  value = chomp(join("\n", [
+    for idx, method in var.encryption_method : <<EOF
+host: ${aws_instance.instance.public_ip}
+port: ${random_integer.ss_port.result + idx}
+password: ${nonsensitive(random_password.ss_password.result)}
+method: ${method}
+EOF
+  ]))
+}
