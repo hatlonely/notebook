@@ -2,7 +2,7 @@
 
 # 安装 shadowsocks-libev
 # https://github.com/shadowsocks/shadowsocks-libev
-sudo apt update
+sudo apt update -y
 sudo apt install -y shadowsocks-libev
 
 sudo mkdir -p /etc/shadowsocks-libev
