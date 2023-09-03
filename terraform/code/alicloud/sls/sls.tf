@@ -84,3 +84,22 @@ resource "alicloud_logtail_attachment" "logtail_attachment" {
   machine_group_name  = alicloud_log_machine_group.log_machine_group.name
   project             = alicloud_log_project.project.name
 }
+
+# 创建告警用户
+resource "alicloud_log_resource_record" "log_resource_record_user_hatlonely" {
+  resource_name = "sls.common.user"
+  record_id     = "hatlonely"
+  tag           = "hatlonely"
+  value         = jsonencode({
+    user_id   = "hatlonely"
+    user_name = "hatlonely"
+    email     = [
+      "hatlonely@foxmail.com"
+    ]
+    "country_code" : "86",
+    "phone" : "13312343333",
+    "enabled" : true,
+    "sms_enabled" : true,
+    "voice_enabled" : true
+  })
+}
