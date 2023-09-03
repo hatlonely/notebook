@@ -7,7 +7,7 @@ resource "local_file" "helloworld" {
   file_permission      = "0644"
 }
 
-resource "local_file" "helloworld-base64" {
+resource "local_file" "helloworld_base64" {
   filename             = "${path.module}/helloworld-base64.txt"
   content_base64       = base64encode("hello world")
   directory_permission = "0755"
