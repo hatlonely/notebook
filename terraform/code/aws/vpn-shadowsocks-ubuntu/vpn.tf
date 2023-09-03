@@ -178,7 +178,7 @@ runtimeConfig:
             sudo apt install shadowsocks-libev
 
             sudo mkdir -p /etc/shadowsocks-libev
-            ss_port=$${random_integer.ss_port.result}
+            ss_port=${random_integer.ss_port.result}
             for encryption_method in ${join(" ", var.encryption_method)}; do
               # 配置文件
               sudo bash -c "cat > /etc/shadowsocks-libev/config.$${encryption_method}.json <<EOF
@@ -187,7 +187,7 @@ runtimeConfig:
                 "server_port": $${ss_port},
                 "password": "${random_password.ss_password.result}",
                 "timeout": 300,
-                "method": "aes-256-gcm",
+                "method": "$${encryption_method}",
                 "fast_open": false,
                 "workers": 1,
                 "prefer_ipv6": false

@@ -1,29 +1,19 @@
 #!/usr/bin/env bash
 
-# 更新系统
-sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
+# 安装 shadowsocks-libev
+# https://github.com/shadowsocks/shadowsocks-libev
+sudo apt update
+sudo apt install -y shadowsocks-libev
 
-# 安装工具链
-sudo apt install -y --no-install-recommends build-essential autoconf libtool \
-  libssl-dev gawk debhelper init-system-helpers pkg-config asciidoc \
-  xmlto apg libpcre3-dev zlib1g-dev libev-dev libudns-dev libsodium-dev \
-  libmbedtls-dev libc-ares-dev automake
-
-# 编译安装
-sudo apt install -y git
-git clone https://github.com/shadowsocks/shadowsocks-libev.git
-cd shadowsocks-libev
-git submodule update --init
-./autogen.sh && ./configure --disable-documentation && make
-sudo make install
-
-# 配置
 sudo mkdir -p /etc/shadowsocks-libev
-sudo bash -c 'cat > /etc/shadowsocks-libev/config.json <<EOF
+ss_port=123
+for encryption_method in aes-256-gcm aes-256-ctr; do
+  # 配置文件
+  sudo bash -c "cat > /etc/shadowsocks-libev/config.${encryption_method}.json <<EOF
 {
     "server": "0.0.0.0",
-    "server_port": 12674,
-    "password": "abc123",
+    "server_port": ${ss_port},
+    "password": "kMjdyUzXJeVWDZoq",
     "timeout": 300,
     "method": "aes-256-gcm",
     "fast_open": false,
@@ -31,24 +21,27 @@ sudo bash -c 'cat > /etc/shadowsocks-libev/config.json <<EOF
     "prefer_ipv6": false
 }
 EOF
-'
+"
+  ((ss_port++))
 
-# 配置服务
-sudo bash -c 'cat > /etc/systemd/system/shadowsocks-libev.service <<EOF
+  # 配置服务
+  sudo bash -c "cat > /etc/systemd/system/shadowsocks-libev-${encryption_method}.service <<EOF
 [Unit]
 Description=Shadowsocks-libev Server
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/ss-server -c /etc/shadowsocks-libev/config.json -u
+ExecStart=/usr/bin/ss-server -c /etc/shadowsocks-libev/config.${encryption_method}.json -u
 Restart=on-abort
 
 [Install]
 WantedBy=multi-user.target
 EOF
-'
+"
 
-# 启动服务
-sudo systemctl start shadowsocks-libev
-sudo systemctl enable shadowsocks-libev
+  # 启动服务
+  sudo systemctl start shadowsocks-libev-${encryption_method}
+  sudo systemctl enable shadowsocks-libev-${encryption_method}
+
+done
