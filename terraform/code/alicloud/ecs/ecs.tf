@@ -84,6 +84,7 @@ resource "alicloud_instance" "instance" {
   vswitch_id                 = alicloud_vswitch.tf-test-vswitch.id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
+  instance_name              = "${var.name}-instance"
   host_name                  = "${var.name}-instance"
   password                   = random_password.password.result
 }
