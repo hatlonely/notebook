@@ -17,10 +17,17 @@ terraform {
   }
 }
 
+variable "name" {
+  type    = string
+  default = "tf-test"
+}
+
 provider "alicloud" {
   region = "cn-beijing"
   alias  = "cn-beijing"
 }
+
+provider "random" {}
 
 # 生成密码
 resource "random_password" "password" {
@@ -43,7 +50,7 @@ data "alicloud_images" "ubuntu_22" {
 
 # 创建 VPC
 resource "alicloud_vpc" "vpc" {
-  vpc_name   = "tf-test-vpc"
+  vpc_name   = "${var.name}-vpc"
   cidr_block = "172.16.0.0/16"
 }
 
@@ -56,7 +63,7 @@ resource "alicloud_vswitch" "tf-test-vswitch" {
 
 # 创建安全组，现在安全组只能创建在 VPC 内，但其规则可以是公网或内网
 resource "alicloud_security_group" "security_group" {
-  name   = "tf-test-security-group"
+  name   = "${var.name}-security-group"
   vpc_id = alicloud_vpc.vpc.id
 }
 
@@ -82,7 +89,7 @@ resource "alicloud_instance" "instance" {
   vswitch_id                 = alicloud_vswitch.tf-test-vswitch.id
   internet_max_bandwidth_out = 5
   internet_charge_type       = "PayByTraffic"
-  host_name                  = "tf-test-ecs"
+  host_name                  = "${var.name}-instance"
   password                   = random_password.password.result
 }
 
