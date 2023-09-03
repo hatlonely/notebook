@@ -12,32 +12,37 @@ terraform {
   }
 }
 
+variable "name" {
+  type    = string
+  default = "tf-test-ram"
+}
+
 ## 创建一个 RAM 用户
 
 # 1. 创建一个 RAM 用户
-resource "alicloud_ram_user" "tf-test-user" {
-  name  = "tf-test-user"
+resource "alicloud_ram_user" "ram_user" {
+  name  = "${var.name}-user"
   force = true
 }
 
 # 2. 为用户创建一个 AccessKey
-resource "alicloud_ram_access_key" "tf-test-user-ak" {
-  user_name   = alicloud_ram_user.tf-test-user.name
-  secret_file = "tf-test-user-ak.secret"
+resource "alicloud_ram_access_key" "ram_access_key" {
+  user_name   = alicloud_ram_user.ram_user.name
+  secret_file = "${var.name}-user.secret"
 }
 
 # 3. 给用户添加 AliyunECSFullAccess 策略
-resource "alicloud_ram_user_policy_attachment" "tf-test-user-policy-aliyun-ecs-full-access" {
+resource "alicloud_ram_user_policy_attachment" "ram_user_policy_attachment_aliyun_ecs_full_access" {
   policy_name = "AliyunECSFullAccess"
   policy_type = "System"
-  user_name   = alicloud_ram_user.tf-test-user.name
+  user_name   = alicloud_ram_user.ram_user.name
 }
 
 
 # 4. 添加自定义策略
-resource "alicloud_ram_policy" "tf-test-policy" {
-  policy_name     = "tf-test-policy"
-  description     = "tf-test-policy"
+resource "alicloud_ram_policy" "ram_policy_custom_oss" {
+  policy_name     = "${var.name}-custom-policy"
+  description     = "${var.name} custom policy"
   force           = true
   policy_document = <<EOF
   {
@@ -57,28 +62,28 @@ resource "alicloud_ram_policy" "tf-test-policy" {
 }
 
 # 5. 给用户添加 OSS 自定义策略
-resource "alicloud_ram_user_policy_attachment" "tf-test-user-policy-oss-custom" {
-  policy_name = alicloud_ram_policy.tf-test-policy.name
+resource "alicloud_ram_user_policy_attachment" "ram_user_policy_attachment_custom_oss" {
+  policy_name = alicloud_ram_policy.ram_policy_custom_oss.name
   policy_type = "Custom"
-  user_name   = alicloud_ram_user.tf-test-user.name
+  user_name   = alicloud_ram_user.ram_user.name
 }
 
 # 6. 生成一个秘钥文件
-resource "local_file" "secret" {
+resource "local_file" "file_secret" {
   filename = "secret.yaml"
   content  = <<EOF
 credential:
   tf-test-user:
-    accessKeyId: ${alicloud_ram_access_key.tf-test-user-ak.id}
-    accessKeySecret: ${alicloud_ram_access_key.tf-test-user-ak.secret}
+    accessKeyId: ${alicloud_ram_access_key.ram_access_key.id}
+    accessKeySecret: ${alicloud_ram_access_key.ram_access_key.secret}
 EOF
 }
 
 ## 创建一个 RAM 角色
 
 # 1. 创建一个 RAM 角色，允许 ECS 服务扮演该角色
-resource "alicloud_ram_role" "tf-test-role" {
-  name     = "tf-test-role"
+resource "alicloud_ram_role" "ram_role_service_ecs" {
+  name     = "${var.name}-role"
   force    = true
   document = <<EOF
   {
@@ -99,8 +104,8 @@ resource "alicloud_ram_role" "tf-test-role" {
 }
 
 # 2. 给角色添加 AliyunECSFullAccess 策略
-resource "alicloud_ram_role_policy_attachment" "tf-test-role-policy-aliyun-ecs-full-access" {
+resource "alicloud_ram_role_policy_attachment" "ram_role_policy_attachment_aliyun_ecs_full_access" {
   policy_name = "AliyunECSFullAccess"
   policy_type = "System"
-  role_name   = alicloud_ram_role.tf-test-role.name
+  role_name   = alicloud_ram_role.ram_role_service_ecs.name
 }
