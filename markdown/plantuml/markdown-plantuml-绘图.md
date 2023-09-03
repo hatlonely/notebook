@@ -9,6 +9,12 @@ jetbrains 需要安装插件 PlantUML Integration。安装步骤如下：
 3. 设置 markdown 插件。
    **Setting** -> **Language & Framework** -> **Markdown** -> **Markdown Extensions** -> **PlantUML**
 
+## vscode 配置
+
+1. 下载插件 <https://plantuml.com/download>
+2. 解压插件到任意目录
+3. 配置指定插件地址 `markdown-preview-enhanced.plantumlJarPath`
+
 ## 参考链接
 
 - [plantuml 中文官网](https://plantuml.com/zh/json)
