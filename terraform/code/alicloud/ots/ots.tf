@@ -12,13 +12,13 @@ provider "alicloud" {
   alias  = "cn-beijing"
 }
 
-resource "alicloud_ots_instance" "tf-test-ots-instance" {
+resource "alicloud_ots_instance" "ots_instance" {
   name = "tf-test"
 }
 
 output "connection" {
   value = {
-    endpoint : "https://${alicloud_ots_instance.tf-test-ots-instance.name}.cn-beijing.ots.aliyuncs.com"
-    endpointVpc : "https://${alicloud_ots_instance.tf-test-ots-instance.name}.cn-beijing.vpc.tablestore.aliyuncs.com"
+    endpoint : "https://${alicloud_ots_instance.ots_instance.name}.cn-beijing.ots.aliyuncs.com"
+    endpointVpc : "https://${alicloud_ots_instance.ots_instance.name}.cn-beijing.vpc.tablestore.aliyuncs.com"
   }
 }
