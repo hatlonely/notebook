@@ -8,6 +8,14 @@
 
 ```terraform
 terraform {
+  cloud {
+    organization = "hatlonely"
+
+    workspaces {
+      tags = ["vultr-vpn-shadowsocks-ubuntu"]
+    }
+  }
+
   required_providers {
     vultr = {
       source  = "vultr/vultr"
@@ -26,9 +34,9 @@ terraform {
   }
 }
 
-variable "os" {
-  type    = string
-  default = "win"
+variable "encryption_method" {
+  type    = list(string)
+  default = ["aes-256-gcm", "aes-256-ctr", "chacha20-ietf-poly1305"]
 }
 
 provider "vultr" {}
@@ -49,12 +57,15 @@ resource "vultr_firewall_rule" "firewall_rule_ssh" {
 }
 
 resource "vultr_firewall_rule" "firewall_rule_ss" {
+  for_each = {
+    for idx, method in var.encryption_method : idx => method
+  }
   firewall_group_id = vultr_firewall_group.firewall_group.id
   protocol          = "tcp"
   ip_type           = "v4"
   subnet            = "0.0.0.0"
   subnet_size       = 0
-  port              = "${random_integer.ss_port.result}"
+  port              = random_integer.ss_port.result + each.key
   notes             = "shadowsocks"
 }
 
@@ -116,58 +127,54 @@ resource "vultr_startup_script" "startup_script_shadowsocks_init" {
   script = base64encode(<<EOT
 #!/usr/bin/env bash
 
-# 更新系统
+# 安装 shadowsocks-libev
+# https://github.com/shadowsocks/shadowsocks-libev
 sudo apt update -y
+sudo apt install -y shadowsocks-libev
+# 关闭默认服务
+sudo systemctl disable shadowsocks-libev
+sudo systemctl stop shadowsocks-libev
 
-# 安装工具链
-sudo apt install -y --no-install-recommends build-essential autoconf libtool \
-  libssl-dev gawk debhelper init-system-helpers pkg-config asciidoc \
-  xmlto apg libpcre3-dev zlib1g-dev libev-dev libudns-dev libsodium-dev \
-  libmbedtls-dev libc-ares-dev automake
-
-# 编译安装
-sudo apt install -y git
-git clone https://github.com/shadowsocks/shadowsocks-libev.git
-cd shadowsocks-libev
-git submodule update --init
-./autogen.sh && ./configure --disable-documentation && make
-sudo make install
-
-# 配置
 sudo mkdir -p /etc/shadowsocks-libev
-sudo bash -c 'cat > /etc/shadowsocks-libev/config.json <<EOF
+ss_port=${random_integer.ss_port.result}
+for encryption_method in ${join(" ", var.encryption_method)}; do
+  # 配置文件
+  sudo bash -c "cat > /etc/shadowsocks-libev/config.$${encryption_method}.json <<EOF
 {
-    "server": "0.0.0.0",
-    "server_port": ${random_integer.ss_port.result},
-    "password": "${random_password.ss_password.result}",
-    "timeout": 300,
-    "method": "${var.os == "win" ? "aes-256-gcm" : "aes-256-ctr"}",
-    "fast_open": false,
-    "workers": 1,
-    "prefer_ipv6": false
+    \"server\": \"0.0.0.0\",
+    \"server_port\": $${ss_port},
+    \"password\": \"${random_password.ss_password.result}\",
+    \"timeout\": 300,
+    \"method\": \"$${encryption_method}\",
+    \"fast_open\": true,
+    \"workers\": 1,
+    \"prefer_ipv6\": false
 }
 EOF
-'
+"
+  ((ss_port++))
 
-# 配置服务
-sudo bash -c 'cat > /etc/systemd/system/shadowsocks-libev.service <<EOF
+  # 配置服务
+  sudo bash -c "cat > /etc/systemd/system/shadowsocks-libev-$${encryption_method}.service <<EOF
 [Unit]
 Description=Shadowsocks-libev Server
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/ss-server -c /etc/shadowsocks-libev/config.json -u
+ExecStart=/usr/bin/ss-server -c /etc/shadowsocks-libev/config.$${encryption_method}.json -u
 Restart=on-abort
 
 [Install]
 WantedBy=multi-user.target
 EOF
-'
+"
 
-# 启动服务
-sudo systemctl start shadowsocks-libev
-sudo systemctl enable shadowsocks-libev
+  # 启动服务
+  sudo systemctl start shadowsocks-libev-$${encryption_method}
+  sudo systemctl enable shadowsocks-libev-$${encryption_method}
+
+done
 
 # 关闭防火墙
 sudo ufw disable
@@ -187,13 +194,22 @@ resource "vultr_instance" "instance" {
   firewall_group_id = vultr_firewall_group.firewall_group.id
 }
 
-output "connect" {
-  value = <<EOT
-conn: ssh -i id_rsa root@${vultr_instance.instance.main_ip}
+output "ssh_connection" {
+  value = chomp(<<EOF
+ssh -i id_rsa root@${vultr_instance.instance.main_ip}
+EOF
+  )
+}
+
+output "ss_connection" {
+  value = chomp(join("\n", [
+    for idx, method in var.encryption_method : <<EOF
 host: ${vultr_instance.instance.main_ip}
-port: ${random_integer.ss_port.result}
+port: ${random_integer.ss_port.result + idx}
 password: ${nonsensitive(random_password.ss_password.result)}
-EOT
+method: ${method}
+EOF
+  ]))
 }
 ```
 
