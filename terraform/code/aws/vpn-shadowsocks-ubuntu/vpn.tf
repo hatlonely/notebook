@@ -186,14 +186,14 @@ runtimeConfig:
               # 配置文件
               sudo bash -c "cat > /etc/shadowsocks-libev/config.$${encryption_method}.json <<EOF
             {
-                "server": "0.0.0.0",
-                "server_port": $${ss_port},
-                "password": "${random_password.ss_password.result}",
-                "timeout": 300,
-                "method": "$${encryption_method}",
-                "fast_open": false,
-                "workers": 1,
-                "prefer_ipv6": false
+                \"server\": \"0.0.0.0\",
+                \"server_port\": $${ss_port},
+                \"password\": \"${random_password.ss_password.result}\",
+                \"timeout\": 300,
+                \"method\": \"$${encryption_method}\",
+                \"fast_open\": false,
+                \"workers\": 1,
+                \"prefer_ipv6\": false
             }
             EOF
             "
