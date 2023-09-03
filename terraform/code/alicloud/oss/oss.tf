@@ -7,12 +7,17 @@ terraform {
   }
 }
 
+variable "name" {
+  type    = string
+  default = "tf-test-oss"
+}
+
 provider "alicloud" {
   region = "cn-beijing"
 }
 
-resource "alicloud_oss_bucket" "tf-hatlonely-test-oss-bucket" {
-  bucket = "tf-hatlonely-test-oss-bucket"
+resource "alicloud_oss_bucket" "oss_bucket" {
+  bucket = "${var.name}-bucket"
   acl    = "private"
 
   lifecycle_rule {
