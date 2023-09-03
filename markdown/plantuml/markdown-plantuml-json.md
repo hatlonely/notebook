@@ -2,11 +2,14 @@
 
 ```plantuml
 @startjson
+#highlight "lastName"
+#highlight "address" / "city"
+#highlight "phoneNumbers" / "0" / "number"
 {
   "firstName": "John",
   "lastName": "Smith",
   "isAlive": true,
-  "age": 27,
+  "age": 28,
   "address": {
     "streetAddress": "21 2nd Street",
     "city": "New York",
