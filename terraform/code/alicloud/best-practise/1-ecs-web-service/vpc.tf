@@ -27,7 +27,7 @@ resource "alicloud_nat_gateway" "nat_gateway" {
 }
 
 # 创建公网IP
-resource "alicloud_eip_address" "eip-outbounds" {
+resource "alicloud_eip_address" "eip_outbounds" {
   bandwidth            = "5"
   internet_charge_type = "PayByTraffic"
   payment_type         = "PayAsYouGo"
@@ -38,7 +38,7 @@ resource "alicloud_eip_address" "eip-outbounds" {
 
 # 绑定公网IP
 resource "alicloud_eip_association" "eip_association_nat_gateway" {
-  allocation_id = alicloud_eip_address.eip-outbounds.id
+  allocation_id = alicloud_eip_address.eip_outbounds.id
   instance_id   = alicloud_nat_gateway.nat_gateway.id
 }
 
@@ -58,5 +58,5 @@ resource "alicloud_snat_entry" "snat_entry" {
   for_each          = alicloud_vswitch.vswitchs
   snat_table_id     = alicloud_nat_gateway.nat_gateway.snat_table_ids
   source_vswitch_id = each.value.id
-  snat_ip           = alicloud_eip_address.eip-outbounds.ip_address
+  snat_ip           = alicloud_eip_address.eip_outbounds.ip_address
 }
