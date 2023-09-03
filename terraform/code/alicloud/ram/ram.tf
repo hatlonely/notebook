@@ -27,8 +27,7 @@ resource "alicloud_ram_user" "ram_user" {
 
 # 2. 为用户创建一个 AccessKey
 resource "alicloud_ram_access_key" "ram_access_key" {
-  user_name   = alicloud_ram_user.ram_user.name
-  secret_file = "${var.name}-user.secret"
+  user_name = alicloud_ram_user.ram_user.name
 }
 
 # 3. 给用户添加 AliyunECSFullAccess 策略
@@ -70,7 +69,7 @@ resource "alicloud_ram_user_policy_attachment" "ram_user_policy_attachment_custo
 
 # 6. 生成一个秘钥文件
 resource "local_file" "file_secret" {
-  filename = "secret.yaml"
+  filename = "${var.name}-secret.yaml"
   content  = <<EOF
 credential:
   tf-test-user:
