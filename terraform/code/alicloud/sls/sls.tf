@@ -58,8 +58,8 @@ resource "alicloud_log_machine_group" "log_machine_group" {
   name          = "${var.name}-machine-group"
   project       = alicloud_log_project.project.name
   identify_type = "userdefined"
-  topic         = "tf-test-machine-group-topic"
-  identify_list = ["tf-test-machine-group-identify"]
+  topic         = "${var.name}-machine-group-topic"
+  identify_list = ["${var.name}-machine-group-identify"]
 }
 
 # 创建日志库配置
