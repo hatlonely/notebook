@@ -105,10 +105,26 @@ resource "alicloud_log_resource_record" "log_resource_record_user_hatlonely" {
     email     = [
       "hatlonely@foxmail.com"
     ]
-    "country_code" : "86",
-    "phone" : "13312343333",
-    "enabled" : true,
-    "sms_enabled" : true,
-    "voice_enabled" : true
+    country_code  = "86"
+    phone         = "13312343333"
+    enabled       = true
+    sms_enabled   = true
+    voice_enabled = true
+  })
+}
+
+# 创建告警用户组
+resource "alicloud_log_resource_record" "log_resource_record_user_group_devops" {
+  provider      = alicloud.cn-heyuan
+  resource_name = "sls.common.user_group"
+  record_id     = "devops"
+  tag           = "devops"
+  value         = jsonencode({
+    user_group_id   = "devops"
+    user_group_name = "devops"
+    enabled         = true
+    members         = [
+      alicloud_log_resource_record.log_resource_record_user_hatlonely.record_id
+    ]
   })
 }
