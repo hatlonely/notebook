@@ -17,6 +17,11 @@ provider "alicloud" {
   alias  = "cn-beijing"
 }
 
+provider "alicloud" {
+  region = "cn-heyuan"
+  alias  = "cn-heyuan"
+}
+
 # 创建日志服务项目
 resource "alicloud_log_project" "project" {
   name = "${var.name}-project"
@@ -85,8 +90,9 @@ resource "alicloud_logtail_attachment" "logtail_attachment" {
   project             = alicloud_log_project.project.name
 }
 
-# 创建告警用户
+# 创建告警用户，必须在 cn-heyuan 创建，其他地区只读
 resource "alicloud_log_resource_record" "log_resource_record_user_hatlonely" {
+  provider      = alicloud.cn-heyuan
   resource_name = "sls.common.user"
   record_id     = "hatlonely"
   tag           = "hatlonely"
