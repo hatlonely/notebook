@@ -98,7 +98,7 @@ resource "alicloud_logtail_attachment" "logtail_attachment" {
 # 创建告警用户，必须在 cn-heyuan 创建，其他地区只读
 # terraform 参考：https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/log_resource_record
 # api 参考：https://help.aliyun.com/zh/sls/developer-reference/use-log-service-sdk-for-go-to-manage-alerts
-# 数据结构参考: https://help.aliyun.com/zh/sls/developer-reference/data-structure-of-an-alert-monitoring-rule
+# 数据结构参考: https://help.aliyun.com/zh/sls/developer-reference/data-structure-of-alert-resource-data
 resource "alicloud_log_resource_record" "log_resource_record_user_hatlonely" {
   provider      = alicloud.cn-heyuan
   resource_name = "sls.common.user"
@@ -121,7 +121,7 @@ resource "alicloud_log_resource_record" "log_resource_record_user_hatlonely" {
 
 `alicloud_log_resource_record` 必须在 `cn-heyuan` 创建，其他地区只读
 
-告警监控规则数据结构：https://help.aliyun.com/zh/sls/developer-reference/data-structure-of-an-alert-monitoring-rule
+告警监控规则数据结构：https://help.aliyun.com/zh/sls/developer-reference/data-structure-of-alert-resource-data
 
 ## 参考链接
 
@@ -129,4 +129,4 @@ resource "alicloud_log_resource_record" "log_resource_record_user_hatlonely" {
 - [源码地址](../code/alicloud/sls/sls.tf)
 - [terraform 参考](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/log_resource_record)
 - [api 参考](https://help.aliyun.com/zh/sls/developer-reference/use-log-service-sdk-for-go-to-manage-alerts)
-- [数据结构参考](https://help.aliyun.com/zh/sls/developer-reference/data-structure-of-an-alert-monitoring-rule)
+- [数据结构参考](https://help.aliyun.com/zh/sls/developer-reference/data-structure-of-alert-resource-data)
