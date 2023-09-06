@@ -157,9 +157,9 @@ export HTTPS_PROXY=http://127.0.0.1:7080
 
 ## 客户端
 
-win: <https://github.com/shadowsocks/shadowsocks-windows/releases>
-mac: <https://github.com/qinyuhang/ShadowsocksX-NG-R/releases>
-android: <https://github.com/shadowsocks/shadowsocks-android/releases>
+- win: <https://github.com/shadowsocks/shadowsocks-windows/releases>
+- mac: <https://github.com/qinyuhang/ShadowsocksX-NG-R/releases>
+- android: <https://github.com/shadowsocks/shadowsocks-android/releases>
 
 ## 参考链接
 
