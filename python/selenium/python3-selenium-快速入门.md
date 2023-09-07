@@ -6,11 +6,12 @@
 pip install selenium
 ```
 
-安装 selenium chrome driver
+安装 google chrome
 
 ```
-wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip && unzip chromedriver_linux64.zip
-rm -rf chromedriver_linux64.zip LICENSE.chromedriver
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install -y xdg-utils
+sudo dpkg -i google-chrome-stable_current_amd64.deb
 ```
 
 ## 参考链接

@@ -40,6 +40,14 @@ function install_unzip() {
   }
 }
 
+function install_google_chrome() {
+  which google-chrome 1>/dev/null 2>&1 && echo "skip google-chrome" || {
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    sudo apt install -y xdg-utils
+    sudo dpkg -i google-chrome-stable_current_amd64.deb
+  }
+}
+
 function main() {
   install_docker
   install_unzip
