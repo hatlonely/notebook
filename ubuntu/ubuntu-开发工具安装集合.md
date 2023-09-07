@@ -20,7 +20,13 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 ## pip 工具安装
 
 ```shell
-sudo apt install python3-pip
+sudo apt install -y python3-pip
+```
+
+## 安装 unzip
+
+```shell
+sudo apt install -y unzip
 ```
 
 ## 参考链接
