@@ -44,6 +44,32 @@ gomplate -f 1.txt.gotpl
 rm -rf 1.txt.gotpl
 ```
 
+3. 用文件渲染文件
+
+```shell
+cat >var.yaml <<EOF
+key1: 1
+key2: val2
+key3:
+  - val3
+  - val4
+EOF
+
+cat >1.txt.gotpl <<EOF
+Hello, {{.Env.USER}}
+
+key1 = {{ .var.key1 }}
+key2 = {{ .var.key2 }}
+{{- range \$i, \$e := $.var.key3 }}
+key3[{{ \$i }}] = {{ \$e }}
+{{- end }}
+EOF
+
+gomplate -f 1.txt.gotpl -c var=var.yaml
+
+rm -rf 1.txt.gotpl
+```
+
 ## 参考链接
 
 - [官网主页](https://docs.gomplate.ca/)
