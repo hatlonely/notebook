@@ -47,9 +47,12 @@ rm -rf 1.txt.gotpl
 3. 用文件渲染文件
 
 ```shell
-cat >var.yaml <<EOF
+cat >var1.yaml <<EOF
 key1: 1
 key2: val2
+EOF
+
+cat >var2.yaml <<EOF
 key3:
   - val3
   - val4
@@ -58,14 +61,14 @@ EOF
 cat >1.txt.gotpl <<EOF
 Hello, {{.Env.USER}}
 
-key1 = {{ .var.key1 }}
-key2 = {{ .var.key2 }}
-{{- range \$i, \$e := $.var.key3 }}
+key1 = {{ .var1.key1 }}
+key2 = {{ .var1.key2 }}
+{{- range \$i, \$e := $.var2.key3 }}
 key3[{{ \$i }}] = {{ \$e }}
 {{- end }}
 EOF
 
-gomplate -f 1.txt.gotpl -c var=var.yaml
+gomplate -f 1.txt.gotpl -c var1=var1.yaml -c var2=var2.yaml
 
 rm -rf 1.txt.gotpl
 ```
