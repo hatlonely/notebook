@@ -73,6 +73,24 @@ gomplate -f 1.txt.gotpl -c var1=var1.yaml -c var2=var2.yaml
 rm -rf 1.txt.gotpl
 ```
 
+4. 渲染目录
+
+```shell
+mkdir -p tpls
+
+cat >tpls/1.txt <<EOF
+hello {{ .Env.USER }}
+EOF
+
+cat >tpls/2.txt <<EOF
+hello {{ .Env.USER }}
+EOF
+
+gomplate --input-dir tpls --output-dir out
+
+rm -rf tpls out
+```
+
 ## 参考链接
 
 - [官网主页](https://docs.gomplate.ca/)
