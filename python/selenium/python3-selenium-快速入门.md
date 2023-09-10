@@ -6,7 +6,7 @@
 pip install selenium
 ```
 
-安装 google chrome
+ubuntu 22.04 安装 google chrome
 
 ```
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
