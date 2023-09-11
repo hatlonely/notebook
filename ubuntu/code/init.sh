@@ -40,6 +40,12 @@ function install_unzip() {
   }
 }
 
+function install_sysstat() {
+  which iostat 1>/dev/null 2>&1 && echo "skip sysstat" || {
+    sudo apt install -y sysstat
+  }
+}
+
 function install_google_chrome() {
   which google-chrome 1>/dev/null 2>&1 && echo "skip google-chrome" || {
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
