@@ -12,7 +12,7 @@
 
 ### 产品主题
 
-1. 打开插件，搜索 MacOS Modern Theme
+1. 安装插件 `MacOS Modern Theme`。macos 风格的界面
 
 ### 字体切换
 
@@ -33,6 +33,10 @@
 1. 打开插件，安装 Python 插件
 
 > 如果代码中有库缺失，会导致测试插件无法检测到测试用例，手动安装缺失库之后可以解决
+
+## git
+
+1. 安装插件 `Auto Commit Message`。点击图标即可自动添加 commit message
 
 ## 参考链接
 
