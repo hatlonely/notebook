@@ -69,6 +69,19 @@ function install_aliyun() {
   }
 }
 
+function install_nodejs() {
+  which node 1>/dev/null 2>&1 && echo "skip node" || {
+    apt install -y nodejs
+    apt install -y npm
+  }
+}
+
+function install_serverless_dev() {
+  which s 1>/dev/null 2>&1 && echo "skip serverless-dev" || {
+    npm install @serverless-devs/s -g
+  }
+}
+
 function main() {
   install_docker
   install_unzip
