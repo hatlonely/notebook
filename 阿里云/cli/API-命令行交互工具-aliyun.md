@@ -12,6 +12,14 @@ tar -xzvf aliyun-cli-macosx-3.0.32-amd64.tgz && chmod +x aliyun && rm aliyun-cli
 mv aliyun /usr/local/bin/
 ```
 
+### Ubuntu 安装
+
+```shell
+wget https://aliyuncli.alicdn.com/aliyun-cli-linux-latest-amd64.tgz -O aliyun-cli-linux-latest-amd64.tgz
+tar -xzvf aliyun-cli-linux-latest-amd64.tgz && chmod +x aliyun && rm aliyun-cli-linux-latest-amd64.tgz
+mv aliyun /usr/local/bin/
+```
+
 ## 访问凭证
 
 1. 配置访问凭证
@@ -73,3 +81,7 @@ aliyun --profile hatlonely ecs DescribeInstances
 ```shell
 aliyun ecs DescribeInstances --dryrun
 ```
+
+## 参考链接
+
+- [阿里云 CLI 官网](https://help.aliyun.com/product/29991.html)
