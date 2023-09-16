@@ -44,6 +44,12 @@ s deploy
 
 部署成功后，打开 url 即可访问
 
+7. 移除
+
+```
+s remove
+```
+
 ## 参考链接
 
 - [阿里云函数计算组件文档](https://docs.serverless-devs.com/fc/config)
