@@ -2,7 +2,7 @@ provider "template" {}
 
 data "template_file" "test_tpl" {
   template = file("tpl/test.tpl")
-  vars     = {
+  vars = {
     key1 = "val1"
     key2 = "val2"
     key3 = jsonencode({
@@ -19,7 +19,7 @@ output "test_tpl" {
 resource "template_dir" "tpls" {
   destination_dir = "${path.cwd}/cfg"
   source_dir      = "${path.module}/tpl"
-  vars            = {
+  vars = {
     key1 = "val1"
     key2 = "val2"
     key3 = jsonencode({
