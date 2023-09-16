@@ -90,7 +90,8 @@ ENTRYPOINT ["mysql"]
 
 ## 参考链接
 
-- [scratch 官方说明](https://hub.docker.com/_/scratch)
+- [scratch 镜像仓库](https://hub.docker.com/_/scratch)
 - [busybox 官网](https://busybox.net/about.html)
 - [busybox 命令列表](https://busybox.net/downloads/BusyBox.html)
 - [alipne 用户手册](https://docs.alpinelinux.org/user-handbook/0.1a/index.html)
+- [ubuntu 镜像仓库](https://hub.docker.com/_/ubuntu)
