@@ -20,6 +20,10 @@
 2. `ctrl + shift + p` 打开命令面板
 3. 输入 `switch font` 切换字体
 
+### 中文
+
+1. 安装插件 `Chinese (Simplified) Language Pack for Visual Studio Code`
+
 ## 终端
 
 ### 选中复制
