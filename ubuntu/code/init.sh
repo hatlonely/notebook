@@ -36,6 +36,9 @@ pytest-base-url~=2.0.0
 pytest-html~=4.0.2
 pytest-metadata~=3.0.0
 pytest-playwright~=0.4.2
+pyquery~=2.0.0
+numpy~=1.25.2
+pandas~=2.1.0
 EOF
   pip3 install -r requirements.txt
   rm -rf requirements.txt
