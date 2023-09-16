@@ -14,6 +14,16 @@
 
 1. 安装插件 `MacOS Modern Theme`。macos 风格的界面
 
+### 颜色主题
+
+1. 安装插件 `Material Theme`
+2. 安装插件 `Andromeda`
+3. 安装插件 `Omni Theme`
+
+### 图标主题
+
+1. 安装插件 `Material Icon Theme`
+
 ### 字体切换
 
 1. 安装插件 `Font Switcher`
