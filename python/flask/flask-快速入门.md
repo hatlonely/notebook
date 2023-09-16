@@ -27,6 +27,8 @@ def hello_world():
 flask --app 1_quick_start run
 ```
 
+> windows wsl 报错找不到 flask 命令，可能需要在 .zsh 中添加路径 `export PATH="$HOME/.local/bin:$PATH"`
+
 3. 访问 app
 
 ```shell
