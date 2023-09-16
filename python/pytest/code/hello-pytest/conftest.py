@@ -2,7 +2,7 @@
 
 import subprocess
 
-import py._xmlgen
+import py.xml
 import pytest
 
 
@@ -23,7 +23,7 @@ def pytest_html_report_title(report):
 
 def pytest_html_results_table_header(cells):
     cells.pop()
-    cells.append(py._xmlgen.html.th("Author"))
+    cells.append(py.xml.html.th("Author"))
 
 
 def detect_authors_from_git_logs(filename):
