@@ -34,6 +34,13 @@
 
 1. 安装插件 `Chinese (Simplified) Language Pack for Visual Studio Code`
 
+## 编辑器
+
+### 自动折行
+
+1. 打开设置
+3. 设置 `word wrap: wordWrapColumn`
+
 ## 终端
 
 ### 选中复制
