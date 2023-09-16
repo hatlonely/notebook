@@ -1,6 +1,6 @@
 # 制作一个最小的 hello world 镜像
 
-1. 创建源文件 `hello-world.c`
+1. 创建源文件 `helloworld.c`
 
 ```c
 #include <stdio.h>
