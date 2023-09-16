@@ -2,7 +2,7 @@
 
 ## 快捷键
 
-windows:
+### windows
 
 运行命令: `ctrl + shift + p`
 快速搜索: `ctrl + p`
