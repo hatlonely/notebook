@@ -1,10 +1,24 @@
 ## vscode 配置
 
+## 快捷键
+
+windows:
+
+运行命令: `ctrl + shift + p`
+快速搜索: `ctrl + p`
+打开设置: `ctrl + ，`
+
 ## 外观
 
 ### 产品主题
 
 1. 打开插件，搜索 MacOS Modern Theme
+
+### 字体切换
+
+1. 安装插件 `Font Switcher`
+2. `ctrl + shift + p` 打开命令面板
+3. 输入 `switch font` 切换字体
 
 ## 终端
 
