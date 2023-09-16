@@ -18,3 +18,5 @@ secret.yaml
 *.pem
 
 chromedriver
+
+.s/
