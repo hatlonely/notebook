@@ -19,12 +19,12 @@ int main()
 ```dockerfile
 FROM gcc AS builder
 
-COPY helloworld.c /code/helloworld.c
-RUN gcc -static -o /code/helloworld /code/helloworld.c
+COPY helloworld.c /workspace/helloworld.c
+RUN gcc -static -o /workspace/helloworld /workspace/helloworld.c
 
 FROM scratch
 
-COPY --from=builder /code/helloworld /
+COPY --from=builder /workspace/helloworld /
 ENTRYPOINT [ "/helloworld" ]
 ```
 
