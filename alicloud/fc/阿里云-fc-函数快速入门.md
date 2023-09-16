@@ -49,6 +49,22 @@ s deploy
 s remove
 ```
 
+## 部署目标检测函数
+
+1. 创建 oss bucket
+2. 授予 AliyunFcDefaultRole 角色 AliyunOSSFullAccess 权限
+3. 创建项目
+    - RAM 角色： acs:ram::150**********543:role/aliyunfcdefaultrole
+    - OSS 触发器角色： acs:ram::150**********543:role/aliyunosseventnotificationrole
+
+```
+s init devsapp/image-prediction-app
+```
+
+报错 tensorflow 版本不匹配
+
+
+
 ## 参考链接
 
 - [阿里云函数计算组件文档](https://docs.serverless-devs.com/fc/config)
