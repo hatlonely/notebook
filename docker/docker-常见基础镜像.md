@@ -2,15 +2,15 @@
 
 ## scratch
 
+scratch 是一个空镜像，用来制作极小的镜像，比如二进制工具的镜像。编译的时候需要注意使用静态编译，因为 scratch 镜像中没有动态链接库。
+
 ```dockerfile
 FROM scratch
 COPY hello /
 CMD ["/hello"]
 ```
 
-空镜像，用来制作极小的镜像，比如二进制工具的镜像。编译的时候需要注意使用静态编译，因为 scratch 镜像中没有动态链接库。
-
-gcc 添加静态编译参数 `-static`
+> gcc 添加静态编译参数 `-static`
 
 ## busybox
 
@@ -70,6 +70,23 @@ busybox 没有包管理工具。一般直接通过 COPY 命令将二进制文件
 
 apline 是一个围绕 musl libc 和 busybox 构建的轻量级的 linux 发行版，其大小只有 7M。其提供了完整的包管理工具，可以通过 apk 命令安装软件包。
 
+```dockerfile
+FROM alpine:3.14
+RUN apk add --no-cache mysql-client
+ENTRYPOINT ["mysql"]
+```
+
+## ubuntu
+
+ubuntu 是一个基于 debian 的 linux 发行版，其大小为 78M。其提供了完整的包管理工具，可以通过 apt 命令安装软件包。
+
+```dockerfile
+FROM ubuntu:22.04
+RUN apt update && \
+    apt install -y --no-install-recommends mysql-client && \
+    rm -rf /var/lib/apt/lists/*
+ENTRYPOINT ["mysql"]
+```
 
 ## 参考链接
 
