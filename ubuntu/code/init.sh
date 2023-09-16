@@ -29,6 +29,13 @@ function install_python3() {
 function install_python3_libs() {
   cat > requirements.txt <<EOF
 selenium~=4.12.0
+playwright~=1.37.0
+tk~=0.1.0
+pytest~=7.4.2
+pytest-base-url~=2.0.0
+pytest-html~=4.0.2
+pytest-metadata~=3.0.0
+pytest-playwright~=0.4.2
 EOF
   pip3 install -r requirements.txt
   rm -rf requirements.txt
