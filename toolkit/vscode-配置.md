@@ -37,6 +37,7 @@
 ## git
 
 1. 安装插件 `Auto Commit Message`。点击图标即可自动添加 commit message
+2. 安装插件 `Git Graph` 插件。可以查看 git 历史记录
 
 ## 参考链接
 
