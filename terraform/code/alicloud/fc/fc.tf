@@ -12,7 +12,8 @@ resource "alicloud_fc_service" "fc_service" {
 }
 
 # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/fc_function
-resource "alicloud_fc_function" "foo" {
+# https://www.alibabacloud.com/help/zh/fc/developer-reference/api-fc-open-2021-04-06-struct-httptriggerconfig
+resource "alicloud_fc_function" "fc_function" {
   depends_on = [
     alicloud_ram_role_policy_attachment.ram_role_policy_attachment_fc_acr,
     alicloud_ram_role_policy_attachment.ram_role_policy_attachment_fc_log,
@@ -27,4 +28,20 @@ resource "alicloud_fc_function" "foo" {
   custom_container_config {
     image = var.image
   }
+  ca_port = 8000
+}
+
+resource "alicloud_fc_trigger" "fc_trigger" {
+  service  = alicloud_fc_service.fc_service.name
+  function = alicloud_fc_function.fc_function.name
+  name     = var.name
+  type     = "http"
+  config = jsonencode({
+    authType = "anonymous"
+    methods  = ["GET", "POST", "PUT", "DELETE"]
+  })
+}
+
+output "trigger" {
+  value = alicloud_fc_trigger.fc_trigger
 }
