@@ -20,6 +20,13 @@ notepad $PROFILE
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\cert.omp.json" | Invoke-Expression
 ```
 
+## 配置代理
+
+```powershell
+$env:HTTP_PROXY="127.0.0.1:7080"
+$env:HTTPS_PROXY="127.0.0.1:7080"
+```
+
 ## 参考链接
 
 - [oh my posh 官网文档](https://ohmyposh.dev/docs/installation/windows)
