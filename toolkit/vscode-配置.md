@@ -39,7 +39,8 @@
 ### 自动折行
 
 1. 打开设置
-2. 设置 `word wrap: wordWrapColumn`
+2. 设置自动折行 `"editor.wordWrap": "bounded"`
+3. 自动折行列数 `"editor.wordWrapColumn": 120`
 
 ### 保存时自动格式化
 
