@@ -67,6 +67,11 @@
 2. 搜索 `selection`
 3. 勾选 `terminal.integrated.copyOnSelection`
 
+## git
+
+1. 安装插件 `Auto Commit Message`。点击图标即可自动添加 commit message
+2. 安装插件 `Git Graph` 插件。可以查看 git 历史记录
+
 ## python
 
 1. 打开插件，安装 Python 插件
@@ -82,10 +87,9 @@
 }
 ```
 
-## git
+## json
 
-1. 安装插件 `Auto Commit Message`。点击图标即可自动添加 commit message
-2. 安装插件 `Git Graph` 插件。可以查看 git 历史记录
+1. 安装插件 `Sort JSON Objects`。用于 json 排序，json 文件中右键即可使用
 
 ## 参考链接
 
