@@ -39,7 +39,24 @@
 ### 自动折行
 
 1. 打开设置
-3. 设置 `word wrap: wordWrapColumn`
+2. 设置 `word wrap: wordWrapColumn`
+
+### 保存时自动格式化
+
+1. 配置保存时自动格式化
+
+```json
+"editor.formatOnSave": true
+```
+
+2. 搜索并安装各个语言对应的格式化插件
+3. 在配置中增加各个语言的格式化配置，以 python 为例：
+
+```json
+"[python]": {
+  "editor.defaultFormatter": "ms-python.black-formatter",
+}
+```
 
 ## 终端
 
@@ -54,6 +71,15 @@
 1. 打开插件，安装 Python 插件
 
 > 如果代码中有库缺失，会导致测试插件无法检测到测试用例，手动安装缺失库之后可以解决
+
+2. 安装插件 Black Formatter 用于格式化代码。安装完成后在 setting 中增加如下配置
+
+```json
+"[python]": {
+  "editor.defaultFormatter": "ms-python.black-formatter",
+  "editor.formatOnSave": true
+}
+```
 
 ## git
 
