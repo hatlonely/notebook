@@ -91,7 +91,27 @@
 
 1. 安装插件 `Sort JSON Objects`。用于 json 排序，json 文件中右键即可使用
 
+## terraform
+
+1. 安装插件 `HashiCorp Terraform`。用于 terraform 语法高亮
+
+配置 HashiCorp Terraform 插件
+
+```json
+"[terraform]": {
+  "editor.defaultFormatter": "hashicorp.terraform",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file"
+},
+"[terraform-vars]": {
+  "editor.defaultFormatter": "hashicorp.terraform",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file"
+},
+```
+
 ## 参考链接
 
 - [vscode python 开发文档](https://code.visualstudio.com/docs/python/testing)
 - [vscode 主题](https://vscodethemes.com/)
+- [vscode terraform 插件](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform)
