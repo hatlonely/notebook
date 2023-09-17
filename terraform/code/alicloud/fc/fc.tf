@@ -13,6 +13,11 @@ resource "alicloud_fc_service" "fc_service" {
 
 # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/fc_function
 resource "alicloud_fc_function" "foo" {
+  depends_on = [
+    alicloud_ram_role_policy_attachment.ram_role_policy_attachment_fc_acr,
+    alicloud_ram_role_policy_attachment.ram_role_policy_attachment_fc_log,
+  ]
+
   service     = alicloud_fc_service.fc_service.name
   name        = var.name
   description = var.name
