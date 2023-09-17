@@ -1,5 +1,5 @@
 # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/fc_service
-resource "alicloud_fc_service" "default" {
+resource "alicloud_fc_service" "fc_service" {
   name        = var.name
   description = var.name
   role        = alicloud_ram_role.ram_role_fc.arn
@@ -11,4 +11,15 @@ resource "alicloud_fc_service" "default" {
   }
 }
 
-
+# https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/fc_function
+resource "alicloud_fc_function" "foo" {
+  service     = alicloud_fc_service.fc_service.name
+  name        = var.name
+  description = var.name
+  memory_size = "512"
+  runtime     = "custom-container"
+  handler     = "index.handler"
+  custom_container_config {
+    image = var.image
+  }
+}

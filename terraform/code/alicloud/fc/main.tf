@@ -16,3 +16,8 @@ variable "name" {
   type    = string
   default = "tf-test-fc"
 }
+
+variable "image" {
+  type    = string
+  default = "registry.cn-beijing.aliyuncs.com/hatlonely/flask-demo:latest"
+}
