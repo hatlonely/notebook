@@ -34,6 +34,12 @@
 
 1. 安装插件 `Chinese (Simplified) Language Pack for Visual Studio Code`
 
+### 保存窗口
+
+```json
+"window.restoreWindows"： "none"
+```
+
 ## 编辑器
 
 ### 自动折行

@@ -5,11 +5,11 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
 
-@app.route('/user/<username>')
+@app.route("/user/<username>")
 def show_user_profile(username):
-    return f'Hello {username}'
+    return f"Hello {username}"
