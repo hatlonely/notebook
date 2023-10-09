@@ -74,8 +74,9 @@ function install_aliyun() {
 
 function install_nodejs() {
   which node 1>/dev/null 2>&1 && echo "skip node" || {
-    apt install -y nodejs
-    apt install -y npm
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    source ~/.bashrc
+    nvm install v18.18.0
   }
 }
 
