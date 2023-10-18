@@ -70,7 +70,7 @@ def pytest_html_results_table_row(report, cells):
     file, _, func = report.location
     func = func.split("[")[0]  # pytest.mark.parameterize，参数在中括号中
     func = func.split(".")[0]  # 测试类，只取类名
-    cells.append(py._xmlgen.html.td(detect_authors_from_git_blame(file, func)))
+    cells.append(py.xml.html.td(detect_authors_from_git_blame(file, func)))
 
 
 @pytest.hookimpl(hookwrapper=True)
