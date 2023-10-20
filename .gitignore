@@ -20,3 +20,4 @@ secret.yaml
 chromedriver
 
 .s/
+build/
