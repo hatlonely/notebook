@@ -28,7 +28,7 @@ sed -i 's|"auto",|"auto",\n  "wailsjsdir": "./frontend/src/lib",|' wails.json
 sed -i "s|all:frontend/dist|all:frontend/build|" main.go
 
 rm -rf frontend
-npm create svelte@latest frontend
+npm create skeleton-app@latest frontend
 npm i -D @skeletonlabs/skeleton @skeletonlabs/tw-plugin
 npm add -D @types/node
 cd frontend
