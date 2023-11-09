@@ -1,4 +1,4 @@
-# 王姿允
+# 从豆瓣上下载王姿允的照片
 # https://www.douban.com/personage/27549915/photos/
 
 import time
@@ -114,7 +114,7 @@ def run(playwright: Playwright) -> None:
             try:
                 # 翻页
                 next_page_label = page.get_by_role("link", name="后页>")
-                next_page_label.scroll_into_view_if_needed(timeout=10)
+                next_page_label.scroll_into_view_if_needed(timeout=10000)
                 next_page_label.click()
                 time.sleep(random.uniform(0.88, 5.96))
                 break
