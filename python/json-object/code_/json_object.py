@@ -10,14 +10,21 @@ def json_object(cls):
             if field not in d or not d.get(field):
                 continue
             # 列表类型
-            if hasattr(field_type, "__class_getitem__") and field_type.__origin__ is list and field_type.__args__:
+            if (
+                hasattr(field_type, "__class_getitem__")
+                and field_type.__origin__ is list
+                and field_type.__args__
+            ):
                 eles = field_type()
                 for e in d.get(field, []):
                     eles.append(field_type.__args__[0](e))
                 setattr(self, field, eles)
             # 字典类型
-            elif field_type is dict:
-                setattr(self, field, field_type(d.get(field)))
+            elif hasattr(field_type, "__origin__") and field_type.__origin__ is dict:
+                val = field_type()
+                for k, v in d.get(field, {}).items():
+                    val.update({k: field_type.__args__[1](v)})
+                setattr(self, field, val)
             else:
                 val = d.get(field)
                 val = json.loads(json.dumps(val, default=lambda x: vars(x)))
