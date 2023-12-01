@@ -80,6 +80,31 @@ EOF
 kubectl create secret generic mysql-admin --from-file=secret.txt
 ```
 
+## 秘钥更新
+
+```shell
+kubectl get secret ${K8S_SECRET_NAME} -n ${K8S_NAMESPACE} >/dev/null 2>&1 && {
+  kubectl create secret generic ${K8S_SECRET_NAME} -n ${K8S_NAMESPACE} \
+    --save-config \
+    --dry-run=client \
+    --from-literal=REGISTRY_ENDPOINT=${REGISTRY_ENDPOINT} \
+    --from-literal=REGISTRY_NAMESPACE=${REGISTRY_NAMESPACE} \
+    --from-literal=REGISTRY_USERNAME=${REGISTRY_USERNAME} \
+    --from-literal=REGISTRY_PASSWORD=${REGISTRY_PASSWORD} \
+    --from-literal=GIT_USERNAME=${GIT_USERNAME} \
+    --from-literal=GIT_PASSWORD=${GIT_PASSWORD} \
+    -o yaml | kubectl apply -f -
+} || {
+  kubectl create secret generic ${K8S_SECRET_NAME} -n ${K8S_NAMESPACE} \
+    --from-literal=REGISTRY_ENDPOINT=${REGISTRY_ENDPOINT} \
+    --from-literal=REGISTRY_NAMESPACE=${REGISTRY_NAMESPACE} \
+    --from-literal=REGISTRY_USERNAME=${REGISTRY_USERNAME} \
+    --from-literal=REGISTRY_PASSWORD=${REGISTRY_PASSWORD} \
+    --from-literal=GIT_USERNAME=${GIT_USERNAME} \
+    --from-literal=GIT_PASSWORD=${GIT_PASSWORD}
+}
+```
+
 ## 参考链接
 
 - [k8s 官网文档](https://kubernetes.io/docs/concepts/configuration/secret/)
