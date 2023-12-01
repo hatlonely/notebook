@@ -11,7 +11,6 @@ kubectl create secret docker-registry my-pull-secret \
   --docker-server=registry.cn-shanghai.aliyuncs.com
 
 # 等效于
-
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
