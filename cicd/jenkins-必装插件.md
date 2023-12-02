@@ -2,9 +2,9 @@
 
 插件安装路径 `Manage Jenkins` -> `Plugins` -> `Available plugins` 搜索插件名
 
-- Docker
 - Blue Ocean
 - Gitee
+- HTML Publisher
 
 界面美化
 
