@@ -7,7 +7,11 @@ def json_object(cls):
     def _init_from_dict__(self, d: dict):
         for field, field_type in cls.__annotations__.items():
             # 跳过不存在的字段
-            if field not in d or not d.get(field):
+            if field not in d:
+                setattr(self, field, None)
+                continue
+            if d.get(field) is None:
+                setattr(self, field, None)
                 continue
             # 列表类型
             if (
