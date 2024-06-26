@@ -26,7 +26,6 @@ def setup():
         time.sleep(1)
 
     yield
-    print("teardown")
     process.terminate()
     process.wait()
     stdout, stderr = process.communicate()
