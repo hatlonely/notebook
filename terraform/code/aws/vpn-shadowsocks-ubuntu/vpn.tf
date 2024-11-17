@@ -135,7 +135,7 @@ resource "aws_security_group" "security_group" {
 # 创建 EC2 实例
 resource "aws_instance" "instance" {
   ami                         = data.aws_ami.ubuntu_22.id
-  instance_type               = "t3.nano"
+  instance_type               = "t2.micro"
   key_name                    = aws_key_pair.key_pair.key_name
   vpc_security_group_ids      = [aws_security_group.security_group.id]
   subnet_id                   = aws_subnet.subnet.id
