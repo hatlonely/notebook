@@ -15,5 +15,5 @@ mount 192.168.0.102:/nfs/share $HOME/share
 ```shell
 mkdir -p $HOME/share
 
-mount -t nfs -o hard,nfsvers=3 192.168.0.101:/nfs/share $HOME/share
+sudo mount -t nfs -o hard,nfsvers=3 192.168.0.102:/nfs/data $HOME/nfs
 ```
