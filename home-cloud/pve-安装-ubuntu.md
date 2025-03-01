@@ -12,18 +12,18 @@
 
 ```yaml
 network:
-version: 2
-renderer: networkd
-ethernets:
+  version: 2
+  renderer: networkd
+  ethernets:
     ens18:
-    dhcp4: no
-    addresses:
-        - 192.168.0.20/24
-    routes:
+      dhcp4: no
+      addresses:
+        - 192.168.0.21/24
+      routes:
         - to: default
-        via: 192.168.0.1
-    nameservers:
+          via: 192.168.0.1
+      nameservers:
         addresses:
-        - 8.8.8.8
-        - 8.8.4.4
+          - 8.8.8.8
+          - 8.8.4.4
 ```
