@@ -239,76 +239,76 @@ runtimeConfig:
               if [ "$protocol" = "vmess" ]; then
                 # 创建VMess配置
                 sudo bash -c "cat > /usr/local/etc/v2ray/config.$${protocol}.json << 'EOF'
-{
-  \"inbounds\": [{
-    \"port\": $${v2ray_port},
-    \"protocol\": \"vmess\",
-    \"settings\": {
-      \"clients\": [
-        {
-          \"id\": \"${random_uuid.v2ray_uuid.result}\",
-          \"alterId\": 0
-        }
-      ]
-    },
-    \"streamSettings\": {
-      \"network\": \"tcp\"
-    }
-  }],
-  \"outbounds\": [{
-    \"protocol\": \"freedom\",
-    \"settings\": {}
-  }]
-}
-EOF"
+            {
+              \"inbounds\": [{
+                \"port\": $${v2ray_port},
+                \"protocol\": \"vmess\",
+                \"settings\": {
+                  \"clients\": [
+                    {
+                      \"id\": \"${random_uuid.v2ray_uuid.result}\",
+                      \"alterId\": 0
+                    }
+                  ]
+                },
+                \"streamSettings\": {
+                  \"network\": \"tcp\"
+                }
+              }],
+              \"outbounds\": [{
+                \"protocol\": \"freedom\",
+                \"settings\": {}
+              }]
+            }
+            EOF"
               elif [ "$protocol" = "vless" ]; then
                 # 创建VLESS配置
                 sudo bash -c "cat > /usr/local/etc/v2ray/config.$${protocol}.json << 'EOF'
-{
-  \"inbounds\": [{
-    \"port\": $${v2ray_port},
-    \"protocol\": \"vless\",
-    \"settings\": {
-      \"clients\": [
-        {
-          \"id\": \"${random_uuid.v2ray_uuid.result}\",
-          \"level\": 0,
-          \"email\": \"user@example.com\"
-        }
-      ],
-      \"decryption\": \"none\"
-    },
-    \"streamSettings\": {
-      \"network\": \"tcp\"
-    }
-  }],
-  \"outbounds\": [{
-    \"protocol\": \"freedom\",
-    \"settings\": {}
-  }]
-}
-EOF"
+            {
+              \"inbounds\": [{
+                \"port\": $${v2ray_port},
+                \"protocol\": \"vless\",
+                \"settings\": {
+                  \"clients\": [
+                    {
+                      \"id\": \"${random_uuid.v2ray_uuid.result}\",
+                      \"level\": 0,
+                      \"email\": \"user@example.com\"
+                    }
+                  ],
+                  \"decryption\": \"none\"
+                },
+                \"streamSettings\": {
+                  \"network\": \"tcp\"
+                }
+              }],
+              \"outbounds\": [{
+                \"protocol\": \"freedom\",
+                \"settings\": {}
+              }]
+            }
+            EOF"
               fi
 
               # 创建systemd服务配置
               sudo bash -c "cat > /etc/systemd/system/v2ray-$${protocol}.service << 'EOF'
-[Unit]
-Description=V2Ray Service ($${protocol})
-Documentation=https://www.v2fly.org/
-After=network.target nss-lookup.target
+            [Unit]
+            Description=V2Ray Service ($${protocol})
+            Documentation=https://www.v2fly.org/
+            After=network.target nss-lookup.target
 
-[Service]
-User=nobody
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-NoNewPrivileges=true
-ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config.$${protocol}.json
-Restart=on-failure
-RestartPreventExitStatus=23
+            [Service]
+            User=nobody
+            CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+            AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+            NoNewPrivileges=true
+            ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config.$${protocol}.json
+            Restart=on-failure
+            RestartPreventExitStatus=23
 
-[Install]
-WantedBy=multi-user.target
-EOF"
+            [Install]
+            WantedBy=multi-user.target
+            EOF"
 
               # 启动服务
               sudo systemctl daemon-reload
