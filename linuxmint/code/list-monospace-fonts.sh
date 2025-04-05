@@ -1,17 +1,15 @@
 #!/bin/bash
-# 获取所有等宽字体列表（去重并排序）
-font_list=$(fc-list :spacing=mono family | awk -F, '{print $1}' | sort | uniq)
-# 格式化输出为 VSCode 配置所需的数组格式
-echo "可用等宽字体列表："
-echo "-------------------"
-printf "[\n"
-i=0
-while IFS= read -r font; do
-    [ -z "$font" ] && continue
-    if [ $i -ne 0 ]; then
-        printf ",\n"
-    fi
-    printf "  '%s'" "$font"
-    ((i++))
-done <<< "$font_list"
-printf "\n]"
+
+# 获取所有等宽字体并格式化输出
+font_list=$(fc-list :spacing=mono family | 
+    awk -F, '{
+        gsub(/[:].*/, "", $1)  # 移除冒号后的样式描述
+        gsub(/[ ]*$/, "", $1)  # 去除行尾空格
+        print "\047" $1 "\047" # 添加单引号包裹
+    }' | 
+    sort -u |
+    tr '\n' ',' | 
+    sed 's/,$//')  # 转换为逗号分隔的字符串
+
+# 添加最后的monospace回退
+echo "${font_list}, monospace"
