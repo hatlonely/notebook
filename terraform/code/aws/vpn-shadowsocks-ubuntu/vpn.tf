@@ -36,7 +36,7 @@ variable "encryption_method" {
 }
 
 provider "aws" {
-  region = "ap-southeast-1"
+  region = "ap-northeast-2"
 }
 
 data "aws_ami" "ubuntu_22" {
@@ -55,7 +55,7 @@ resource "aws_vpc" "vpc" {
 
 resource "aws_subnet" "subnet" {
   vpc_id            = aws_vpc.vpc.id
-  availability_zone = "ap-southeast-1a"
+  availability_zone = "ap-northeast-2a"
   cidr_block        = "10.0.1.0/24"
 }
 
@@ -135,7 +135,7 @@ resource "aws_security_group" "security_group" {
 # 创建 EC2 实例
 resource "aws_instance" "instance" {
   ami                         = data.aws_ami.ubuntu_22.id
-  instance_type               = "t2.micro"
+  instance_type               = "t2.nano"
   key_name                    = aws_key_pair.key_pair.key_name
   vpc_security_group_ids      = [aws_security_group.security_group.id]
   subnet_id                   = aws_subnet.subnet.id
