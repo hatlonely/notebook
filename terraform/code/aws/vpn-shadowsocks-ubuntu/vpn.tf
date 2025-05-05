@@ -36,7 +36,7 @@ variable "encryption_method" {
 }
 
 provider "aws" {
-  region = "ap-northeast-2"
+  region = "ap-southeast-1"
 }
 
 data "aws_ami" "ubuntu_22" {
@@ -55,7 +55,7 @@ resource "aws_vpc" "vpc" {
 
 resource "aws_subnet" "subnet" {
   vpc_id            = aws_vpc.vpc.id
-  availability_zone = "ap-northeast-2a"
+  availability_zone = "ap-southeast-1a"
   cidr_block        = "10.0.1.0/24"
 }
 
